@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.2.4",
     "axios": "^1.6.5",
     "http": "^0.0.1-security",
     "i18next": "^23.7.16",
