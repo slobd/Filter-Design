@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Image from 'next/image'
-import Logo from "assets/images/logo.png";
+import Logo from "/assets/images/logo.png";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");

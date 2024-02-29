@@ -12,7 +12,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Image from 'next/image'
-import Logo from "assets/images/logo.png";
+import Logo from "/assets/images/logo.png";
 import API from "apis";
 import { setCampaign } from "store/actions/Campaign";
 

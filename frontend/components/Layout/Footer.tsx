@@ -6,7 +6,7 @@ const Footer: NextPage = () => {
   return (
     <div className="flex flex-col items-center bg-white px-5 py-10 gap-4 border-t relative z-50">
       <Image
-        src="assets/images/logo.png"
+        src="/assets/images/logo.png"
         width={40}
         height={40}
         alt="Logo"

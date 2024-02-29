@@ -1,7 +1,7 @@
 import React from "react";
 import Image from 'next/image'
 import BeatLoader from "react-spinners/BeatLoader";
-import Logo from "assets/images/logo.png";
+import Logo from "/assets/images/logo.png";
 
 const PageLoading = () => {
   return (

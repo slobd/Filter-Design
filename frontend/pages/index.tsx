@@ -15,25 +15,25 @@ const items = [
     id: 1,
     title: "Meet Me At Filter for Events",
     link: "",
-    image: "assets/images/cases/1.png",
+    image: "/assets/images/cases/1.png",
   },
   {
     id: 2,
     title: "Hear me Speak Filter for Events",
     link: "",
-    image: "assets/images/cases/2.png",
+    image: "/assets/images/cases/2.png",
   },
   {
     id: 3,
     title: "Fan Filter for Sports & Entertainment",
     link: "",
-    image: "assets/images/cases/3.png",
+    image: "/assets/images/cases/3.png",
   },
   {
     id: 4,
     title: "Linkedin Filter for Companies",
     link: "",
-    image: "assets/images/cases/4.png",
+    image: "/assets/images/cases/4.png",
   },
 ];
 
@@ -98,7 +98,7 @@ const Home: NextPage = () => {
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
               <Image
-                src='/assets/images/logo.png'
+                src="/assets/images/logo.png"
                 height={40}
                 width={40}
                 alt="Logo"
@@ -161,13 +161,15 @@ const Home: NextPage = () => {
             role="list"
             className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-4"
           >
-            {/* {items.map((item) => (
+            {items.map((item) => (
               <li
                 key={item.id}
                 className="relative bg-white shadow-xl overflow-hidden rounded-xl"
               >
                 <Image
                   src={item.image}
+                  width={400}
+                  height={400}
                   className="pointer-events-none object-cover group-hover:opacity-75"
                   alt=""
                 />
@@ -187,7 +189,7 @@ const Home: NextPage = () => {
                   </p>
                 </div>
               </li>
-            ))} */}
+            ))}
           </ul>
         </div>
       </div>
@@ -197,11 +199,11 @@ const Home: NextPage = () => {
           <h2 className="text-xl md:text-3xl font-bold text-center mb-10 md:mb-16">
             WHO IS USING LIVEDAB ALREADY?
           </h2>
-          {/* <div className="-mx-6 grid grid-cols-2 gap-0.5 overflow-hidden sm:mx-0 sm:rounded-2xl md:grid-cols-3">
+          <div className="-mx-6 grid grid-cols-2 gap-0.5 overflow-hidden sm:mx-0 sm:rounded-2xl md:grid-cols-3">
             <div className="bg-gray-400/5 p-8 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/1.jpeg"
+                src="/assets/images/logos/1.jpeg"
                 alt="Transistor"
                 width={158}
                 height={48}
@@ -210,7 +212,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/2.jpeg"
+                src="/assets/images/logos/2.jpeg"
                 alt="Reform"
                 width={158}
                 height={48}
@@ -219,7 +221,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/3.png"
+                src="/assets/images/logos/3.png"
                 alt="Tuple"
                 width={158}
                 height={48}
@@ -228,7 +230,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/4.png"
+                src="/assets/images/logos/4.png"
                 alt="Laravel"
                 width={158}
                 height={48}
@@ -237,7 +239,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/5.jpeg"
+                src="/assets/images/logos/5.jpeg"
                 alt="SavvyCal"
                 width={158}
                 height={48}
@@ -246,7 +248,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/6.png"
+                src="/assets/images/logos/6.png"
                 alt="Statamic"
                 width={158}
                 height={48}
@@ -255,7 +257,7 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/7.jpeg"
+                src="/assets/images/logos/7.jpeg"
                 alt="Statamic"
                 width={158}
                 height={48}
@@ -264,13 +266,13 @@ const Home: NextPage = () => {
             <div className="bg-gray-400/5 p-6 sm:p-10">
               <Image
                 className="max-h-12 w-full object-contain"
-                src="assets/images/logos/8.jpeg"
+                src="/assets/images/logos/8.jpeg"
                 alt="Statamic"
                 width={158}
                 height={48}
               />
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
       <Footer />
