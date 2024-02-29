@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .font-condensed {
+      font-stretch: condensed;
+    }
+
+    .font-expanded {
+        font-stretch: expanded;
+    }
+
+    .mobile-font-48 {
+        font-size: 48px;
+    }
+
+    .mobile-font-32 {
+        font-size: 32px;
+    }
+
+    .mobile-font-24 {
+        font-size: 24px;
+    }
+
+    .mobile-font-18 {
+        font-size: 18px;
+    }
+
+    .text-nowrap {
+        text-wrap: nowrap;
+    }
+
+    *:has(+ .display-company-name) {
+        display: block;       
+    }
+
+    .not-empty {
+        border: 1px solid #010A3F;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .not-empty p {
+        display: block;
+    }
+
+    .custom {
+        width: 100%;
+    }
+
+    .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-inline-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+}
+
+@media (max-width: 640px) { 
+    .custom {
+        width: 100%;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+}
+
+@media (min-width: 600px) { 
+    .custom {
+        width: 80%;       
+    }
+}
