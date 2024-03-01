@@ -8,4 +8,10 @@ export const campaignCategories: OptionType[] = [
     { value: "ngo", label: "NGO / Donation" },
     { value: "other", label: "Other" },
 ];
+
+export const filterDesignWidths = {
+    square: "max-w-[350px]",
+    story: "max-w-[290px]",
+    custom: "max-w-[700px]",
+};
   

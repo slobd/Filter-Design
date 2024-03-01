@@ -1,18 +1,13 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {} from '../utils/types';
-// import { getCookie } from 'typescript-cookie';
-
-// if (typeof window !== "undefined") {
-//     var token = getCookie('token');
-// }
+import { CampaignType } from '../utils/types';
 
 type ContextType = {
-    isAuthenticated: boolean,
-    contextLogin: () => void,
-    contextLogout: () => void,
+    campaigns: CampaignType[] | [],
+    contextCampaigns: (campaigns: CampaignType[]) => void,
+    getInitData: () => void,
     loading: boolean,
-    getInitData: () => void,    
     loadingHandle: (e:boolean) => void,
 };
 
@@ -21,50 +16,41 @@ type Props = {
 };
 
 const contextDefaultValues: ContextType = {
-    isAuthenticated: false,
-    contextLogin: () => {},
-    contextLogout: () => {},
+    campaigns:[],
+    getInitData: () => {},
+    contextCampaigns: () => {},
     loading: true,
-    getInitData: () => {},    
-    loadingHandle: (e:boolean) => {},
+    loadingHandle: (e: boolean) => {},
 };
 
 const AppContext = createContext<ContextType>(contextDefaultValues);
 
 export function ContextWrapper({ children } : Props) {
-    const router = useRouter();   
     const [loading, setLoading] = useState(true); 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
 
     useEffect(() => {
-        // if(token) {
-        //     getInitData();               
-        // }
-    }, []); 
+      getInitData();
+    }, []);
 
     const getInitData = () => { 
 
-    }    
-
-    const loadingHandle = (e:boolean) => {
-        setLoading(e);
     }
 
-    const contextLogin = () => {
-     
-    };
+    const loadingHandle = (e:boolean) => {
+      setLoading(e);
+    }
 
-    const contextLogout = () => {
-     
-    };
+    const contextCampaigns = (newCampaigns: CampaignType[]) => {
+      setCampaigns(newCampaigns);
+    }
 
     const sharedState = {
-        isAuthenticated,
+        campaigns,
+        contextCampaigns,
+        getInitData,
         loading,
-        getInitData,        
         loadingHandle,
-        contextLogin,
-        contextLogout,
     };
 
   return (

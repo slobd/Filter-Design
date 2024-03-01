@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+require('dotenv').config();
 const withReactSvg = require('next-react-svg')
 const path = require('path')
 
