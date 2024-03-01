@@ -1,6 +1,6 @@
-import React from "react";
-
-const Row = ({ children, className, onClick }) => {
+import type { NextPage } from 'next';
+import { BasicPropType } from '../../../utils/types';
+const Row: NextPage<BasicPropType> = ({ children, className, onClick }: any) => {
   return (
     <tr
       onClick={onClick}

@@ -1,8 +1,8 @@
-import React, { useState, Suspense } from "react";
-import { useSelector } from "react-redux";
+import type { NextPage } from 'next';
+import { useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Disclosure } from "@headlessui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useRouter } from 'next/router';
 import {
   ArrowUpCircleIcon,
   Bars3Icon,
@@ -13,18 +13,20 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import Image from 'next/image'
-import Logo from "/assets/images/logo.png";
+import Image from 'next/image';
+import { useAppContext } from '../../context/context';
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Sidebar = () => {
-  const { campaigns } = useSelector((state) => state.campaign);
+const Sidebar: NextPage = () => {
+  const router = useRouter();
+  const { pathname, query } = router;
+  const { campaigns } = useAppContext();
   const { user, logout } = useAuth0();
-  const navigate = useNavigate();
-  const { pathname, search } = useLocation();
+  // const navigate = useNavigate();
+  // const { pathname, search } = useLocation();
   const [open, setOpen] = useState(false);
   const navigation = [
     {
@@ -77,9 +79,11 @@ const Sidebar = () => {
         <div className="flex h-16 shrink-0 items-center justify-between">
           <Image
             className="h-10 w-auto cursor-pointer"
-            src={Logo}
+            src="/assets/images/logo.png"
             alt="LIVEDABv2"
-            onClick={() => navigate("/campaigns")}
+            width={100}
+            height={100}
+            onClick={() => router.push("/campaigns")}
           />
           <XMarkIcon
             className="w-6 md:hidden cursor-pointer"
@@ -153,7 +157,7 @@ const Sidebar = () => {
                                     as="a"
                                     href={subItem.href}
                                     className={classNames(
-                                      `${pathname}${search}` === subItem.href
+                                      `${pathname}${query}` === subItem.href
                                         ? "bg-gray-50 text-indigo-600"
                                         : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
                                       "block rounded-md py-2 pr-2 pl-9 text-sm font-medium leading-6 text-gray-700"
@@ -178,15 +182,15 @@ const Sidebar = () => {
                 className="flex items-center justify-between gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
               >
                 <div className="flex items-center gap-x-4">
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Image
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      alt=""
-                    />
-                  </Suspense>
+                  <Image
+                    className="h-8 w-8 rounded-full bg-gray-50"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                    width={40}
+                    height={40}
+                  />
                   <span className="sr-only">Your profile</span>
-                  <span aria-hidden="true">{user.nickname}</span>
+                  <span aria-hidden="true">{user?.nickname}</span>
                 </div>
                 <button
                   className="w-8 h-8 flex items-center justify-center bg-transparent hover:bg-gray-50"

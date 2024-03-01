@@ -1,6 +1,17 @@
+export type BasicPropType = {
+  children: React.ReactNode;
+  className?: string;
+};
+
 export type OptionType = {
   value: string | null,
   label: string | null,
+}
+
+export type ColumnType = {
+  id: string | null,
+  label: string | null,
+  align?: string | null,
 }
 
 export type buttonType = {
@@ -92,6 +103,7 @@ export type CampaignType = {
   background: backgroundType | undefined,
   imprint_link: string | null,
   data_privacy_link: string | null,
+  updatedAt?: string | null,
 }
 
 export type contactType = {

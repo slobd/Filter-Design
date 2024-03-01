@@ -8,13 +8,13 @@ module.exports = withImages()
 
 module.exports = {
   reactStrictMode: true,
-  env: {
-    // SOCKET_URL: 'http://localhost:9000',
-  },
   experimental: {
     images: {
         allowFutureImage: true
     }
+  },
+  images: {
+    domains: ['images.unsplash.com'],
   },
 }
 

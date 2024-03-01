@@ -1,7 +1,11 @@
-import React from "react";
+import type { NextPage } from 'next';
 
-const Badge = ({ color, children }) => {
-  const colorStyles = {
+export type BadgeProps = {
+  color?: string | "success" | "default";
+  children: React.ReactNode;
+}
+const Badge: NextPage<BadgeProps> = ({ color, children }: any) => {
+  const colorStyles: any = {
     success: "bg-green-500/10 text-green-400 border border-green-600/20",
     warning: "bg-yellow-400/10 text-yellow-500 border border-yellow-600/20",
     default: "bg-gray-400/10 text-gray-400 border border-gray-500/10",

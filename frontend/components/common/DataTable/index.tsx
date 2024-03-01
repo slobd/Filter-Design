@@ -1,14 +1,22 @@
-import React, { Fragment } from "react";
+import type { NextPage } from 'next';
+import { Fragment } from "react";
 import Col from "./Col";
 import Row from "./Row";
+import { CampaignType, ColumnType } from '../../../utils/types';
 
-const DataTable = ({ cols, rows, renderRow }) => {
+export type DataTablePros = {
+  cols: ColumnType[];
+  rows: CampaignType[];
+  renderRow: (row?: any, i?: number) => void;
+}
+
+const DataTable: NextPage<DataTablePros> = ({ cols, rows, renderRow }) => {
   return (
     <div className="overflow-x-auto md:overflow-visible">
       <table className="w-full min-w-max">
         <thead>
           <Row className="border-b-2">
-            {cols.map((col) => (
+            {cols.map((col: ColumnType) => (
               <Col
                 className={`font-regular ${
                   col.align === `center` ? `text-center` : `text-left`
@@ -23,7 +31,7 @@ const DataTable = ({ cols, rows, renderRow }) => {
         <tbody>
           {rows && rows.length > 0 ? (
             <>
-              {rows.map((row, i) => (
+              {rows.map((row: CampaignType, i: number) => (
                 <Fragment key={i}>{renderRow(row)}</Fragment>
               ))}
             </>
