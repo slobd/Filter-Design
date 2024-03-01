@@ -5,7 +5,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Image from 'next/image'
 import FadeLoader from "react-spinners/FadeLoader";
 import { useAppContext } from '../context/context';
-import API from "../api"
 
 import Footer from "../components/Layout/Footer";
 import Button from "../components/common/Button";
@@ -44,25 +43,7 @@ const Home: NextPage = () => {
   const {loading, loadingHandle} = useAppContext();
 
   const handleCreateFilterCampaign = () => {
-    console.log("handleCreateFilterCampaign")
-    // API.filter.getAll().then((filterRes) => {
-    //   API.campaign
-    //     .create({
-    //       author: "free",
-    //       filters: [
-    //         {
-    //           filter_design: filterRes.data[0]._id,
-    //           button: { text: "Upload Photo", color: "#000" },
-    //           rnd: { x: 0, y: 0, w: 100, h: 100 },
-    //         },
-    //       ],
-    //       placeholder_image: "uploads/default_placeholder_image.png",
-    //       placeholder_story_image: "uploads/default_placeholder_image.png",
-    //     })
-    //     .then((filterRes) => {
-    //       navigate(`/creator/${filterRes.data._id}/basic`);
-    //     });
-    // });
+    console.log("handleCreateFilterCampaign");
   };
 
   useEffect(() => {

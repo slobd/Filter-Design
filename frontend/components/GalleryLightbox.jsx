@@ -87,7 +87,7 @@ const GalleryLightbox = ({ show, onClose, items, onDelete, start, imageHeight })
               key={item._id}
             >
                 <Image
-                  src={`${process.env.REACT_APP_API_URL}/${item.path}`}
+                  src={`${process.env.APP_API_URL}/${item.path}`}
                   className="max-w-xs md:max-w-md mb-8 rounded-lg object-cover"
                   style={{ height: `${imageHeight - 230}px` }}
                   alt=""
@@ -108,7 +108,7 @@ const GalleryLightbox = ({ show, onClose, items, onDelete, start, imageHeight })
                     className="w-32 gap-2"
                     onClick={() =>
                       handleDownload(
-                        `${process.env.REACT_APP_API_URL}/${item.path}`
+                        `${process.env.APP_API_URL}/${item.path}`
                       )
                     }
                   >
