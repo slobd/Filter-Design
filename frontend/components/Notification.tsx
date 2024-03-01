@@ -1,9 +1,27 @@
-import React, { Fragment, useEffect } from 'react';
+import type { NextPage } from 'next';
+import { Fragment, useEffect } from 'react';
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Transition } from "@headlessui/react";
 
-const Notification = ({ type, title, content, show, onClose }) => {
+export type GalleryLightboxProps = {
+  show: boolean;
+  onClose: () => void;
+  items: any;
+  onDelete: (id: any) => void;
+  start: number;
+  imageHeight: number;
+};
+
+export type NotificationProps = {
+  type: string;
+  title: string;
+  content: string;
+  show: boolean;
+  onClose: () => void;
+}
+
+const Notification: NextPage<NotificationProps> = ({ type, title, content, show, onClose }) => {
   useEffect(() => {
     show && setTimeout(() => onClose(), 3000)
   }, [show]);

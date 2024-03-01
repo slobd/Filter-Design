@@ -16,7 +16,7 @@ const Button: NextPage<ButtonProps> = ({
   onClick,
   className,
   style,
-}: any) => {
+}) => {
   const colorStyles: any = {
     primary: "bg-indigo-600 text-white border-indigo-600",
     dark: "bg-black text-white",
