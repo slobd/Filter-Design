@@ -3,10 +3,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Fragment, useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import Link from 'next/link';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { ToastContainer, toast } from 'react-toast';
 import moment from "moment";
 import { Menu, Transition } from "@headlessui/react";
 import {
@@ -23,10 +20,9 @@ import Button from "../../components/common/Button";
 import DataTable, { Row, Col } from "../../components/common/DataTable";
 import GalleryLightbox from "../../components/GalleryLightbox";
 import Notification from "../../components/Notification";
-import API from "../../api";
+import { APIService } from "../../api";
 import { CampaignType, ColumnType, galleryType } from '../../utils/types';
 import { useAppContext } from '../../context/context';
-// const DynamicSocialLogin = dynamic(async () => await import('../../components/SocialLogin'), { ssr: false });
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -35,7 +31,7 @@ function classNames(...classes: any) {
 const Signup: NextPage = () => {
   const router = useRouter();
   const { user } = useAuth0();
-  const { campaigns } = useAppContext();
+  const { campaigns, getInitData, contextCampaignData, contextResetCampaignData } = useAppContext();
   const [galleries, setGalleries] = useState<galleryType[]>([]);
   const [showGallery, setShowGallery] = useState(false);
   const [show, setShow] = useState(false);
@@ -50,15 +46,24 @@ const Signup: NextPage = () => {
     { id: "actions", label: "Actions" },
   ];
 
+  useEffect(() => {
+    getInitData();
+  }, []);
+
+  useEffect(() => {
+    fetchGalleries();
+  }, [campaigns]);
+
   const handleCopyCampaign = (row: CampaignType) => {
-    // API.campaign
-    //   .create({
-    //     ...row,
-    //     name: `${row.name} - Copy`,
-    //   })
-    //   .then((res) => {
-    //     dispatch(addCampaign(res.data));
-    //   });
+    console.log("copy campaign", row)
+    APIService.campaign
+      .create({
+        ...row,
+        name: `${row.name} - Copy`,
+      })
+      .then((res: any) => {
+        getInitData();
+      });
   };
 
   const handleShowGalleryLightbox = (i: any) => {
@@ -66,107 +71,69 @@ const Signup: NextPage = () => {
     setStartIndex(i);
   };
 
-  useEffect(() => {
-    // const handleResize = () => {
-    //   const pageHeight = window.innerHeight;
-    //   setImageHeight(`${pageHeight}`);
-    // };
-
-    // handleResize(); // Set initial image height on component mount
-    // window.addEventListener('resize', handleResize); // Update image height on window resize
-
-    // return () => {
-    //   window.removeEventListener('resize', handleResize); // Clean up the event listener
-    // };
-  }, []);
-
   const handleDeleteCampaign = (id: any) => {
-    // API.campaign.delete(id).then((res) => {
-    //   if (res.data) {
-    //     dispatch(deleteCampaign(id));
-    //     setShow(true);
-    //     fetchAll();
-    //   }
-    // });
+    APIService.campaign.delete(id).then((res: any) => {
+      if (res.data) {
+        getInitData();
+        setShow(true);
+      }
+    });
   };
 
-  const fetchAll = () => {
-    // API.filter
-    //   .getAll()
-    //   .then((res) => dispatch(setFilterDesigns(res.data)));
-    // API.campaign
-    //   .getAll(user.email)
-    //   .then((res) => dispatch(setCampaigns(res.data)));
-    // fetchGalleries();
-  }
-
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  useEffect(() => {
-    fetchGalleries();
-  }, [campaigns]);
-
   const handleCreateFilterCampaign = () => {
-    // dispatch(setCampaign({
-    //   name: "",
-    //   category: "event",
-    //   event_name: "",
-    //   start_date: "",
-    //   location: "",
-    //   share_title: "",
-    //   share_text: "",
-    //   imprint_link: "",
-    //   data_privacy_link: "",
-    // }))
+    contextResetCampaignData();
     let slug = crc.crc32(moment().valueOf().toString());
-    // API.filter.getAll().then((filterRes) => {
-    //   const filter = filterRes.data?.filter(i => i.author == '')?.[0];
-    //   API.campaign
-    //     .create({
-    //       slug: slug,
-    //       author: user.email,
-    //       filters: [
-    //         {
-    //           filter_design: filter?._id,
-    //           button: {
-    //             text: "Upload Photo",
-    //             bgcolor: "#FFF",
-    //             textcolor: "#000",
-    //           },
-    //           rnd: { x: 0, y: 0, w: 100, h: 100 },
-    //         },
-    //       ],
-    //       placeholder_image: "uploads/default_placeholder_image.png",
-    //       placeholder_story_image: "uploads/default_placeholder_image.png",
-    //     })
-    //     .then((filterRes) => {
-    //       navigate(`/creator/${filterRes.data.slug}/basic`);
-    //       // API.uniqueLink
-    //       //   .create({ campaign: filterRes.data._id })
-    //       //   .then((res) => {
-    //       //     // console.log(res);
-    //       //   });
-    //     });
-    // });
+    APIService.filter.getAll().then((filterRes: any) => {
+      const filter = filterRes.data?.filter((i: any) => i.author == '')?.[0];
+      console.log("filter", filter)
+      APIService.campaign
+        .create({
+          slug: slug,
+          author: user?.email,
+          filters: [
+            {
+              filter_design: filter?._id,
+              button: {
+                text: "Upload Photo",
+                bgcolor: "#FFF",
+                textcolor: "#000",
+              },
+              rnd: { x: 0, y: 0, w: 100, h: 100 },
+            },
+          ],
+          placeholder_image: "uploads/default_placeholder_image.png",
+          placeholder_story_image: "uploads/default_placeholder_image.png",
+        })
+        .then((res: any) => {
+          console.log("campaign created: ", res.data)
+          if(res.data.slug) {
+            router.push(`/creator/${res.data.slug}/basic`);
+            // APIService.uniqueLink
+            //   .create({ campaign: res.data._id })
+            //   .then((res) => {
+            //     // console.log(res);
+            //   });
+          }
+          
+        });
+    });
   };
 
   const handleDeleteGallery = (id: any) => {
-    // API.gallery.delete(id).then((res) => {
-    //   const { acknowledged, deletedCount } = res.data;
-    //   if (acknowledged === true && deletedCount > 0) {
-    //     fetchGalleries();
-    //     setShow(true);
-    //   }
-    // });
+    APIService.gallery.delete(id).then((res: any) => {
+      const { acknowledged, deletedCount } = res.data;
+      if (acknowledged === true && deletedCount > 0) {
+        fetchGalleries();
+        setShow(true);
+      }
+    });
   };
 
   const fetchGalleries = () => {
-    // setGalleries()
-    // API.gallery
-    //   .getAll(user.email)
-    //   .then((res) => dispatch(setGalleries(res.data)));
+    setGalleries([]);
+    APIService.gallery
+      .getAll(user?.email)
+      .then((res: any) => setGalleries(res.data));
   };
 
   const renderRow = (row: CampaignType) => {
@@ -182,27 +149,36 @@ const Signup: NextPage = () => {
                         : `max-h-full h-max`
                     } flex relative`}
                   >
+                    <div className="absolute top-0 left-0 w-full h-full object-cover rounded-md overflow-hidden">
                       <Image
-                        src={`${process.env.REACT_APP_API_URL}/${row?.placeholder_image}`}
-                        className="absolute top-0 left-0 w-full h-full object-cover rounded-md"
+                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${row?.placeholder_image}`}
+                        width={70}
+                        height={70}
+                        alt=""
+                        loader={({ src, width }) => { return src + "?w=" + width }}
                       />
-                      <Image
-                        src={`${process.env.REACT_APP_API_URL}/${row?.filters[0]?.filter_design?.image}`}
-                        className="max-h-full relative z-10 rounded-md"
-                      />
+                    </div>
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${row?.filters[0]?.filter_design?.image}`}
+                      className="max-h-full relative z-10 rounded-md"
+                      width={70}
+                      height={70}
+                      alt=""
+                      loader={({ src, width }) => { return src + "?w=" + width }}
+                    />
                   </div>
                 : null
               }
             </div>
             <div className="flex flex-col">
-              <Link
+              <a
                 href={`/creator/${row.slug}/filters`}
               >
                 <span className="font-medium cursor-pointer hover:underline">{row.name}</span>
-              </Link>
+              </a>
               <span className="text-[0.8rem] text-gray-400">
-                {row.filters.length}x Filters added | Created:{" "}
-                {moment(row.updatedAt).format("DD.MM.YYYY - hh:mma")}
+                {row?.filters?.length}x Filters added | Created:{" "}
+                {moment(row?.updatedAt).format("DD.MM.YYYY - hh:mma")}
               </span>
             </div>
           </div>
@@ -223,12 +199,12 @@ const Signup: NextPage = () => {
                 View
               </Button>
             </a>
-            <Link href={`/creator/${row.slug}/reporting`}>
+            <a href={`/creator/${row.slug}/reporting`}>
               <Button color="white" size="sm">
                 <ChartBarIcon className="w-4 mr-2" />
                 Reports
               </Button>
-            </Link>
+            </a>
             <Menu as="div" className="relative inline-block text-left">
               <div>
                 <Menu.Button className="inline-flex justify-center items-center rounded-md bg-white w-[30px] h-[30px] shadow-sm hover:bg-gray-50 border">
@@ -341,9 +317,13 @@ const Signup: NextPage = () => {
                       <TrashIcon className="w-5 text-white" />
                     </button>
                       <Image
-                        src={`${process.env.REACT_APP_API_URL}/${gallery.path}`}
+                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
                         className="rounded-lg cursor-pointer"
                         onClick={() => handleShowGalleryLightbox(i)}
+                        width={120}
+                        height={120}
+                        alt=""
+                        loader={({ src, width }) => { return src + "?w=" + width }}
                       />
                   </div>
                 ))}

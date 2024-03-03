@@ -1,7 +1,16 @@
-import React from "react";
-import ReactTailwindcssSelect from "react-tailwindcss-select";
+import type { NextPage } from "next";
+// import ReactTailwindcssSelect from "react-tailwindcss-select";
 
-const Select = ({ label, value, onChange, options, isMultiple, ...props }) => {
+export type SelectProps = {
+  label?: string | null;
+  value: string | null;
+  onChange: (e: any) => void;
+  options: any;
+  isMultiple: boolean;
+  props: any;
+};
+
+const Select: NextPage<SelectProps> = ({ label, value, onChange, options, isMultiple, ...props }) => {
   return (
     <div className="mb-2">
       {label && (
@@ -12,7 +21,7 @@ const Select = ({ label, value, onChange, options, isMultiple, ...props }) => {
           {label}
         </label>
       )}
-      <ReactTailwindcssSelect
+      {/* <ReactTailwindcssSelect
         value={value}
         onChange={onChange}
         options={options}
@@ -28,7 +37,7 @@ const Select = ({ label, value, onChange, options, isMultiple, ...props }) => {
         }}
         placeholder=""
         {...props}
-      />
+      /> */}
     </div>
   );
 };

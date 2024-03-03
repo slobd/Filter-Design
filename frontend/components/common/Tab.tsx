@@ -1,9 +1,18 @@
-function classNames(...classes) {
+import type { NextPage } from "next";
+
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Tab = ({ items, active, onClick, gap = 8 }) => {
-  const gaps = {
+export type TabProps = {
+  items: any[];
+  active?: number;
+  onClick: (e: any) => void;
+  gap?: string;
+};
+
+const Tab: NextPage<TabProps> = ({ items, active, onClick, gap = 8 }) => {
+  const gaps: any = {
     0: "space-x-0",
     1: "space-x-1",
     2: "space-x-2",
@@ -30,9 +39,9 @@ const Tab = ({ items, active, onClick, gap = 8 }) => {
           id="tabs"
           name="tabs"
           className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-          defaultValue={items.find((tab) => tab.id === active)}
+          defaultValue={items.find((tab: any) => tab.id === active)}
         >
-          {items.map((tab) => (
+          {items.map((tab: any) => (
             <option key={tab.name}>{tab.name}</option>
           ))}
         </select>
@@ -40,7 +49,7 @@ const Tab = ({ items, active, onClick, gap = 8 }) => {
       <div className="h-full hidden sm:block">
         <div className="h-full">
           <nav className={`h-full -mb-px flex ${gaps[gap]}`} aria-label="Tabs">
-            {items.map((tab) => (
+            {items.map((tab: any) => (
               <a
                 key={tab.name}
                 onClick={() => onClick(tab)}

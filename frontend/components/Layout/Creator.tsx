@@ -1,5 +1,7 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import type { NextPage } from 'next';
+import { Fragment, useEffect, useState } from "react";
+// import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useRouter } from 'next/router';
 import { useDispatch } from "react-redux";
 import {
   Bars3Icon,
@@ -12,19 +14,19 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Image from 'next/image'
-import Logo from "/assets/images/logo.png";
-import API from "apis";
-import { setCampaign } from "store/actions/Campaign";
+import { APIService } from '../../api';
+import { useAppContext } from '../../context/context';
 
-function classNames(...classes) {
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const CreatorLayout = () => {
-  const { slug: id } = useParams();
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const dispatch = useDispatch();
+const CreatorLayout: NextPage = () => {
+  const router = useRouter();
+  const { pathname, query } = router;
+  const { contextCampaignData } = useAppContext();
+
+
   const [open, setOpen] = useState(false);
   const navigation = [
     {
@@ -61,10 +63,11 @@ const CreatorLayout = () => {
   ];
 
   useEffect(() => {
-    API.campaign.getBySlug(id).then((res) => {
-      dispatch(setCampaign({ ...res.data }));
+    const slug = query?.slug;
+    APIService.campaign.getBySlug(slug).then((res: any) => {
+      contextCampaignData({ ...res.data });
     });
-  }, []);
+  }, [query]);
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
@@ -76,9 +79,11 @@ const CreatorLayout = () => {
         <div className="flex h-16 shrink-0 items-center justify-between">
           <Image
             className="h-10 w-auto cursor-pointer"
-            src={Logo}
+            src="/assets/images/logo.png"
             alt="LIVEDABv2"
-            onClick={() => navigate("/campaigns")}
+            onClick={() => router.push("/campaigns")}
+            width={40}
+            height={40}
           />
           <XMarkIcon
             className="w-6 md:hidden cursor-pointer"
@@ -93,7 +98,7 @@ const CreatorLayout = () => {
                   <Fragment key={item.name}>
                     <li>
                       <span
-                        onClick={() => navigate(`/creator/${id}/${item.href}`)}
+                        // onClick={() => router.push(`/creator/${id}/${item.href}`)}
                         className={classNames(
                           pathname.includes(item.href)
                             ? "bg-gray-50 text-indigo-600"
@@ -111,14 +116,14 @@ const CreatorLayout = () => {
                           aria-hidden="true"
                         />
                         {item.name}
-                        {item.count && (
+                        {/* {item.count && (
                           <span
                             className="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200"
                             aria-hidden="true"
                           >
                             {item.count}
                           </span>
-                        )}
+                        )} */}
                       </span>
                     </li>
                     {item.underline && <hr className="!my-2.5" />}
@@ -134,7 +139,7 @@ const CreatorLayout = () => {
         className="w-6 flex md:hidden absolute top-5 left-4 cursor-pointer"
       />
       <div className="w-full md:pl-72">
-        <Outlet />
+        {/* <Outlet /> */}
       </div>
     </div>
   );

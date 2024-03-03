@@ -1,19 +1,28 @@
-import React, { Fragment } from "react";
+import type { NextPage } from "next";
+import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-function classNames(...classes) {
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const DropdownButton = ({
+export type DropdownButtonProps = {
+  label?: string | null;
+  color?: "primary" | "dark" | "white" | "transparent" | "success" | "danger" | "pink" | "secondary";
+  align?: string;
+  items?: any[] | [];
+  children?: React.ReactNode;
+};
+
+const DropdownButton: NextPage<DropdownButtonProps> = ({
   label,
   color = "white",
   align = "left",
   items = [],
   children = "Dropdown Button",
 }) => {
-  const colorStyles = {
+  const colorStyles: any = {
     white: "bg-white text-black border",
     black: "bg-black text-white",
   };
@@ -55,7 +64,7 @@ const DropdownButton = ({
             } z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
           >
             <div className="py-1">
-              {items.map((item, index) => (
+              {items.map((item: any, index: any) => (
                 <Menu.Item key={index}>
                   {({ active }) => (
                     <a

@@ -1,7 +1,13 @@
-import React, { useRef } from "react";
+import type { NextPage } from 'next';
+import { useRef } from "react";
 
-const ImagePicker = ({ onChange, label }) => {
-  const fileRef = useRef();
+export type ImagePickerProps = {
+  onChange: (e: any) => void;
+  label?: string | null;
+};
+
+const ImagePicker: NextPage<ImagePickerProps> = ({ onChange, label }) => {
+  const fileRef = useRef<any>();
 
   return (
     <div className="mb-2">
@@ -41,7 +47,7 @@ const ImagePicker = ({ onChange, label }) => {
           </div>
           <input
             type="file"
-            onChange={(e) => e.target.files.length > 0 && onChange(e)}
+            onChange={(e: any) => e.target.files && e.target.files.length > 0 && onChange(e)}
             className="hidden"
             ref={fileRef}
             accept="image/*"

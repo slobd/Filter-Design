@@ -13,8 +13,8 @@ export type GalleryLightboxProps = {
   onClose: () => void;
   items: any;
   onDelete: (id: any) => void;
-  start: number;
-  imageHeight: number;
+  start?: number;
+  imageHeight?: number;
 };
 
 const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items, onDelete, start, imageHeight }) => {
@@ -43,19 +43,19 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
   };
 
   const handleDownload = (url: any) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.responseType = "blob";
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        const blob = new Blob([xhr.response], { type: "image/jpeg" });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = "image.jpg";
-        link.click();
-      }
-    };
-    xhr.send();
+    // const xhr = new XMLHttpRequest();
+    // xhr.open("GET", url, true);
+    // xhr.responseType = "blob";
+    // xhr.onload = function () {
+    //   if (xhr.status === 200) {
+    //     const blob = new Blob([xhr.response], { type: "image/jpeg" });
+    //     const link = document.createElement("a");
+    //     link.href = window.URL.createObjectURL(blob);
+    //     link.download = "image.jpg";
+    //     link.click();
+    //   }
+    // };
+    // xhr.send();
   };
 
   if (!show) {
@@ -70,7 +70,7 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
           onClick={onClose}
           className="!z-10 w-8 h-8 absolute bg-white top-5 md:top-10 right-5 top:right-10 cursor-pointer opacity-60 hover:opacity-100 transition rounded-sm p-1.5"
         >
-          <Image src="/assets/images/icons/close.svg" className="w-full h-full" alt=""/>
+          <Image src="/assets/images/icons/close.svg" className="w-full h-full" alt="" width={35} height={35}/>
         </button>
         <Image
           src="/assets/images/icons/arrow-right.svg"
@@ -91,7 +91,7 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
               key={item._id}
             >
                 <Image
-                  src={`${process.env.APP_API_URL}/${item.path}`}
+                  src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${item.path}`}
                   className="max-w-xs md:max-w-md mb-8 rounded-lg object-cover"
                   // style={{ height: `${imageHeight - 230}px` }}
                   alt=""
@@ -111,7 +111,7 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                     className="w-32 gap-2"
                     onClick={() =>
                       handleDownload(
-                        `${process.env.APP_API_URL}/${item.path}`
+                        `${process.env.NEXT_PUBLIC_APP_API_URL}/${item.path}`
                       )
                     }
                   >

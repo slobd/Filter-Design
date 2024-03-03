@@ -1,8 +1,19 @@
+import type { NextPage } from "next";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const Drawer = ({
+export type DrawerProps = {
+  open: boolean;
+  setOpen: (e: any) => void;
+  children?: React.ReactNode;
+  title?: string;
+  onSave?: () => void;
+  onCancel?: () => void;
+  size: string | null;
+};
+
+const Drawer: NextPage<DrawerProps> = ({
   open,
   setOpen,
   children,
@@ -25,7 +36,7 @@ const Drawer = ({
 
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={setOpen}>
+      <Dialog as="div" className="relative z-50" onClose={() => setOpen}>
         <div className="fixed inset-0" />
 
         <div className="fixed inset-0 overflow-hidden font-inter">

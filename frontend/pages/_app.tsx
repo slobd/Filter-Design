@@ -14,23 +14,23 @@ function MyApp({ Component, pageProps } : AppProps) {
     router.push(appState?.returnTo || window.location.pathname);
   };
   return (
-    <ContextWrapper>
-      <Head>          
-          <meta charSet='utf-8'/>
-          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-          <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Auth0Provider
-          domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN ?? ""}
-          clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ?? ""}
-          authorizationParams={{
-            redirect_uri: process.env.NEXT_PUBLIC_AUTH0_CALLBACK_URL ?? "",
-          }}
-          onRedirectCallback={onRedirectCallback}
-        >
+    <Auth0Provider
+      domain={process.env.NEXT_PUBLIC_AUTH0_DOMAIN ?? ""}
+      clientId={process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ?? ""}
+      authorizationParams={{
+        redirect_uri: process.env.NEXT_PUBLIC_AUTH0_CALLBACK_URL ?? "",
+      }}
+      onRedirectCallback={onRedirectCallback}
+    >
+      <ContextWrapper>
+        <Head>          
+            <meta charSet='utf-8'/>
+            <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            <link rel="icon" href="/favicon.ico" />
+        </Head>
           <Component {...pageProps} /> 
-        </Auth0Provider>
-    </ContextWrapper>
+      </ContextWrapper>
+    </Auth0Provider>
   )
 }
 

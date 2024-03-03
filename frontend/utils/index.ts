@@ -33,7 +33,7 @@ export const getBase64 = (file: any, cb: any) => {
   export const getImageUrl = (link: string) => {
     return link.startsWith("http")
       ? link
-      : `${process.env.APP_API_URL}/${link}`;
+      : `${process.env.NEXT_PUBLIC_APP_API_URL}/${link}`;
   };
   
   export const validateEmail = (email: string) => {

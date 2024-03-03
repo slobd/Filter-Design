@@ -16,7 +16,7 @@ const DataTable: NextPage<DataTablePros> = ({ cols, rows, renderRow }) => {
       <table className="w-full min-w-max">
         <thead>
           <Row className="border-b-2">
-            {cols.map((col: ColumnType) => (
+            {cols?.map((col: ColumnType) => (
               <Col
                 className={`font-regular ${
                   col.align === `center` ? `text-center` : `text-left`
@@ -31,7 +31,7 @@ const DataTable: NextPage<DataTablePros> = ({ cols, rows, renderRow }) => {
         <tbody>
           {rows && rows.length > 0 ? (
             <>
-              {rows.map((row: CampaignType, i: number) => (
+              {rows?.map((row: CampaignType, i: number) => (
                 <Fragment key={i}>{renderRow(row)}</Fragment>
               ))}
             </>

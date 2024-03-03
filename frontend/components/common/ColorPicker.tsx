@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import type { NextPage } from "next";
+import { useState } from "react";
 import { default as Picker } from "react-pick-color";
 import OutsideClickHandler from "react-outside-click-handler";
 
-const ColorPicker = ({ label, value, onChange }) => {
+export type ColorPickerProps = {
+  label: string;
+  value?: string;
+  onChange: (e: any) => void;
+};
+
+const ColorPicker: NextPage<ColorPickerProps> = ({ label, value, onChange }) => {
   const [opened, setOpened] = useState(false);
 
   return (
@@ -28,7 +35,7 @@ const ColorPicker = ({ label, value, onChange }) => {
         {opened && (
           <OutsideClickHandler onOutsideClick={() => setOpened(false)}>
             <div className="absolute z-10 mt-1">
-              <Picker color={value} onChange={(color) => onChange(color.hex)} />
+              <Picker color={value} onChange={(color: any) => onChange(color.hex)} />
             </div>
           </OutsideClickHandler>
         )}

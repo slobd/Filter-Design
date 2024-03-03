@@ -1,6 +1,17 @@
-import React from "react";
+import type { NextPage } from "next";
 
-const RadioGroup = ({
+export type RadioGroupProps = {
+  name?: string;
+  label?: string;
+  value?: string | null | undefined;
+  onChange: (id: any) => void;
+  className?: string;
+  wrapperClassName?: string;
+  options: any[];
+  props?: string;
+};
+
+const RadioGroup: NextPage<RadioGroupProps> = ({
   name,
   label,
   value,
@@ -18,7 +29,7 @@ const RadioGroup = ({
         </label>
       )}
       <div>
-        {options.map((option) => (
+        {options.map((option: any) => (
           <div key={option.value} className="flex items-center">
             <input
               id={option.value}
