@@ -78,7 +78,7 @@ export function ContextWrapper({ children } : Props) {
 
     const contextCampaignData = (newCampaign: CampaignType) => {
       setCampaignData(newCampaign);
-      console.log("setCampaignData", campaignData);
+      console.log("set CampaignData", campaignData);
     }
 
     const contextResetCampaignData = () => {

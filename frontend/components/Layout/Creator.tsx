@@ -2,7 +2,6 @@ import type { NextPage } from 'next';
 import { Fragment, useEffect, useState } from "react";
 // import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRouter } from 'next/router';
-import { useDispatch } from "react-redux";
 import {
   Bars3Icon,
   Cog8ToothIcon,
@@ -25,7 +24,6 @@ const CreatorLayout: NextPage = () => {
   const router = useRouter();
   const { pathname, query } = router;
   const { contextCampaignData } = useAppContext();
-
 
   const [open, setOpen] = useState(false);
   const navigation = [
@@ -70,7 +68,7 @@ const CreatorLayout: NextPage = () => {
   }, [query]);
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <>
       <div
         className={`fixed top-0 left-0 w-72 h-screen z-[100] flex flex-shrink-0 flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition ${
           open ? `translate-x-0` : `-translate-x-full md:translate-x-0`
@@ -98,7 +96,7 @@ const CreatorLayout: NextPage = () => {
                   <Fragment key={item.name}>
                     <li>
                       <span
-                        // onClick={() => router.push(`/creator/${id}/${item.href}`)}
+                        onClick={() => router.push(`/creator/${query?.slug}/${item.href}`)}
                         className={classNames(
                           pathname.includes(item.href)
                             ? "bg-gray-50 text-indigo-600"
@@ -116,12 +114,12 @@ const CreatorLayout: NextPage = () => {
                           aria-hidden="true"
                         />
                         {item.name}
-                        {/* {item.count && (
+                        {/* {item?.count && (
                           <span
                             className="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200"
                             aria-hidden="true"
                           >
-                            {item.count}
+                            {item?.count}
                           </span>
                         )} */}
                       </span>
@@ -138,10 +136,10 @@ const CreatorLayout: NextPage = () => {
         onClick={() => setOpen(!open)}
         className="w-6 flex md:hidden absolute top-5 left-4 cursor-pointer"
       />
-      <div className="w-full md:pl-72">
-        {/* <Outlet /> */}
-      </div>
-    </div>
+      {/* <div className="w-full md:pl-72">
+        <Outlet />
+      </div> */}
+    </>
   );
 };
 

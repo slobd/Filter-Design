@@ -18,20 +18,23 @@ const CreatorBasic: NextPage = () => {
     const { campaignData, contextCampaignData } = useAppContext();
     const [campaignURL, setCampaignURL] = useState("");
 
-    console.log("campaignData", campaignData)
-
     const handleChange = (target: any, value: any) => {
-        contextCampaignData({ [target]: value });
+        if(target && value) {
+            contextCampaignData({
+                ...campaignData,
+                [target]: value
+            });
+        }
     };
 
     const handleSave = () => {
         if (!user) {
-        loginWithRedirect({
-            appState: {
-            returnTo: `/creator/${query?.slug}/basic`,
-            },
-        });
-        return;
+            loginWithRedirect({
+                appState: {
+                returnTo: `/creator/${query?.slug}/basic`,
+                },
+            });
+            return;
         }
         if(!campaignData) return;
         APIService.campaign
@@ -48,55 +51,56 @@ const CreatorBasic: NextPage = () => {
     }, [])
     
     return (
-        <div className="w-full">
+        <div className="w-full bg-gray-100 min-h-screen flex flex-row">
             <CreatorLayout />
-            <div className="max-w-lg mx-auto p-5 md:p-10">
-                <div className="bg-white shadow-lg rounded-md p-5">
-                <TextField
-                    value={campaignData?.name}
-                    onChange={(e: any) => handleChange("name", e.target.value)}
-                    label="Campaign Name"
-                />
-                <RadioGroup
-                    value={campaignData?.category}
-                    onChange={(e: any) => handleChange("category", e.value)}
-                    label="Category"
-                    options={campaignCategories}
-                />
-                {campaignData?.category === "event" && (
-                    <>
+            <div className="md:w-[288px] md:min-w-[288px] min-h-screen"></div>
+            <div className="md:w-[60%] w-[80%] max-w-lg mx-auto p-5 md:p-10">
+                <div className="bg-white shadow-xl rounded-md p-5">
                     <TextField
-                        label="Event Name"
-                        value={campaignData?.event_name}
-                        onChange={(e: any) => handleChange("event_name", e.target.value)}
+                        value={campaignData?.name ?? ""}
+                        onChange={(e: any) => handleChange("name", e.target.value)}
+                        label="Campaign Name"
+                    />
+                    <RadioGroup
+                        value={campaignData?.category ?? ""}
+                        onChange={(e: any) => handleChange("category", e.value)}
+                        label="Category"
+                        options={campaignCategories}
+                    />
+                    {campaignData?.category === "event" && (
+                        <>
+                        <TextField
+                            label="Event Name"
+                            value={campaignData?.event_name ?? ""}
+                            onChange={(e: any) => handleChange("event_name", e.target.value)}
+                        />
+                        <TextField
+                            label="Start Date"
+                            value={campaignData?.start_date ?? ""}
+                            onChange={(e: any) => handleChange("start_date", e.target.value)}
+                        />
+                        </>
+                    )}
+                    <TextField
+                        label="Location"
+                        value={campaignData?.location ?? ""}
+                        onChange={(e: any) => handleChange("location", e.target.value)}
                     />
                     <TextField
-                        label="Start Date"
-                        value={campaignData?.start_date}
-                        onChange={(e: any) => handleChange("start_date", e.target.value)}
+                        label="Imprint Link"
+                        value={campaignData?.imprint_link ?? ""}
+                        onChange={(e: any) => handleChange("imprint_link", e.target.value)}
                     />
-                    </>
-                )}
-                <TextField
-                    label="Location"
-                    value={campaignData?.location}
-                    onChange={(e: any) => handleChange("location", e.target.value)}
-                />
-                <TextField
-                    label="Imprint Link"
-                    value={campaignData?.imprint_link ?? 'http://livedab.com/imprint'}
-                    onChange={(e: any) => handleChange("imprint_link", e.target.value)}
-                />
-                <TextField
-                    label="Data Privacy"
-                    value={campaignData?.data_privacy_link ?? 'http://livedab.com/privacy'}
-                    onChange={(e: any) => handleChange("data_privacy_link", e.target.value)}
-                />
-                <TextField 
-                    value={campaignURL} 
-                    label="Campaign URL" 
-                    readOnly 
-                />
+                    <TextField
+                        label="Data Privacy"
+                        value={campaignData?.data_privacy_link ?? ""}
+                        onChange={(e: any) => handleChange("data_privacy_link", e.target.value)}
+                    />
+                    <TextField 
+                        value={campaignURL} 
+                        label="Campaign URL" 
+                        readOnly 
+                    />
                 </div>
                 <Button
                 className="w-full mt-5 gap-2"
