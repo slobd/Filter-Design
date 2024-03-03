@@ -1,12 +1,11 @@
-import React from "react";
+import { NextPage } from 'next';
 import Image from 'next/image'
 import BeatLoader from "react-spinners/BeatLoader";
-import Logo from "/assets/images/logo.png";
 
-const PageLoading = () => {
+const PageLoading: NextPage = () => {
   return (
     <div className="w-screen h-screen flex flex-col items-center justify-center gap-4">
-      <Image src={Logo} className="w-16" alt="Livedab | v2" />
+      <Image src="/assets/images/logo.png" className="w-16" alt="Livedab | v2" width={40} height={40}/>
       <BeatLoader
         color={"#4F46E5"}
         loading={true}

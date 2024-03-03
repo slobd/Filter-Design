@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import { NextPage } from 'next';
+import { useState } from "react";
 import Image from 'next/image'
-import Tab from "components/common/Tab";
-import TextField from "components/common/TextField";
-import ToggleSwitch from "components/common/ToggleSwitch";
-import Button from "components/common/Button";
-import ColorPicker from "components/common/ColorPicker";
-import DropdownButton from "components/common/DropdownButton";
-import PlaceholderImage from "assets/images/placeholder.jpg";
-import SettingIcon from "assets/images/icons/setting.svg";
+import Tab from "./common/Tab";
+import TextField from "./common/TextField";
+import ToggleSwitch from "./common/ToggleSwitch";
+import Button from "./common/Button";
+import ColorPicker from "./common/ColorPicker";
+import DropdownButton from "./common/DropdownButton";
+// import PlaceholderImage from "assets/images/placeholder.jpg";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const Drawer = () => {
+const Drawer: NextPage = () => {
   const [open, setOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(1);
   const [name, setName] = useState("");
@@ -31,7 +31,7 @@ const Drawer = () => {
         className="flex md:hidden absolute top-20 left-4 !px-2 z-10"
         onClick={() => setOpen(!open)}
       >
-        <Image src={SettingIcon} className="w-5" alt="" />
+        <Image src="/assets/images/icons/setting.svg" width={35} height={35} className="w-5" alt="" />
       </Button>
       <div
         className={`transition fixed z-20 left-0 top-0 w-full max-w-[320px] md:max-w-[400px] flex h-screen flex-col divide-y divide-gray-200 bg-white border-r ${
@@ -60,18 +60,18 @@ const Drawer = () => {
               <Tab
                 items={items}
                 active={selectedTab}
-                onClick={(item) => setSelectedTab(item.id)}
+                onClick={(item: any) => setSelectedTab(item.id)}
               />
             </div>
             <TextField
               label="Campaign Name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e: any) => setName(e.target.value)}
             />
             <ToggleSwitch
               label="Light Mode"
               checked={lightMode}
-              onChange={setLightMode}
+              onChange={() => setLightMode}
             />
             <ColorPicker label="Main Color" value={color} onChange={setColor} />
             <div className="mb-2">
@@ -80,7 +80,7 @@ const Drawer = () => {
               </label>
               <div className="flex">
                 <div className="grid grid-cols-3 gap-2">
-                  <Image
+                  {/* <Image
                     src={PlaceholderImage}
                     className="w-12 h-12 rounded object-cover"
                     alt=""
@@ -109,19 +109,19 @@ const Drawer = () => {
                     src={PlaceholderImage}
                     className="w-12 h-12 rounded object-cover"
                     alt=""
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
             <ToggleSwitch
               label="Photo Gallery"
               checked={photoGallery}
-              onChange={setPhotoGallery}
+              onChange={() => setPhotoGallery}
             />
             <ToggleSwitch
               label="Password Protected"
               checked={passwordProtected}
-              onChange={setPasswordProtected}
+              onChange={() => setPasswordProtected}
             />
             <DropdownButton label="Language" />
             <div>

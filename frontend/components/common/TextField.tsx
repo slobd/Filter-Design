@@ -8,7 +8,7 @@ const TextField = ({
   className,
   wrapperClassName,
   ...props
-}) => {
+}: any) => {
   return (
     <div className={`mb-2 ${wrapperClassName}`}>
       {label && (

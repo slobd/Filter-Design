@@ -1,8 +1,8 @@
-import React from "react";
+import type { NextPage } from "next";
 import { Datepicker } from "flowbite-react";
 import moment from "moment";
 
-const DatePicker = ({
+const DatePicker: NextPage = ({
   value,
   onChange,
   label,
@@ -11,7 +11,7 @@ const DatePicker = ({
   format = "YYYY/MM/DD",
   align = "left",
   ...props
-}) => {
+}: any) => {
   const customizeTheme = {
     root: {
       input: {

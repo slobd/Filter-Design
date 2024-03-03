@@ -25,9 +25,8 @@ const Sidebar: NextPage = () => {
   const { pathname, query } = router;
   const { campaigns } = useAppContext();
   const { user, logout } = useAuth0();
-  // const navigate = useNavigate();
-  // const { pathname, search } = useLocation();
   const [open, setOpen] = useState(false);
+
   const navigation = [
     {
       name: "My Filter Campaigns",
@@ -62,11 +61,11 @@ const Sidebar: NextPage = () => {
   ];
 
   const handleLogout = () => {
-    logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
-    });
+    // logout({
+    //   logoutParams: {
+    //     returnTo: window.location.origin,
+    //   },
+    // });
   };
 
   return (
@@ -81,8 +80,8 @@ const Sidebar: NextPage = () => {
             className="h-10 w-auto cursor-pointer"
             src="/assets/images/logo.png"
             alt="LIVEDABv2"
-            width={100}
-            height={100}
+            width={40}
+            height={40}
             onClick={() => router.push("/campaigns")}
           />
           <XMarkIcon
@@ -182,12 +181,10 @@ const Sidebar: NextPage = () => {
                 className="flex items-center justify-between gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
               >
                 <div className="flex items-center gap-x-4">
-                  <Image
+                  <img
                     className="h-8 w-8 rounded-full bg-gray-50"
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                     alt=""
-                    width={40}
-                    height={40}
                   />
                   <span className="sr-only">Your profile</span>
                   <span aria-hidden="true">{user?.nickname}</span>

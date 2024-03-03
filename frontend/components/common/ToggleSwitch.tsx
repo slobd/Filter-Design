@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import type { NextPage } from 'next';
 import { Switch } from "@headlessui/react";
 
-function classNames(...classes) {
+function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ToggleSwitch = ({ label, checked, onChange }) => {
+export type ToggleSwitchProps = {
+  label?: string;
+  checked?: boolean;
+  onChange: () => void;
+};
+
+const ToggleSwitch: NextPage<ToggleSwitchProps> = ({ label, checked, onChange }) => {
   return (
     <div className="mb-2 text-center">
       {label && (

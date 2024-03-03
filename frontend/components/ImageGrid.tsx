@@ -1,10 +1,7 @@
-import React from "react";
+import { NextPage } from "next";
 import Card from "./Card";
-import OverlayImage1 from "assets/images/overlay/1.png";
-import OverlayImage2 from "assets/images/overlay/2.png";
-import OverlayImage3 from "assets/images/overlay/3.png";
 
-const ImageGrid = () => {
+const ImageGrid: NextPage = () => {
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -18,7 +15,7 @@ const ImageGrid = () => {
           </span>
         </div>
         <div className="flex flex-col gap-5">
-          <Card overlay={OverlayImage1} />
+          <Card overlay={"/assets/images/overlay/1.png"} />
         </div>
       </div>
       <div>
@@ -31,7 +28,7 @@ const ImageGrid = () => {
             1080x1080px
           </span>
         </div>
-        <Card overlay={OverlayImage2} dir="column" />
+        <Card overlay={"/assets/images/overlay/2.png"} dir="column" />
       </div>
       <div>
         <div className="flex items-center justify-between mb-3">
@@ -43,7 +40,7 @@ const ImageGrid = () => {
             1080x1080px
           </span>
         </div>
-        <Card overlay={OverlayImage3} />
+        <Card overlay={"/assets/images/overlay/3.png"} />
       </div>
     </div>
   );
