@@ -33,6 +33,7 @@
     "react-pick-color": "^2.0.0",
     "react-redux": "^7.2.6",
     "react-responsive-modal": "^6.4.2",
+    "react-rnd": "^10.4.1",
     "react-slick": "^0.30.2",
     "react-spinners": "^0.13.8",
     "react-toast": "^1.0.3",

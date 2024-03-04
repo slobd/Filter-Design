@@ -53,8 +53,8 @@ const CreatorBasic: NextPage = () => {
     return (
         <div className="w-full bg-gray-100 min-h-screen flex flex-row">
             <CreatorLayout />
-            <div className="md:w-[288px] md:min-w-[288px] min-h-screen"></div>
-            <div className="md:w-[60%] w-[80%] max-w-lg mx-auto p-5 md:p-10">
+            {/* <div className="md:w-[288px] md:min-w-[288px] min-h-screen"></div> */}
+            <div className="w-[80%] md:pl-80 md:pr-5 md:max-w-3xl max-w-lg mx-auto py-5">
                 <div className="bg-white shadow-xl rounded-md p-5">
                     <TextField
                         value={campaignData?.name ?? ""}
