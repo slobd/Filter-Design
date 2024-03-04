@@ -61,7 +61,7 @@ const campaignSchema = Schema(
     title: {
       type: textSchema,
       default: {
-        text: "",
+        text: "Share your Photo with your Network and Friends",
         font_family: "Inter",
         font_weight: 700,
         font_size: 30,
@@ -75,7 +75,7 @@ const campaignSchema = Schema(
     description: {
       type: textSchema,
       default: {
-        text: "",
+        text: "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
         font_family: "Inter",
         font_weight: 400,
         font_size: 14,
