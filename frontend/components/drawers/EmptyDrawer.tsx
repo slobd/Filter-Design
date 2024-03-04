@@ -10,7 +10,7 @@ export type DrawerProps = {
   title?: string;
   onSave?: () => void;
   onCancel?: () => void;
-  size: string | null;
+  size?: string | null;
 };
 
 const Drawer: NextPage<DrawerProps> = ({

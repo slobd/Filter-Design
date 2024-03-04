@@ -7,11 +7,6 @@ const getFilters = async (req, res) => {
           author: { $in: ["", req.query.author] },
         }
       : {}
-      // req.query.author
-      // ? {
-      //     author: { $in: [req.query.author] },
-      //   }
-      // : {}
   ).sort({
     updatedAt: -1,
   });

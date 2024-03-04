@@ -14,24 +14,24 @@ export type ColumnType = {
   align?: string | null,
 }
 
-export type buttonType = {
-  text: string | null,
-  bgcolor: string | null,
-  textcolor: string | null,
-  icon: string | null,
+export type ButtonType = {
+  text?: string | null,
+  bgcolor?: string | null,
+  textcolor?: string | null,
+  icon?: string | null,
 }
 
-export type rndType = {
-  x: number | null,
-  y: number | null,
-  w: number | null,
-  h: number | null,
+export type RndType = {
+  x: number | undefined,
+  y: number | undefined,
+  w: number | undefined,
+  h: number | undefined,
 }
 
-export type filterType = {
+export type FilterType = {
   filter_design: FilterDesignType | undefined,
-  button: buttonType | undefined,
-  rnd: rndType | undefined,
+  button: ButtonType | undefined,
+  rnd: RndType | undefined,
 }
 
 export type sharingOptionType = {
@@ -43,12 +43,12 @@ export type sharingOptionType = {
   email: boolean | null,
 }
 
-export type backgroundType = {
+export type BackgroundType = {
   type: string | null,
   value: string | null,
 }
 
-export type textType = {
+export type TextType = {
   text: string | null,
   font_family: string | null,
   font_weight: number | null,
@@ -60,7 +60,7 @@ export type textType = {
   letter_spacing: number | null,
 };
 
-export type logoType = {
+export type LogoType = {
   size: number | null,
   radius: number | null,
   padding_top: number | null,
@@ -71,11 +71,11 @@ export type CampaignType = {
   _id?: number,
   name?: string | null,
   slug?: string | null,
-  title?: textType | undefined,
-  description?: textType | undefined,
+  title?: TextType | undefined,
+  description?: TextType | undefined,
   logo?: string | null,
-  logo_setting?: logoType | undefined,
-  filters?: [filterType] | [],
+  logo_setting?: LogoType | undefined,
+  filters?: FilterType[] | [],
   active_slider_mode?: boolean | null,
   hide_size_buttons?: boolean | null,
   dark_mode?: boolean | null,
@@ -100,13 +100,13 @@ export type CampaignType = {
   start_date?: string | null,
   location?: string | null,
   event_name?: string | null,
-  background?: backgroundType | undefined,
+  background?: BackgroundType | undefined,
   imprint_link?: string | null,
   data_privacy_link?: string | null,
   updatedAt?: string | null,
 }
 
-export type contactType = {
+export type ContactType = {
   _id: number | null,
   email: string | null,
   first_name: string | null,
@@ -116,7 +116,7 @@ export type contactType = {
   logo: string | null,
   company_name: string | null,
   company_logo: string | null,
-  tags: [string] | [],
+  tags: string[] | [],
   author: string | null,
 }
 
@@ -128,25 +128,25 @@ export type FilterDesignType = {
   author: string | null,
 }
 
-export type filterDesignPlaceholderType = {
+export type FilterDesignPlaceholderType = {
   _id: number | null,
   image: string | null,
   author: string | null,
   type: string | null,
 }
 
-export type galleryType = {
+export type GalleryType = {
   _id: number | null,
   campaign: string | null,
   path: string | null,
 }
 
-export type tagType = {
+export type TagType = {
   _id: number | null,
   name: string | null,
 }
 
-export type uniqueLinkType = {
+export type UniqueLinkType = {
   _id: number | null,
   campaign: string | null,
   contact: string | null,

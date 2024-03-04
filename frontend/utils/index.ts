@@ -43,4 +43,12 @@ export const getBase64 = (file: any, cb: any) => {
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       );
   };
+
+  export const getFilterIndexByFilterDesignId = (filter: any[], id: any) => {
+    let index;
+    filter.map((item, i) => {
+      if (item?.filterDesign._id === id) index = i;
+    });
+    return index;
+  };
   

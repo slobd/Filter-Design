@@ -1,14 +1,14 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth0 } from "@auth0/auth0-react";
-import {} from '../utils/types';
-import { CampaignType } from '../utils/types';
+import { CampaignType, FilterType } from '../utils/types';
 import { APIService } from '../api';
+import { filterDesignWidths } from '../utils/constants';
 
 type ContextType = {
     campaigns: CampaignType[] | [],
     campaignData: CampaignType | null,
-    contextCampaignData: (campaigns: CampaignType) => void,
+    contextCampaignData: (newCampaigns: CampaignType) => void,
     contextResetCampaignData: () => void,
     getInitData: () => void,
     loading: boolean,
@@ -78,7 +78,7 @@ export function ContextWrapper({ children } : Props) {
 
     const contextCampaignData = (newCampaign: CampaignType) => {
       setCampaignData(newCampaign);
-      console.log("setCampaignData", campaignData);
+      console.log("set CampaignData", campaignData);
     }
 
     const contextResetCampaignData = () => {

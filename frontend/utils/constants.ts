@@ -14,4 +14,8 @@ export const filterDesignWidths = {
     story: "max-w-[290px]",
     custom: "max-w-[700px]",
 };
-  
+
+export const sizeTypes: any = {
+    "1080x1080": "square",
+    "1080x1920": "story",
+};

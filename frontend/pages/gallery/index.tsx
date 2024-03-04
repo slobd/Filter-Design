@@ -8,14 +8,14 @@ import Notification from "../../components/Notification";
 import GalleryLightbox from "../../components/GalleryLightbox";
 import { APIService} from "../../api";
 import { useAppContext } from "../../context/context";
-import { galleryType } from "../../utils/types";
+import { GalleryType } from "../../utils/types";
 
 const Gallery: NextPage = () => {
   const { user } = useAuth0();
   const { campaigns, getInitData } = useAppContext();
   const [show, setShow] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-  const [galleries, setGalleries] = useState<galleryType[]>([])
+  const [galleries, setGalleries] = useState<GalleryType[]>([])
   const [showGallery, setShowGallery] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<any>("all");
 

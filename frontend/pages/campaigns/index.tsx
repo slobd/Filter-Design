@@ -21,7 +21,7 @@ import DataTable, { Row, Col } from "../../components/common/DataTable";
 import GalleryLightbox from "../../components/GalleryLightbox";
 import Notification from "../../components/Notification";
 import { APIService } from "../../api";
-import { CampaignType, ColumnType, galleryType } from '../../utils/types';
+import { CampaignType, ColumnType, GalleryType } from '../../utils/types';
 import { useAppContext } from '../../context/context';
 
 function classNames(...classes: any) {
@@ -32,7 +32,7 @@ const Signup: NextPage = () => {
   const router = useRouter();
   const { user } = useAuth0();
   const { campaigns, getInitData, contextCampaignData, contextResetCampaignData } = useAppContext();
-  const [galleries, setGalleries] = useState<galleryType[]>([]);
+  const [galleries, setGalleries] = useState<GalleryType[]>([]);
   const [showGallery, setShowGallery] = useState(false);
   const [show, setShow] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
@@ -56,10 +56,12 @@ const Signup: NextPage = () => {
 
   const handleCopyCampaign = (row: CampaignType) => {
     console.log("copy campaign", row)
+    let slug = crc.crc32(moment().valueOf().toString());
     APIService.campaign
       .create({
         ...row,
         name: `${row.name} - Copy`,
+        slug: slug,
       })
       .then((res: any) => {
         getInitData();
@@ -85,7 +87,6 @@ const Signup: NextPage = () => {
     let slug = crc.crc32(moment().valueOf().toString());
     APIService.filter.getAll().then((filterRes: any) => {
       const filter = filterRes.data?.filter((i: any) => i.author == '')?.[0];
-      console.log("filter", filter)
       APIService.campaign
         .create({
           slug: slug,
@@ -105,7 +106,6 @@ const Signup: NextPage = () => {
           placeholder_story_image: "uploads/default_placeholder_image.png",
         })
         .then((res: any) => {
-          console.log("campaign created: ", res.data)
           if(res.data.slug) {
             router.push(`/creator/${res.data.slug}/basic`);
             // APIService.uniqueLink
@@ -114,7 +114,6 @@ const Signup: NextPage = () => {
             //     // console.log(res);
             //   });
           }
-          
         });
     });
   };
@@ -130,7 +129,6 @@ const Signup: NextPage = () => {
   };
 
   const fetchGalleries = () => {
-    setGalleries([]);
     APIService.gallery
       .getAll(user?.email)
       .then((res: any) => setGalleries(res.data));
@@ -152,7 +150,7 @@ const Signup: NextPage = () => {
                     <div className="absolute top-0 left-0 w-full h-full object-cover rounded-md overflow-hidden">
                       <Image
                         src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${row?.placeholder_image}`}
-                        width={70}
+                        width={row?.filters[0]?.filter_design?.type == 'square' ? 70 : 50}
                         height={70}
                         alt=""
                         loader={({ src, width }) => { return src + "?w=" + width }}
@@ -161,7 +159,7 @@ const Signup: NextPage = () => {
                     <Image
                       src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${row?.filters[0]?.filter_design?.image}`}
                       className="max-h-full relative z-10 rounded-md"
-                      width={70}
+                      width={row?.filters[0]?.filter_design?.type == 'square' ? 70 : 50}
                       height={70}
                       alt=""
                       loader={({ src, width }) => { return src + "?w=" + width }}
