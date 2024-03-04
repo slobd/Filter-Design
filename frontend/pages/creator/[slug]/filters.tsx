@@ -393,7 +393,7 @@ const FilterDesigns: NextPage = () => {
                         onClick={handlePublish}
                     >
                         <RocketLaunchIcon className="w-5" />
-                        <span className="hidden md:inline">Save & Publish Campaign</span>
+                        <span className="hidden md:inline">Save Campaign</span>
                     </Button>
                     <Button
                         color="white"
