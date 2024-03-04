@@ -19,13 +19,6 @@ import { EyeIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
 // import SettingIcon from "/assets/images/icons/setting-lines.svg";
 // import WhiteSaveIcon from "/assets/images/icons/save-white.svg";
 // import ArrowRightIcon from "/assets/images/icons/arrow-right.svg";
-// import {
-//   setCampaign,
-//   addPlaceholder,
-//   setPlaceholders,
-//   setFilterDesigns,
-//   setLoading,
-// } from "store/actions/Campaign";
 import CreatorLayout from '../../../components/Layout/Creator';
 import EmptyDrawer from "../../../components/drawers/EmptyDrawer";
 import { APIService } from "../../../api";
@@ -55,33 +48,33 @@ const Settings: NextPage = () => {
   const [openTitlePanel, setOpenTitlePanel] = useState(false);
   const [openDescriptionPanel, setOpenDescriptionPanel] = useState(false);
   const [password, setPassword] = useState("");
-  const [edge, setEdge] = useState(0);
-  const [shareTitle, setShareTitle] = useState("");
-  const [shareText, setShareText] = useState("");
+  const [edge, setEdge] = useState(14);
+  // const [shareTitle, setShareTitle] = useState("");
+  // const [shareText, setShareText] = useState("");
   const [logo, setLogo] = useState(campaignData?.logo);
-  const [title, setTitle] = useState<TextType>(campaignData?.title
-    ?? {
-      ...textTypeDefaultValue,
-      text: "Share your Photo with your Network and Friends",
-    }
-  );
-  const [logoSetting, setLogoSetting] = useState<LogoType>(logoTypeDefaultValue);
-  const [description, setDescription] = useState<TextType>(
-    campaignData?.description
-    ?? {
-      ...textTypeDefaultValue,
-      text: "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
-    }
-  );
+  // const [title, setTitle] = useState<TextType>(campaignData?.title
+  //   ?? {
+  //     ...textTypeDefaultValue,
+  //     text: "Share your Photo with your Network and Friends",
+  //   }
+  // );
+  // const [logoSetting, setLogoSetting] = useState<LogoType>(logoTypeDefaultValue);
+  // const [description, setDescription] = useState<TextType>(
+  //   campaignData?.description
+  //   ?? {
+  //     ...textTypeDefaultValue,
+  //     text: "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
+  //   }
+  // );
   const [showPassword, setShowPassword] = useState(false);
-  const [sharingOptions, setSharingOptions] = useState<sharingOptionType>({
-    twitter: false,
-    linkedin: false,
-    whatsapp: false,
-    facebook: false,
-    download: true,
-    email: false,
-  });
+  // const [sharingOptions, setSharingOptions] = useState<sharingOptionType>({
+  //   twitter: false,
+  //   linkedin: false,
+  //   whatsapp: false,
+  //   facebook: false,
+  //   download: true,
+  //   email: false,
+  // });
   const [selectedPlaceholderImage, setSelectedPlaceholderImage] = useState("");
   const [selectedPlaceholderImageForStory, setSelectedPlaceholderImageForStory] = useState("");
   const [settingOptions, setSettingOptions] = useState({
@@ -101,7 +94,6 @@ const Settings: NextPage = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChangeLogo = (target: any, value: any) => {
-    setLogoSetting({ ...logoSetting, [target]: value });
     contextCampaignData({
       ...campaignData,
       logo_setting: { ...campaignData?.logo_setting, [target]: value }
@@ -109,18 +101,22 @@ const Settings: NextPage = () => {
   };
 
   const handleChangeTitle = (target: any, value: any) => {
-    setTitle({ ...title, [target]: value });
     contextCampaignData({
       ...campaignData,
-      title: { ...campaignData?.title, [target]: value }
+      title: { 
+        ...campaignData?.title, 
+        [target]: value,
+      }
     });
   };
 
   const handleChangeDescription = (target: any, value: any) => {
-    setDescription({ ...description, [target]: value });
     contextCampaignData({
       ...campaignData,
-      description: { ...campaignData?.description, [target]: value }
+      description: { 
+        ...campaignData?.description, 
+        [target]: value,
+      }
     });
     const metaDescription = document.getElementById('metaDescription');
     // Set the meta description based on the content of description
@@ -130,7 +126,6 @@ const Settings: NextPage = () => {
   };
 
   const handleChangeSharingOptions = (e: any) => {
-    setSharingOptions({ ...sharingOptions, [e.target.name]: e.target.checked });
     contextCampaignData({
       ...campaignData,
       sharing_options: { ...campaignData?.sharing_options, [e.target.name]: e.target.checked }
@@ -139,25 +134,50 @@ const Settings: NextPage = () => {
 
   const handleChangeSettingOption = (target: any, value: any) => {
     setSettingOptions({ ...settingOptions, [target]: value });
+    contextCampaignData
     if(target == 'lightMode') {
-      setDescription({
-        ...description,
-        color: "#6b7280",
-      });
-      setTitle({
-        ...title,
-        color: "#FFF"
-      });
-
       contextCampaignData({
         ...campaignData,
         title: {
           ...campaignData?.title,
-          color: "#FFF"
+          color: value ? "#FFF" : "#000"
         },
         description: {
           ...campaignData?.description,
-          color: "#6b7280"
+          color: value ? "#6b7280" : "#000"
+        },
+        dark_mode: value
+      })
+    } else if(target == 'hideSizeButtons') {
+      contextCampaignData({
+        ...campaignData,
+        hide_size_buttons: value
+      })
+    } else if(target == 'activeSliderMode') {
+      contextCampaignData({
+        ...campaignData,
+        active_slider_mode: value
+      })
+    }
+    if(target == 'showTitle' && value) {
+      contextCampaignData({
+        ...campaignData,
+        title: {
+          ...campaignData?.title,
+          text: campaignData?.title?.text != ""
+            ? campaignData?.title?.text
+            : "Share your Photo with your Network and Friends"
+        }
+      })
+    }
+    if(target == 'showDescription' && value) {
+      contextCampaignData({
+        ...campaignData,
+        description: {
+          ...campaignData?.description,
+          text: campaignData?.description?.text != "" 
+            ? campaignData?.description?.text
+            : "It’s easy! Just upload a photo and get a visual filter to share with your network and friends."
         }
       })
     }
@@ -228,7 +248,7 @@ const Settings: NextPage = () => {
         status: "published",
       })
       .then((res: any) => {
-        contextCampaignData({ ...campaignData, ...res.data });
+        getInitData();
       })
       .catch((err: any) => console.log(err));
   };
@@ -248,7 +268,7 @@ const Settings: NextPage = () => {
         id: campaignData?._id,
       })
       .then((res: any) => {
-        contextCampaignData({ ...campaignData, ...res.data });
+        getInitData();
         const newWindow = window.open(`/campaign/${res.data.slug}`, "_blank");
         if(newWindow) {
           setTimeout(() => {
@@ -264,65 +284,56 @@ const Settings: NextPage = () => {
   }, [openSidebar]);
 
   useEffect(() => {
-    if (!settingOptions.downloadOptions)
-      setSharingOptions({
-        twitter: false,
-        linkedin: false,
-        whatsapp: false,
-        facebook: false,
-        download: true,
-        email: false,
-      });
-    if (!settingOptions.showLogo) setLogo(null || campaignData?.logo);
+    if (!settingOptions.showLogo) setLogo(null);
     contextCampaignData({
       ...campaignData,
       logo: settingOptions.showLogo && logo ? logo : null,
-      title: settingOptions.showTitle
-        ? {
-            ...title,
-            text:
-              title?.text !== ""
-                ? title?.text
-                : "Share your Photo with your Network and Friends",
-          }
-        : {
-            text: "",
-            font_family: "Inter",
-            font_weight: 700,
-            font_size: 30,
-            color: "#000",
-            letter_spacing: 0,
-            line_height: 45,
-            padding_top: 0,
-            padding_bottom: 0,
-          },
-      logo_setting: { ...campaignData?.logo_setting, ...logoSetting },
-      description: settingOptions.showDescription
-        ? {
-            ...description,
-            text:
-              description?.text !== ""
-                ? description?.text
-                : "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
-          }
-        : {
-            text: "",
-            font_family: "Inter",
-            font_weight: 400,
-            font_size: 14,
-            color: "#000",
-            letter_spacing: 0,
-            line_height: 21,
-            padding_top: 0,
-            padding_bottom: 20,
-          },
+      // title: settingOptions.showTitle
+      //   ? {
+      //       ...title,
+      //       text:
+      //         title?.text !== ""
+      //           ? title?.text
+      //           : "Share your Photo with your Network and Friends",
+      //     }
+      //   : {
+      //       text: "",
+      //       font_family: "Inter",
+      //       font_weight: 700,
+      //       font_size: 30,
+      //       color: "#000",
+      //       letter_spacing: 0,
+      //       line_height: 45,
+      //       padding_top: 0,
+      //       padding_bottom: 0,
+      //     },
+      // logo_setting: { ...campaignData?.logo_setting, ...logoSetting },
+      // description: settingOptions.showDescription
+      //   ? {
+      //       ...description,
+      //       text:
+      //         description?.text !== ""
+      //           ? description?.text
+      //           : "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
+      //     }
+      //   : {
+      //       text: "",
+      //       font_family: "Inter",
+      //       font_weight: 400,
+      //       font_size: 14,
+      //       color: "#000",
+      //       letter_spacing: 0,
+      //       line_height: 21,
+      //       padding_top: 0,
+      //       padding_bottom: 20,
+      //     },
       dark_mode: settingOptions.lightMode,
       hide_size_buttons: settingOptions.hideSizeButtons,
       active_slider_mode: settingOptions.activeSliderMode,
       password: settingOptions.passwordProtected ? password : null,
       edge: settingOptions.enableEdge ? edge * 1 : 0,
-      share_title: shareTitle,
-      share_text: shareText,
+      // share_title: shareTitle,
+      // share_text: shareText,
       // sharing_options: settingOptions.downloadOptions
       //   ? { ...sharingOptions }
       //   : {
@@ -337,17 +348,18 @@ const Settings: NextPage = () => {
       // placeholder_image: selectedPlaceholderImage,
       // placeholder_story_image: selectedPlaceholderImageForStory,
     })
-  }, [ 
-  //   logo,
-  //   logoSetting,
+  }
+  , [ 
+    logo,
+    // logoSetting,
   //   title,
   //   description,
-  //   password,
+    password,
     settingOptions,
   //   selectedPlaceholderImage,
   //   selectedPlaceholderImageForStory,
   //   sharingOptions,
-  //   edge,
+    edge,
   //   shareTitle,
   //   shareText, 
   ]);
@@ -363,47 +375,48 @@ const Settings: NextPage = () => {
   };
 
   useEffect(() => {
+    setSelectedPlaceholderImage("uploads/default_placeholder_image.png");
+    setSelectedPlaceholderImageForStory("uploads/default_placeholder_image.png");
     if(!campaignData) return;
     APIService.placeholder.getAll().then((res: any) => {
-      getInitData();
       setPlaceholders(res.data);
-      if (!campaignData?.placeholder_image) setSelectedPlaceholderImage("uploads/default_placeholder_image.png");
-      if (!campaignData?.placeholder_story_image) setSelectedPlaceholderImageForStory("uploads/default_placeholder_image.png");
-      
     });
-    // setSettingOptions({
-    //   ...settingOptions,
-    //   showLogo: !!campaignData?.logo,
-    //   // showTitle: campaignData?.title?.text !== "" ? true : false,
-    //   // showDescription: campaignData?.description?.text !== "" ? true : false,
-    //   activeSliderMode: !!campaignData?.active_slider_mode,
-    //   lightMode: !!campaignData?.dark_mode,
-    //   hideSizeButtons: !!campaignData?.hide_size_buttons,
-    //   passwordProtected: campaignData?.password ? true : false,
-    //   downloadOptions: campaignData?.sharing_options
-    //     ? getActiveSocial(campaignData?.sharing_options)
-    //     : false,
-    //   showGallery: campaignData?.show_gallery ? true : false,
-    //   enableEdge: campaignData?.edge !== 0,
-    // });
-    setEdge(campaignData?.edge ?? 14);
-    setShareTitle(campaignData?.share_title ?? "");
-    setShareText(campaignData?.share_text ?? "");
-    campaignData?.logo && setLogo(campaignData.logo);
-    setTitle({ ...campaignData?.title ?? textTypeDefaultValue});
-    setLogoSetting({ ...campaignData?.logo_setting ?? logoTypeDefaultValue });
-    setDescription({ ...campaignData?.description ?? textTypeDefaultValue });
-    campaignData?.description && setDescription(campaignData?.description);
-    campaignData?.password && setPassword(campaignData?.password);
-    campaignData?.sharing_options &&
-      setSharingOptions({ ...campaignData?.sharing_options });
-      campaignData?.placeholder_image &&
-      setSelectedPlaceholderImage(campaignData?.placeholder_image);
-      campaignData?.placeholder_story_image &&
-      setSelectedPlaceholderImageForStory(campaignData?.placeholder_story_image);
-      campaignData?.background?.type === "color" &&
-      setBackgroundColor(campaignData?.background.value ?? "#FFF");
-  }, [campaignData]);
+    APIService.campaign.getBySlug(query?.slug).then((res: any) => {
+      if(res) {
+        setSettingOptions({
+          showLogo: !!res.data?.logo,
+          showTitle: !!res.data?.title?.text,
+          showDescription: !!res.data?.description?.text,
+          activeSliderMode: !!res.data?.active_slider_mode,
+          lightMode: !!res.data?.dark_mode,
+          hideSizeButtons: !!res.data?.hide_size_buttons,
+          passwordProtected: !!res.data?.password,
+          downloadOptions: res.data?.sharing_options
+            ? getActiveSocial(res.data?.sharing_options)
+            : false,
+          showGallery: !!res.data?.show_gallery,
+          enableEdge: res.data?.edge != 0 ? true : false,
+        });
+        setEdge(res.data?.edge ?? 14);
+        // setShareTitle(res.data?.share_title ?? "");
+        // setShareText(res.data?.share_text ?? "");
+        res.data?.logo && setLogo(res.data.logo);
+        // setTitle({ ...res.data?.title ?? textTypeDefaultValue});
+        // setLogoSetting({ ...res.data?.logo_setting ?? logoTypeDefaultValue });
+        // setDescription({ ...res.data?.description ?? textTypeDefaultValue });
+        // res.data?.description && setDescription(res.data?.description);
+        res.data?.password && setPassword(res.data?.password);
+        // res.data?.sharing_options &&
+        // setSharingOptions({ ...res.data?.sharing_options });
+        res.data?.placeholder_image &&
+        setSelectedPlaceholderImage(res.data?.placeholder_image);
+        res.data?.placeholder_story_image &&
+        setSelectedPlaceholderImageForStory(res.data?.placeholder_story_image);
+        res.data?.background?.type === "color" &&
+        setBackgroundColor(res.data?.background.value ?? "#FFF");
+      }
+    });
+  }, []);
 
   const handleChangeText = (text: any) => {
     contextCampaignData({ change_photo: text });
@@ -605,7 +618,7 @@ const Settings: NextPage = () => {
                           aria-describedby="twitter-description"
                           name="twitter"
                           type="checkbox"
-                          checked={sharingOptions?.twitter ?? false}
+                          checked={campaignData?.sharing_options?.twitter ?? false}
                           onChange={handleChangeSharingOptions}
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                         />
@@ -628,7 +641,7 @@ const Settings: NextPage = () => {
                           id="linkedin"
                           aria-describedby="linkedin-description"
                           name="linkedin"
-                          checked={sharingOptions.linkedin ?? false}
+                          checked={campaignData?.sharing_options?.linkedin ?? false}
                           onChange={handleChangeSharingOptions}
                           type="checkbox"
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -650,7 +663,7 @@ const Settings: NextPage = () => {
                           id="whatsapp"
                           aria-describedby="whatsapp-description"
                           name="whatsapp"
-                          checked={sharingOptions.whatsapp ?? false}
+                          checked={campaignData?.sharing_options?.whatsapp ?? false}
                           onChange={handleChangeSharingOptions}
                           type="checkbox"
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -672,7 +685,7 @@ const Settings: NextPage = () => {
                           id="facebook"
                           aria-describedby="facebook-description"
                           name="facebook"
-                          checked={sharingOptions.facebook ?? false}
+                          checked={campaignData?.sharing_options?.facebook ?? false}
                           onChange={handleChangeSharingOptions}
                           type="checkbox"
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -694,7 +707,7 @@ const Settings: NextPage = () => {
                           id="download"
                           aria-describedby="download-description"
                           name="download"
-                          checked={sharingOptions.download ?? true}
+                          checked={campaignData?.sharing_options?.download ?? true}
                           onChange={handleChangeSharingOptions}
                           type="checkbox"
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -716,7 +729,7 @@ const Settings: NextPage = () => {
                           id="email"
                           aria-describedby="email-description"
                           name="email"
-                          checked={sharingOptions.email ?? false}
+                          checked={campaignData?.sharing_options?.email ?? false}
                           onChange={handleChangeSharingOptions}
                           type="checkbox"
                           className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -740,8 +753,13 @@ const Settings: NextPage = () => {
                 <div className="relative rounded-md shadow-sm mb-2">
                   <textarea
                     className="pl-3 block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    value={shareTitle}
-                    onChange={(e) => setShareTitle(e.target.value)}
+                    value={campaignData?.share_title ?? ""}
+                    onChange={(e: any) => {
+                      contextCampaignData({
+                        ...campaignData,
+                        share_title: e.target.value
+                      })
+                    }}
                   />
                 </div>
               </li>
@@ -752,8 +770,13 @@ const Settings: NextPage = () => {
                 <div className="relative rounded-md shadow-sm mb-2">
                   <textarea
                     className="pl-3 block min-h-[160px] w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    value={shareText}
-                    onChange={(e) => setShareText(e.target.value)}
+                    value={campaignData?.share_text ?? ""}
+                    onChange={(e: any) => {
+                      contextCampaignData({
+                        ...campaignData,
+                        share_text: e.target.value
+                      })
+                    }}
                   />
                 </div>
               </li>
@@ -761,7 +784,7 @@ const Settings: NextPage = () => {
                 <span>Photo Gallery</span>
                 <ToggleSwitch
                   checked={settingOptions.showGallery}
-                  onChange={(value) =>
+                  onChange={(value: any) =>
                     handleChangeSettingOption("showGallery", value)
                   }
                 />
@@ -885,7 +908,7 @@ const Settings: NextPage = () => {
             onClick={handleNext}
           >
             <RocketLaunchIcon className="w-5" />
-            <span className="hidden md:inline">Save & Publish Campaign</span>
+            <span className="hidden md:inline">Save Campaign</span>
           </Button>
         </div>
         {loading ? (
@@ -927,7 +950,6 @@ const Settings: NextPage = () => {
                         logo: e.target.files[0],
                       })
                       .then((res: any) => {
-                        contextCampaignData({ ...campaignData, ...res.data });
                         setLogo(res.data.logo);
                       });
                   }              
@@ -1072,31 +1094,31 @@ const Settings: NextPage = () => {
                           {campaignData?.download_share}
                         </p>
                         <div className="flex gap-3 mb-1">
-                          {sharingOptions.linkedin && (
+                          {campaignData?.sharing_options?.linkedin && (
                             <img
                               src="/assets/images/icons/linkedin.svg"
                               className="w-11 transition hover:opacity-60 cursor-pointer"
                             />
                           )}
-                          {sharingOptions.facebook && (
+                          {campaignData?.sharing_options?.facebook && (
                             <img
                               src="/assets/images/icons/facebook.svg"
                               className="w-11 transition hover:opacity-60 cursor-pointer"
                             />
                           )}
-                          {sharingOptions.twitter && (
+                          {campaignData?.sharing_options?.twitter && (
                             <div className="w-11 h-11 bg-black flex items-center justify-center rounded-md cursor-pointer transition hover:opacity-60">
                               <img src="/assets/images/icons/twitter-sm.svg" className="w-6 invert" />
                             </div>
                           )}
-                          {sharingOptions.whatsapp && (
+                          {campaignData?.sharing_options?.whatsapp && (
                             <img
                               src="/assets/images/icons/whatsapp.svg"
                               className="w-11 transition hover:opacity-60 cursor-pointer"
                             />
                           )}
                         </div>
-                        {sharingOptions.download && (
+                        {campaignData?.sharing_options?.download && (
                           <button className={`bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : ""}`}>
                             <img
                               src="/assets/images/icons/download-white.svg"
@@ -1117,7 +1139,7 @@ const Settings: NextPage = () => {
                             </span>
                           </button>
                         )}
-                        {sharingOptions.email && (
+                        {campaignData?.sharing_options?.email && (
                           <div className="flex items-center gap-2">
                             <TextField
                               placeholder="E-Mail Address"
@@ -1133,17 +1155,17 @@ const Settings: NextPage = () => {
               })}
             </div>
             <div className="w-full bg-white rounded-lg max-w-[350px]">
-              {shareTitle && (
+              {campaignData?.share_title && (
                 <h2 className="break-all w-full font-semibold text-lg p-3">
-                  {shareTitle}
+                  {campaignData?.share_title}
                 </h2>
               )}
-              {shareText && (
+              {campaignData?.share_text && (
                 <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                <span className="break-all mb-3 opacity-80 text-xs">{shareText}</span>
+                <span className="break-all mb-3 opacity-80 text-xs">{campaignData?.share_text}</span>
                 <button
                   className="text-sm hover:opacity-70 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
-                  onClick={() => copy(shareText)}
+                  onClick={() => copy(campaignData?.share_text ?? "")}
                 >
                   <img 
                     src="/assets/images/icons/save-white.svg" 
@@ -1168,13 +1190,13 @@ const Settings: NextPage = () => {
       >
         <TextField
           type="number"
-          value={logoSetting.size}
+          value={campaignData?.logo_setting?.size}
           label="Size"
           onChange={(e: any) => handleChangeLogo("size", e.target.value)}
         />
         <TextField
           type="number"
-          value={logoSetting.radius}
+          value={campaignData?.logo_setting?.radius}
           label="Radius"
           onChange={(e: any) => handleChangeLogo("radius", e.target.value)}
         />
@@ -1184,13 +1206,13 @@ const Settings: NextPage = () => {
         <div className="flex gap-3">
           <TextField
             type="number"
-            value={logoSetting.padding_top}
+            value={campaignData?.logo_setting?.padding_top}
             label="Top"
             onChange={(e: any) => handleChangeLogo("padding_top", e.target.value)}
           />
           <TextField
             type="number"
-            value={logoSetting.padding_bottom}
+            value={campaignData?.logo_setting?.padding_bottom}
             label="Bottom"
             onChange={(e: any) => handleChangeLogo("padding_bottom", e.target.value)}
           />
@@ -1210,7 +1232,7 @@ const Settings: NextPage = () => {
           {typeof window !== 'undefined' && 
             <FontPicker
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-              activeFontFamily={title.font_family ?? "Inter"}
+              activeFontFamily={campaignData?.title?.font_family ?? "Inter"}
               onChange={(font: any) => handleChangeTitle("font_family", font.family)} 
               pickerId={""} 
               families={[]} 
@@ -1228,7 +1250,7 @@ const Settings: NextPage = () => {
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
-            value={title.font_weight ?? 400}
+            value={campaignData?.title?.font_weight ?? 400}
             onChange={(e) => handleChangeTitle("font_weight", e.target.value)}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           >
@@ -1242,24 +1264,24 @@ const Settings: NextPage = () => {
         </div>
         <TextField
           type="number"
-          value={title.font_size}
+          value={campaignData?.title?.font_size}
           label="Font Size"
           onChange={(e: any) => handleChangeTitle("font_size", e.target.value)}
         />
         <TextField
           type="number"
-          value={title.letter_spacing}
+          value={campaignData?.title?.letter_spacing}
           label="Letter Spacing"
           onChange={(e: any) => handleChangeTitle("letter_spacing", e.target.value)}
         />
         <TextField
           type="number"
-          value={title.line_height}
+          value={campaignData?.title?.line_height}
           label="Line Height"
           onChange={(e: any) => handleChangeTitle("line_height", e.target.value)}
         />
         <ColorPicker
-          value={title.color ?? "#000"}
+          value={campaignData?.title?.color ?? "#000"}
           label="Color"
           onChange={(e: any) => handleChangeTitle("color", e)}
         />
@@ -1269,13 +1291,13 @@ const Settings: NextPage = () => {
         <div className="flex gap-3">
           <TextField
             type="number"
-            value={title.padding_top}
+            value={campaignData?.title?.padding_top}
             label="Top"
             onChange={(e: any) => handleChangeTitle("padding_top", e.target.value)}
           />
           <TextField
             type="number"
-            value={title.padding_bottom}
+            value={campaignData?.title?.padding_bottom}
             label="Bottom"
             onChange={(e: any) =>
               handleChangeTitle("padding_bottom", e.target.value)
@@ -1297,7 +1319,7 @@ const Settings: NextPage = () => {
           {typeof window !== 'undefined' && 
             <FontPicker
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-              activeFontFamily={description.font_family ?? "Inter"}
+              activeFontFamily={campaignData?.description?.font_family ?? "Inter"}
               onChange={(font: any) => handleChangeDescription("font_family", font.family)}pickerId={""} 
               families={[]} 
               categories={[]} 
@@ -1314,7 +1336,7 @@ const Settings: NextPage = () => {
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
-            value={description.font_weight ?? 400}
+            value={campaignData?.description?.font_weight ?? 400}
             onChange={(e: any) =>
               handleChangeDescription("font_weight", e.target.value)
             }
@@ -1330,13 +1352,13 @@ const Settings: NextPage = () => {
         </div>
         <TextField
           type="number"
-          value={description.font_size}
+          value={campaignData?.description?.font_size}
           label="Font Size"
           onChange={(e: any) => handleChangeDescription("font_size", e.target.value)}
         />
         <TextField
           type="number"
-          value={description.letter_spacing}
+          value={campaignData?.description?.letter_spacing}
           label="Letter Spacing"
           onChange={(e: any) =>
             handleChangeDescription("letter_spacing", e.target.value)
@@ -1344,14 +1366,14 @@ const Settings: NextPage = () => {
         />
         <TextField
           type="number"
-          value={description.line_height}
+          value={campaignData?.description?.line_height}
           label="Line Height"
           onChange={(e: any) =>
             handleChangeDescription("line_height", e.target.value)
           }
         />
         <ColorPicker
-          value={description.color ?? "#000"}
+          value={campaignData?.description?.color ?? "#000"}
           label="Color"
           onChange={(e: any) => handleChangeDescription("color", e)}
         />
@@ -1361,7 +1383,7 @@ const Settings: NextPage = () => {
         <div className="flex gap-3">
           <TextField
             type="number"
-            value={description.padding_top}
+            value={campaignData?.description?.padding_top}
             label="Top"
             onChange={(e: any) =>
               handleChangeDescription("padding_top", e.target.value)
@@ -1369,7 +1391,7 @@ const Settings: NextPage = () => {
           />
           <TextField
             type="number"
-            value={description.padding_bottom}
+            value={campaignData?.description?.padding_bottom}
             label="Bottom"
             onChange={(e: any) =>
               handleChangeDescription("padding_bottom", e.target.value)
