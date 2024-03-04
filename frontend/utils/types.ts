@@ -35,12 +35,12 @@ export type FilterType = {
 }
 
 export type sharingOptionType = {
-  twitter: boolean | null,
-  linkedin: boolean | null,
-  whatsapp: boolean | null,
-  facebook: boolean | null,
-  download: boolean | null,
-  email: boolean | null,
+  twitter?: boolean | null | undefined,
+  linkedin?: boolean | null | undefined,
+  whatsapp?: boolean | null | undefined,
+  facebook?: boolean | null | undefined,
+  download?: boolean | null | undefined,
+  email?: boolean | null | undefined,
 }
 
 export type BackgroundType = {
@@ -49,22 +49,22 @@ export type BackgroundType = {
 }
 
 export type TextType = {
-  text: string | null,
-  font_family: string | null,
-  font_weight: number | null,
-  font_size: number | null,
-  line_height: number | null,
-  color: string | null,
-  padding_top: number | null,
-  padding_bottom: number | null,
-  letter_spacing: number | null,
+  text?: string | null | undefined,
+  font_family?: string | null | undefined,
+  font_weight?: number | null | undefined,
+  font_size?: number | null | undefined,
+  line_height?: number | null | undefined,
+  color?: string | null | undefined,
+  letter_spacing?: number | null | undefined,
+  padding_top?: number | null | undefined,
+  padding_bottom?: number | null | undefined,
 };
 
 export type LogoType = {
-  size: number | null,
-  radius: number | null,
-  padding_top: number | null,
-  padding_bottom: number | null,
+  size?: number | null | undefined,
+  radius?: number | null | undefined,
+  padding_top?: number | null | undefined,
+  padding_bottom?: number | null | undefined,
 }
 
 export type CampaignType = {
@@ -107,7 +107,7 @@ export type CampaignType = {
 }
 
 export type ContactType = {
-  _id: number | null,
+  _id?: number | null,
   email: string | null,
   first_name: string | null,
   last_name: string | null,
@@ -121,7 +121,7 @@ export type ContactType = {
 }
 
 export type FilterDesignType = {
-  _id: number | null,
+  _id?: number | null,
   image: string | null,
   campaign: string | null,
   type: string | null,
@@ -129,28 +129,35 @@ export type FilterDesignType = {
 }
 
 export type FilterDesignPlaceholderType = {
-  _id: number | null,
+  _id?: number | null,
   image: string | null,
   author: string | null,
   type: string | null,
 }
 
 export type GalleryType = {
-  _id: number | null,
+  _id?: number | null,
   campaign: string | null,
   path: string | null,
 }
 
 export type TagType = {
-  _id: number | null,
+  _id?: number | null,
   name: string | null,
 }
 
 export type UniqueLinkType = {
-  _id: number | null,
+  _id?: number | null,
   campaign: string | null,
   contact: string | null,
   link: string | null,
   uses: number | null,
   blocked: boolean | null,
+}
+
+export type PlaceholderType = {
+  _id?: number | null,
+  image: string | null,
+  author: string | null,
+  type: string | null,
 }

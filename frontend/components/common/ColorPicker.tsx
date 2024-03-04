@@ -4,7 +4,7 @@ import { default as Picker } from "react-pick-color";
 import OutsideClickHandler from "react-outside-click-handler";
 
 export type ColorPickerProps = {
-  label: string;
+  label?: string;
   value?: string;
   onChange: (e: any) => void;
 };

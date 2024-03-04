@@ -8,7 +8,7 @@ function classNames(...classes: any) {
 export type ToggleSwitchProps = {
   label?: string;
   checked?: boolean;
-  onChange: () => void;
+  onChange: (e: any) => void;
 };
 
 const ToggleSwitch: NextPage<ToggleSwitchProps> = ({ label, checked, onChange }) => {
