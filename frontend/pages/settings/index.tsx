@@ -51,16 +51,16 @@ const Settings: NextPage = () => {
             value={info.city}
             onChange={(e: any) => handleChange("city", e.target.value)}
           />
-          <Select
+          {/* <Select
             label="Country"
             value={ info.country }
             onChange={(e: any) => handleChange("country", e.target.value)}
-          />
-          <Select
+          /> */}
+          {/* <Select
             label="Language"
             value={ info.language }
             onChange={(e: any) => handleChange("language", e.target.value)}
-          />
+          /> */}
           <ImagePicker
             label="Logo"
             value={info.logo}

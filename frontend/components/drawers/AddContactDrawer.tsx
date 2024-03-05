@@ -2,18 +2,25 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { useAuth0 } from "@auth0/auth0-react";
-import { useDispatch, useSelector } from "react-redux";
 import EmptyDrawer from "./EmptyDrawer";
 import ImagePicker from "../common/ImagePicker";
 import Select from "../common/Select";
 import TextField from "../common/TextField";
 import { APIService } from "../../api";
-// import { addContact, setTags } from "store/actions/Contact";
+import { ContactType, TagType } from '../../utils/types';
 
-const AddContactDrawer: NextPage = ({ open, setOpen }: any) => {
+export type AddContactDrawerProps = {
+  open: boolean;
+  setOpen: (e: any) => void;
+  contacts: ContactType[];
+  setContacts: (e: any) => void;
+  tags: TagType[];
+  setTags: (e: any) => void;
+}
+
+const AddContactDrawer: NextPage<AddContactDrawerProps> = ({ open, setOpen, contacts, setContacts, tags, setTags }) => {
   const router = useRouter();
   const { user } = useAuth0();
-  // const tags = useSelector((state) => state.contact?.tags);
   const [info, setInfo] = useState({
     firstName: "",
     lastName: "",
@@ -23,7 +30,7 @@ const AddContactDrawer: NextPage = ({ open, setOpen }: any) => {
     logo: "",
     companyName: "",
     companyLogo: "",
-    tags: null,
+    tags: [],
   });
 
   const handleChange = (target: any, value: any) => {
@@ -31,26 +38,29 @@ const AddContactDrawer: NextPage = ({ open, setOpen }: any) => {
   };
 
   const handleSave = () => {
-    // APIService.contact
-    //   .create({
-    //     email: info.email,
-    //     first_name: info.firstName,
-    //     last_name: info.lastName,
-    //     position: info.position,
-    //     linkedin: info.linkedin,
-    //     logo: info.logo,
-    //     company_name: info.companyName,
-    //     company_logo: info.companyLogo,
-    //     tags: info.tags && info.tags.map((tag) => tag.value),
-    //     author: user.email,
-    //   })
-    //   .then((res) => {
-    //     dispatch(addContact(res.data));
-    //     setTimeout(() => {
-    //       router.push("/contacts");
-    //     }, 500);
-    //     setOpen(!open);
-    //   });
+    APIService.contact
+      .create({
+        email: info.email,
+        first_name: info.firstName,
+        last_name: info.lastName,
+        position: info.position,
+        linkedin: info.linkedin,
+        logo: info.logo,
+        company_name: info.companyName,
+        company_logo: info.companyLogo,
+        tags: info.tags && info.tags.map((tag: any) => tag.value),
+        author: user?.email,
+      })
+      .then((res: any) => {
+        setContacts([
+          ...contacts,
+          res.data
+        ]);
+        setTimeout(() => {
+          router.push("/contacts");
+        }, 500);
+        setOpen(!open);
+      });
   };
 
   const handleCancel = () => {
@@ -68,7 +78,7 @@ const AddContactDrawer: NextPage = ({ open, setOpen }: any) => {
 
   useEffect(() => {
     APIService.tag.getAll().then((res: any) => {
-      // dispatch(setTags(res.data));
+      setTags(res.data);
     });
   }, []);
 
@@ -119,13 +129,13 @@ const AddContactDrawer: NextPage = ({ open, setOpen }: any) => {
         label="Company Logo"
         onChange={(e: any) => handleChange("companyLogo", e.target.files[0])}
       />
-      {/* <Select
+      <Select
         label="Tags"
         value={info.tags}
         isMultiple={true}
         options={getTagOptions(tags)}
         onChange={(value: any) => handleChange("tags", value)}
-      /> */}
+      />
     </EmptyDrawer>
   );
 };
