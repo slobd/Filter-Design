@@ -2,7 +2,19 @@ import type { NextPage } from "next";
 import { Datepicker } from "flowbite-react";
 import moment from "moment";
 
-const DatePicker: NextPage = ({
+export type DatePickerPropsType = {
+  value: Date;
+  onChange: (data: any) => void;
+  label?: string;
+  className?: string;
+  wrapperClassName?: string;
+  format?: string;
+  align?: string;
+  maxDate?: Date;
+  minDate?: Date;
+};
+
+const DatePicker: NextPage<DatePickerPropsType> = ({
   value,
   onChange,
   label,
@@ -11,7 +23,7 @@ const DatePicker: NextPage = ({
   format = "YYYY/MM/DD",
   align = "left",
   ...props
-}: any) => {
+}) => {
   const customizeTheme = {
     root: {
       input: {
@@ -79,7 +91,8 @@ const DatePicker: NextPage = ({
         </label>
       )}
       <Datepicker
-        icon={null}
+        icon={undefined}
+        style={{ paddingLeft: '10px' }}
         className={`bg-red ${className}`}
         value={moment(value).format(format)}
         onSelectedDateChanged={onChange}

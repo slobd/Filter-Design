@@ -1,18 +1,19 @@
-import React, { Fragment, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { NextPage } from "next";
+import { useRouter } from "next/router";
+import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import Button from "components/common/Button";
+import Button from "../common/Button";
 import { ClipboardDocumentIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import copy from "copy-to-clipboard";
 
-const EmbedCodeModal = ({ open, setOpen }) => {
-  const { slug } = useParams();
+const EmbedCodeModal = ({ open, setOpen }: any) => {
+  const router = useRouter();
+  const { pathname, query } = router;
   const cancelButtonRef = useRef(null);
-  const shareLink = `${window.location.origin}/campaign/${slug}`;
-  const code = `<iframe src="${shareLink}" frameborder="0">
-</iframe>`;
+  const shareLink = `${window.location.origin}/campaign/${query?.slug}`;
+  const code = `<iframe src="${shareLink}" frameborder="0"></iframe>`;
 
   return (
     <Transition.Root show={open} as={Fragment}>

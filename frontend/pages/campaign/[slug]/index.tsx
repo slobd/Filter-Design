@@ -1,7 +1,10 @@
 import { NextPage } from "next";
 import { Fragment, useEffect, useRef, useState, Suspense } from "react";
 import { useRouter } from "next/router";
-import domtoimage from "dom-to-image";
+import Image from "next/image";
+import { useAuth0 } from "@auth0/auth0-react";
+// import domtoimage from "dom-to-image";
+import html2canvas from 'html2canvas';
 import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
@@ -30,6 +33,7 @@ interface FilterCardProps {
 }
 
 const User: NextPage = () => {
+    const { user } = useAuth0();
     const router = useRouter();
     const { pathname, query } = router;
     const [error, setError] = useState(false);
@@ -68,17 +72,18 @@ const User: NextPage = () => {
     };
 
     const handleDownload = (i: any) => {
-        const dom = document.querySelector(`#card-${i}`);
+        const dom = document.querySelector<HTMLDivElement>(`#card-${i}`);
         if (dom) {
             const { width, height } = dom.getBoundingClientRect();
             !image
                 ? alert("Please select an image")
-                : domtoimage
-                    .toPng(dom, { quality: 0.95, width, height })
-                    .then(function (dataUrl) {
+                // : domtoimage
+                //     .toPng(dom, { quality: 0.95, width, height })
+                : html2canvas(dom)
+                    .then((canvas: any) => {
                         var link = document.createElement("a");
                         link.download = "image.png";
-                        link.href = dataUrl;
+                        link.href = canvas.toDataURL('image/png');
                         link.click();
                     });
         }
@@ -91,36 +96,43 @@ const User: NextPage = () => {
     };
 
     const handleGenerate = () => {
+        console.log("handleGenerate", fileRef.current.files[0]);
         let clonedImage = [...image];
         clonedImage[selectedIndex] = fileRef.current.files[0];
         setImage([...clonedImage]);
-        fileRef.current.value = "";
         setOpen(false);
         setPassed(true);
         changeCarouselHeight();
         setTimeout(() => {
-            const dom = document.querySelector(`#card-${selectedIndex}`);
+            console.log(selectedIndex, "selectedIndex", fileRef.current.files[0])
+            const dom = document.querySelector<HTMLDivElement>(`#card-${selectedIndex}`);
             if (dom) {
-                const { width, height } = dom.getBoundingClientRect();
-                domtoimage
-                    .toPng(dom, {
-                        quality: 0.95,
-                        width,
-                        height,
-                    })
-                    .then(function (dataUrl) {
+                // domtoimage
+                //     .toPng(dom, {
+                //         quality: 0.95,
+                //         width,
+                //         height,
+                //     })
+                html2canvas(dom)
+                    .then((canvas: any) => {
                         APIService.gallery
                             .create({
                                 campaign_id: campaign?._id,
-                                image: dataURLtoFile(dataUrl, image[selectedIndex].name),
+                                author: user?.email,
+                                image: dataURLtoFile(canvas.toDataURL('image/png'), fileRef.current.files[0]?.name),
                             })
                             .then((res: any) => {
+                                console.log(" gallery created", res.data)
                                 let clonedGallery = [...gallery];
                                 clonedGallery[selectedIndex] = res.data.path;
                                 setGallery([...clonedGallery]);
                             });
+                    })
+                    .catch(function (error: any) {
+                        console.error('Error generating image: ', error);
                     });
                 changeCarouselHeight();
+                fileRef.current.value = "";
             }
         }, 1000);
     };
@@ -191,6 +203,7 @@ const User: NextPage = () => {
     useEffect(() => {
         console.log("useEffect", campaign)
         if (campaign?.filters) {
+            setImage(campaign?.filters.map(i => null))
             const squareFilters = campaign?.filters.filter(i => i.filter_design?.type == 'square');
             const storyFilters = campaign?.filters.filter(i => i.filter_design?.type == 'story');
             if (squareFilters.length && storyFilters.length) {
@@ -204,7 +217,7 @@ const User: NextPage = () => {
             }
             if (campaign?.filters.length <= 1) setVisibileSizeButtons(false);
         }
-    }, [campaign, filterDesignWidths]);
+    }, [campaign]);
 
     // useEffect(() => {
     //   const handleScroll = () => {
@@ -245,35 +258,41 @@ const User: NextPage = () => {
                         className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
                         style={{ borderRadius: campaign?.edge ?? 14 }}
                     >
-                        <div className={`w-full relative flex-shrink-0 overflow-hidden`}>
-                            {image[i] ? (
-                                <img
-                                    src={URL.createObjectURL(image[i])}
-                                    className="object-cover absolute max-w-none"
-                                    style={{
-                                        width: `${filter?.rnd?.w}%`,
-                                        height: `${filter?.rnd?.h}%`,
-                                        left: `${filter?.rnd?.x}%`,
-                                        top: `${filter?.rnd?.y}%`,
-                                    }}
+                        <div id={`card-${i}`} className={`w-full relative flex-shrink-0`}>
+                            <div
+                                className="object-cover absolute max-w-none"
+                                style={{
+                                    width: `${filter?.rnd?.w}%`,
+                                    height: `${filter?.rnd?.h}%`,
+                                    left: `${filter?.rnd?.x}%`,
+                                    top: `${filter?.rnd?.y}%`,
+                                }}
+                            >
+                                {image[i] ? (
+                                    <Image
+                                        src={URL.createObjectURL(image[i])}
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                    />
+                                ) : (
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                    />
+                                )}
+                            </div>
+                            <div className="relative z-10">
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                    onLoad={imageLoaded}
                                 />
-                            ) : (
-                                <img
-                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
-                                    className="object-cover absolute max-w-none"
-                                    style={{
-                                        width: `${filter?.rnd?.w}%`,
-                                        height: `${filter?.rnd?.h}%`,
-                                        left: `${filter?.rnd?.x}%`,
-                                        top: `${filter?.rnd?.y}%`,
-                                    }}
-                                />
-                            )}
-                            <img
-                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                className="relative z-10"
-                                onLoad={imageLoaded}
-                            />
+                            </div>
                         </div>
 
                         <div
@@ -365,10 +384,10 @@ const User: NextPage = () => {
                         </div>
                     </div>
                 </div>
-                <div className="w-0 h-0 overflow-hidden">
+                <div className="w-0 h-0 overflow-hidden" >
                     <div
                         className={`w-max h-max relative overflow-hidden`}
-                        id={`card-${i}`}
+                        // id={`card-${i}`}
                     >
                         {image[i] && (
                             <img

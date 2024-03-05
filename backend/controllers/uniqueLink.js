@@ -5,7 +5,7 @@ const UniqueLink = require("../models/UniqueLink");
 const getUniqueLinks = async (req, res) => {
   const campaign = await Campaign.findOne({ slug: req.query.campaign });
   const links = await UniqueLink.find({
-    campaign: campaign._id,
+    campaign: campaign?._id,
   })
     .populate("campaign")
     .populate("contact");
@@ -15,13 +15,13 @@ const getUniqueLinks = async (req, res) => {
 const createUniqueLinks = async (req, res) => {
   try {
     const campaign = await Campaign.findOne({ _id: req.body.campaign });
-    const author = campaign.author;
+    const author = campaign?.author;
     const contacts = await Contact.find({ author });
 
     for (let contact of contacts) {
       let uniqueLink = await UniqueLink.create({
         campaign: req.body.campaign,
-        contact: contact._id,
+        contact: contact?._id,
         link: new Date().getTime().toString(),
       });
       await uniqueLink.save();

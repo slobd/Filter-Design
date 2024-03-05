@@ -35,10 +35,16 @@ database.once("connected", async () => {
  
 });
 
+// var corsOptions = {
+//   origin: ["http://3.123.34.123:3000","http://3.123.34.123","http://localhost:3000","http://127.0.0.1:5500", "http://livedab.de"]
+// };
+
 global.appRootRir = __dirname;
 const app = express();
-const directory = path.join(__dirname, "/uploads");
-app.use("/uploads", express.static(directory));
+// const directory = path.join(__dirname, "/uploads");
+// app.use("/uploads", express.static(directory));
+app.use('/uploads', express.static('uploads'));
+// app.use(cors(corsOptions));
 app.use(cors());
 app.use(express.json());
 

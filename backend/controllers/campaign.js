@@ -159,7 +159,7 @@ const inviteByEmail = async (req, res) => {
     to: req.body.email,
     from: "meinehannes@gmail.com",
     subject: "Shared a Campaign",
-    html: `<p>dummy text content....</p><a href="${res.body.link}">${res.body.link}</a>`,
+    html: `<p>dummy text content....</p><a href="${res.body?.link}">${res.body?.link}</a>`,
   };
 
   sgMail.send(msg).then(
@@ -178,24 +178,26 @@ const inviteByEmail = async (req, res) => {
 
 const getReporting = async (req, res) => {
   const campaign = await Campaign.findOne({ slug: req.query.slug });
-  const galleries = await Gallery.find({
-    campaign: campaign.id,
-    createdAt: {
-      $gte: new Date(req.query.startDate),
-      $lt: new Date(req.query.endDate),
-    },
-  })
-    .populate("campaign")
-    .sort({
-      updatedAt: -1,
+  if(campaign) {
+    const galleries = await Gallery.find({
+      campaign: campaign?._id,
+      createdAt: {
+        $gte: new Date(req.query.startDate),
+        $lt: new Date(req.query.endDate),
+      },
+    })
+      .populate("campaign")
+      .sort({
+        updatedAt: -1,
+      });
+    return res.status(200).json({
+      views: campaign.views,
+      uses: campaign.uses,
+      downloads: 0,
+      conversationRate: 0,
+      galleries,
     });
-  return res.status(200).json({
-    views: campaign.views,
-    uses: campaign.uses,
-    downloads: 0,
-    conversationRate: 0,
-    galleries,
-  });
+  }
 };
 
 module.exports = {
