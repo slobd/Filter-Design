@@ -4,6 +4,7 @@ import { useRef } from "react";
 export type ImagePickerProps = {
   onChange: (e: any) => void;
   label?: string | null;
+  value?: string | null;
 };
 
 const ImagePicker: NextPage<ImagePickerProps> = ({ onChange, label }) => {

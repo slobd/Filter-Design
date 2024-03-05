@@ -20,19 +20,23 @@ const Gallery: NextPage = () => {
   const [selectedCampaign, setSelectedCampaign] = useState<any>("all");
 
   useEffect(() => {
-    APIService.campaign
-      .getAll(user?.email)
-      .then((res: any) => getInitData());
-      APIService.gallery
-      .getAll(user?.email)
-      .then((res: any) => setGalleries(res.data));
-      
-  }, []);
+    if(user?.email) {
+      APIService.campaign
+        .getAll(user?.email)
+        .then((res: any) => getInitData());
+        APIService.gallery
+        .getAll(user?.email)
+        .then((res: any) => setGalleries(res.data));
+    }
+    
+  }, [user?.email]);
+
   console.log("galleries", galleries);
+  
   const getFilteredGalleries = (galleries: any[]) => {
     return galleries.filter((gallery: any) => {
       if (selectedCampaign !== "all") {
-        return gallery.campaign_id === selectedCampaign;
+        return gallery.campaign?._id === selectedCampaign;
       }
       return true;
     });
@@ -55,7 +59,7 @@ const Gallery: NextPage = () => {
 
   const fetchGalleries = () => {
     APIService.gallery
-      .getAll(user?.email)
+      .getAll({author: user?.email})
       .then((res: any) => setGalleries(res.data));
   };
 
@@ -91,10 +95,11 @@ const Gallery: NextPage = () => {
               <div className="relative group" key={gallery._id}>
                   <Image
                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
+                    loader={({ src, width }) => { return src + "?w=" + width }}
                     className="rounded-lg shadow-center cursor-pointer"
                     onClick={() => handleShowGalleryLightbox(i)}
-                    width={100}
-                    height={100}
+                    width={200}
+                    height={200}
                     alt=""
                   />
                 <button

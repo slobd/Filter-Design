@@ -8,6 +8,7 @@ const gallerySchema = Schema(
       required: true,
       ref: "Campaign",
     },
+    author: { type: String, required: true },
     path: { type: String, required: true },
   },
   {

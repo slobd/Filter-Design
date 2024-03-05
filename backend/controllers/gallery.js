@@ -27,6 +27,7 @@ const getGalleries = async (req, res) => {
 const createGallery = async (req, res) => {
   const gallery = new Gallery({
     campaign: req.body.campaign_id,
+    author: req.body.author,
     path: req.file.path,
   });
   const campaign = await Campaign.findOne({ _id: req.body.campaign_id });
