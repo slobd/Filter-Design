@@ -6,7 +6,7 @@ import { CampaignType, ColumnType } from '../../../utils/types';
 
 export type DataTablePros = {
   cols: ColumnType[];
-  rows: CampaignType[];
+  rows: any[];
   renderRow: (row?: any, i?: number) => void;
 }
 
