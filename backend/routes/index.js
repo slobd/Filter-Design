@@ -24,6 +24,8 @@ const uploadFile = multer({
   storage: multerStorage,
 });
 
+const { validateAccessToken } = require("../middleware/auth0.middleware.js");
+
 router.get("/filters", filterDesignController.getFilters);
 router.get("/filter", filterDesignController.getFilter);
 router.delete("/filter", filterDesignController.deleteFilter);

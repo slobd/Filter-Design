@@ -3,7 +3,25 @@ const cors = require("cors");
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const { expressjwt: jwt } = require('express-jwt'); 
+const jwtAuthz = require('express-jwt-authz');
+const jwksRsa = require('jwks-rsa');
+const { auth } = require('express-oauth2-jwt-bearer');
+
+const { errorHandler } = require("./middleware/error.middleware.js");
 const FilterDesign = require("./models/FilterDesign");
+
+// var jwtCheck = jwt({
+//   secret: jwksRsa.expressJwtSecret({
+//     cache: true, 
+//     rateLimit: true, 
+//     jwksRequestsPerMinute: 5, 
+//     jwksUri: `${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
+//   }),
+//   audience: process.env.AUTH0_IDENTIFIER,
+//   issuer: process.env.AUTH0_DOMAIN,
+//   algorithms: ['RS256']
+// });
 
 mongoose.connect(process.env.DATABASE_URL);
 const database = mongoose.connection;
@@ -30,9 +48,6 @@ database.once("connected", async () => {
       console.log("seed failed");
     }
   }
-  
-
- 
 });
 
 // var corsOptions = {
@@ -48,10 +63,12 @@ app.use('/uploads', express.static('uploads'));
 app.use(cors());
 app.use(express.json());
 
+// app.use(jwtCheck);
 
 const router = require("./routes");
 
 app.use("/", router);
+// app.use(errorHandler);
 
 app.listen(8000, () => {
   console.log(`Server Started at ${8000}`);
