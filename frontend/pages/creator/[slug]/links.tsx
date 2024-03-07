@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Badge from "../../../components/common/Badge";
@@ -48,9 +49,13 @@ const Links: NextPage = () => {
                 </Col>
                 <Col>
                     {row.contact.logo && (
-                        <img
+                        <Image
                             src={getImageUrl(row.contact.logo)}
                             className="w-10 h-10 object-cover rounded"
+                            loader={({ src, width }) => { return src + "?w=" + width }}
+                            quality={50}
+                            width={15}
+                            height={15}
                         />
                     )}
                 </Col>
@@ -59,9 +64,13 @@ const Links: NextPage = () => {
                 <Col>
                     <div className="flex items-center gap-2">
                         {row.contact.company_logo && (
-                            <img
+                            <Image
                                 src={getImageUrl(row.contact.company_logo)}
                                 className="w-10 h-10 object-cover rounded"
+                                loader={({ src, width }) => { return src + "?w=" + width }}
+                                quality={50}
+                                width={15}
+                                height={15}
                             />
                         )}
                         <span>{row.contact.company_name}</span>

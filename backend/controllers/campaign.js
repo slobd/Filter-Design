@@ -56,6 +56,7 @@ const createCampaign = async (req, res) => {
 
 const editCampaign = async (req, res) => {
   const campaign = await Campaign.findOne({ _id: req.body._id });
+  if(campaign.author != req.body.author) res.status(403).json({ message: "No permission!!!" });
   bcrypt.genSalt(saltRounds, (err, salt) => {
     bcrypt.hash(req.body.password, salt, async (err, hash) => {
       campaign.name = req.body.name;
@@ -107,16 +108,6 @@ const editCampaign = async (req, res) => {
 const deleteCampaign = async (req, res) => {
   const response = await Campaign.findOneAndDelete({ _id: req.query.id });
   await UniqueLink.deleteMany({ campaign: response._id });
-  // delete filterdesign and its images
-  // const filterdesigns = await FilterDesign.find({campaign: req.query.id});
-  // filterdesigns.map(i => {
-  //   let path = i.image;
-  //   fs.unlink(path, async () => {
-  //     console.log("deleted:", i.image);
-  //   });
-  // })
-  // await FilterDesign.deleteMany({ campaign: response._id });
-  // delete gallery and its images
   const galleries = await Gallery.find({campaign: req.query.id});
   galleries.map(i => {
     let path = i.path;

@@ -1,5 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import domtoimage from "dom-to-image";
@@ -10,11 +11,6 @@ import EmbedCodeModal from "../../../components/modal/EmbedCodeModal";
 import CreatorLayout from '../../../components/Layout/Creator';
 import { validateEmail } from "../../../utils";
 import { APIService } from "../../../api";
-
-// import ShareLinkIcon from "/assets/images/share/link.svg";
-// import ShareCodeIcon from "/assets/images/share/embed.svg";
-// import ShareQRCodeIcon from "/assets/images/share/qr.svg";
-// import ShareEmailIcon from "/assets/images/share/email.svg";
 
 const Share: NextPage = () => {
     const router = useRouter();
@@ -86,7 +82,7 @@ const Share: NextPage = () => {
             <div className="md:pl-80 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 p-5 md:p-10">
                 <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
                     <div className="flex items-center justify-center aspect-[1/1] bg-gray-200">
-                        <img src="/assets/images/share/link.svg" className="w-20 md:w-28" />
+                        <Image src="/assets/images/share/link.svg" width={100} height={100} className="w-20 md:w-28" />
                     </div>
                     <div className="flex flex-1 flex-col space-y-2 p-4">
                         <h3 className="text-sm font-medium text-gray-900 text-center">
@@ -110,7 +106,7 @@ const Share: NextPage = () => {
                 </div>
                 <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
                     <div className="flex items-center justify-center aspect-[1/1] bg-gray-200">
-                        <img src="/assets/images/share/embed.svg" className="w-20 md:w-28" />
+                        <Image src="/assets/images/share/embed.svg" width={100} height={100} className="w-20 md:w-28" />
                     </div>
                     <div className="flex flex-1 flex-col space-y-2 p-4">
                         <h3 className="text-sm font-medium text-gray-900 text-center">
@@ -130,7 +126,7 @@ const Share: NextPage = () => {
                 </div>
                 <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
                     <div className="flex items-center justify-center aspect-[1/1] bg-gray-200">
-                        <img src="/assets/images/share/qr.svg" className="w-20 md:w-28" />
+                        <Image src="/assets/images/share/qr.svg" width={100} height={100} className="w-20 md:w-28" />
                     </div>
                     <div className="flex flex-1 flex-col space-y-2 p-4">
                         <h3 className="text-sm font-medium text-gray-900 text-center">
@@ -160,7 +156,7 @@ const Share: NextPage = () => {
                 </div>
                 <div className="relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
                     <div className="flex items-center justify-center aspect-[1/1] bg-gray-200">
-                        <img src="/assets/images/share/email.svg" className="w-20 md:w-28" />
+                        <Image src="/assets/images/share/email.svg" width={100} height={100} className="w-20 md:w-28" />
                     </div>
                     <div className="flex flex-1 flex-col space-y-2 p-4">
                         <h3 className="text-sm font-medium text-gray-900 text-center">

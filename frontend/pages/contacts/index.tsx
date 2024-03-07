@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { parse } from "papaparse";
@@ -87,9 +88,13 @@ const Contacts: NextPage = () => {
         </Col>
         <Col>
           {row.logo && (
-            <img
+            <Image
               src={getImageUrl(row.logo)}
+              loader={({ src, width }) => { return src + "?w=" + width }}
               className="w-10 h-10 object-cover rounded"
+              quality={50}
+              width={35}
+              height={35}
             />
           )}
         </Col>
@@ -98,9 +103,13 @@ const Contacts: NextPage = () => {
         <Col>
           <div className="flex items-center gap-2">
             {row.company_logo && (
-              <img
+              <Image
                 src={getImageUrl(row.company_logo)}
                 className="w-10 h-10 object-cover rounded"
+                loader={({ src, width }) => { return src + "?w=" + width }}
+                quality={50}
+                width={35}
+                height={35}
               />
             )}
             <span>{row.company_name}</span>

@@ -7,6 +7,7 @@ import Image from 'next/image'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Button from "./common/Button";
+import { XMarkIcon, ArrowLeftIcon, ArrowRightIcon, ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export type GalleryLightboxProps = {
   show: boolean;
@@ -43,19 +44,19 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
   };
 
   const handleDownload = (url: any) => {
-    // const xhr = new XMLHttpRequest();
-    // xhr.open("GET", url, true);
-    // xhr.responseType = "blob";
-    // xhr.onload = function () {
-    //   if (xhr.status === 200) {
-    //     const blob = new Blob([xhr.response], { type: "image/jpeg" });
-    //     const link = document.createElement("a");
-    //     link.href = window.URL.createObjectURL(blob);
-    //     link.download = "image.jpg";
-    //     link.click();
-    //   }
-    // };
-    // xhr.send();
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const blob = new Blob([xhr.response], { type: "image/jpeg" });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "image.jpg";
+        link.click();
+      }
+    };
+    xhr.send();
   };
 
   if (!show) {
@@ -70,20 +71,16 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
           onClick={onClose}
           className="!z-10 w-8 h-8 absolute bg-white top-5 md:top-10 right-5 top:right-10 cursor-pointer opacity-60 hover:opacity-100 transition rounded-sm p-1.5"
         >
-          <Image src="/assets/images/icons/close.svg" className="w-full h-full" alt="" width={35} height={35}/>
+          <XMarkIcon className='w-5'/>
         </button>
-        <Image
-          src="/assets/images/icons/arrow-right.svg"
-          className="invert absolute opacity-60 hidden md:inline transition hover:opacity-100 w-12 top-1/2 right-8 -translate-y-1/2 cursor-pointer z-10"
-          onClick={handleNext}
-          alt=""
-        />
-        <Image
-          src="/assets/images/icons/arrow-right.svg"
-          className="invert absolute opacity-60 hidden md:inline transition hover:opacity-100 rotate-180 w-12 top-1/2 left-8 -translate-y-1/2 cursor-pointer z-10"
+        <ArrowLeftIcon
           onClick={handlePrev}
-          alt=""
-        />
+          className="w-5 invert absolute opacity-60 hidden md:inline transition hover:opacity-100 w-12 top-1/2 left-8 -translate-y-1/2 cursor-pointer z-10"/
+        >
+        <ArrowRightIcon
+          onClick={handleNext}
+          className="w-5 invert absolute opacity-60 hidden md:inline transition hover:opacity-100 w-12 top-1/2 right-8 -translate-y-1/2 cursor-pointer z-10"/
+        >
         <Slider {...settings} className="campaign-slick-slider w-full h-full p-10" ref={sliderRef}>
           {items.map((item: any) => (
             <div
@@ -92,8 +89,12 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
             >
                 <Image
                   src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${item.path}`}
+                  loader={({ src, width }) => { return src + "?w=" + width }}
+                  quality={50}
+                  priority={true}
                   className="max-w-xs md:max-w-md mb-8 rounded-lg object-cover"
                   // style={{ height: `${imageHeight - 230}px` }}
+                  width={500} height={700}
                   alt=""
                 />
               <div className="h-full">
@@ -115,7 +116,7 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                       )
                     }
                   >
-                    <Image src="/assets/images/icons/download.svg" className="w-4 invert" alt=""/>
+                    <ArrowDownTrayIcon className="h-5 w-5 text-gray-black" />
                     <span>Download</span>
                   </Button>
                   <Button
@@ -123,7 +124,7 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                     color="danger"
                     onClick={() => handleDelete(item._id)}
                   >
-                    <Image src="/assets/images/icons/trash.svg" className="w-3.5 invert" alt="" />
+                    <TrashIcon className="h-5 w-5 text-gray-black" />
                     <span>Delete</span>
                   </Button>
                 </div>

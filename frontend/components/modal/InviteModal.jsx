@@ -1,10 +1,7 @@
 import React, { Fragment, useLayoutEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import Image from 'next/image'
 import Button from "components/common/Button";
-import PlusIcon from "assets/images/icons/plus.svg";
-import SearchIcon from "assets/images/icons/search.svg";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 const statuses = {
   Completed: "text-green-400 bg-green-400/10",
@@ -124,11 +121,11 @@ const InviteModal = ({ open, setOpen }) => {
                       placeholder="Search..."
                     />
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                      <Image src={SearchIcon} className="w-4 opacity-50" alt=""/>
+                      <MagnifyingGlassIcon className="w-5 opacity-50" />
                     </div>
                   </div>
                   <Button className="!px-2 md:!px-3">
-                    <Image src={PlusIcon} className="w-4 invert" alt=""/>
+                    <PlusIcon className="w-5 invert" />
                     <span className="hidden md:inline-block ml-1.5">
                       Send Invitation
                     </span>

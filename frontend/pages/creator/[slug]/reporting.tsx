@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState, Suspense } from "react";
 import DatePicker from "../../../components/common/DatePicker";
@@ -104,9 +105,13 @@ const Reporting: NextPage = () => {
                     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {report.galleries.map((gallery: any, i) => (
                             <div className="relative group" key={gallery._id}>
-                                <img
+                                <Image
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
                                     className="rounded-lg cursor-pointer"
+                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    quality={50}
+                                    width={15}
+                                    height={15}
                                 />
                             </div>
                         ))}

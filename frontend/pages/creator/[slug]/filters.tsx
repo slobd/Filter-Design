@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Image  from "next/image";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/router";
@@ -8,8 +9,12 @@ import {
     Cog8ToothIcon,
     EyeIcon,
     RocketLaunchIcon,
+    CameraIcon, 
+    ArrowRightIcon, 
+    ArrowDownTrayIcon, 
+    TrashIcon,
+    ViewfinderCircleIcon
 } from "@heroicons/react/24/outline";
-import { sizeTypes } from "../../../utils/constants";
 import Button from "../../../components/common/Button";
 import ColorPicker from "../../../components/common/ColorPicker";
 import EmptyDrawer from "../../../components/drawers/EmptyDrawer";
@@ -17,19 +22,17 @@ import ImagePicker from "../../../components/common/ImagePicker";
 import TextField from "../../../components/common/TextField";
 import CreatorLayout from '../../../components/Layout/Creator';
 import { useAppContext } from "../../../context/context";
-import { FilterType, FilterDesignType, ButtonType } from '../../../utils/types';
+import { FilterDesignType, ButtonType } from '../../../utils/types';
 import { APIService } from "../../../api";
-// import {
-//   addFilterDesign,
-//   setFilterDesigns,
-//   setCampaign,
-//   deleteFilterDesign,
-//   setLoading,
-// } from "store/actions/Campaign";
-import { CameraIcon } from '@heroicons/react/20/solid';
+import { getFilterType } from "../../../utils";
 
 const tabs = [
-    { id: "square", label: "Square", icon: "/assets/images/icons/square.svg", width: "max-w-[350px]" },
+    { 
+        id: "square", 
+        label: "Square", 
+        icon: "/assets/images/icons/square.svg", 
+        width: "max-w-[350px]",
+    },
     {
         id: "story",
         label: "Story",
@@ -87,18 +90,8 @@ const FilterDesigns: NextPage = () => {
         contextCampaignData({ ...campaignData, filters: _filters });
     }
 
-    const getFilterType = (file: any, cb: any) => {
-        var img = new Image();
-        let type;
-        img.onload = () => {
-            type = sizeTypes[`${img.width}x${img.height}`];
-            cb(type || "custom");
-        };
-        img.src = URL.createObjectURL(file);
-    };
-
     const handleUploadFilterDesign = (e: any) => {
-        if(!e.target.files[0]) return
+        if(!e.target.files[0]) return;
         getFilterType(e.target.files[0], (type: any) => {
             if (e.target.files[0]) {
                 APIService.filter
@@ -281,18 +274,14 @@ const FilterDesigns: NextPage = () => {
                     className="w-10 h-10 flex md:hidden items-center justify-center bg-white shadow absolute top-20 right-0 translate-x-full rounded-r-lg"
                     onClick={() => setOpenSidebar(!openSidebar)}
                 >
-                    <img
-                        src="/assets/images/icons/arrow-right.svg"
-                        className={`w-6 ${!openSidebar ? `rotate-0` : `rotate-180`
-                            } transition`}
-                    />
+                    <ArrowRightIcon className={`w-6 ${!openSidebar ? `rotate-0` : `rotate-180`} transition`}/>
                 </button>
                 <div className="flex flex-col h-full p-4 bg-[#18191A] text-white">
                     <Button
                         className="w-full h-12 !text-lg mb-5 gap-2 !font-medium"
                         onClick={() => filterRef.current.click()}
                     >
-                        <img src="/assets/images/icons/upload_2.svg" className="w-6 invert" />
+                        <ArrowDownTrayIcon className="w-6"/>
                         <span>Upload Filter Design</span>
                     </Button>
                     <input
@@ -317,10 +306,13 @@ const FilterDesigns: NextPage = () => {
                                             : "text-white bg-gray-700"
                                         } w-full group inline-flex justify-center items-center gap-1 py-2 text-[0.8rem] cursor-pointer px-2 border-black border-r last:border-0`}
                                 >
-                                    <img
+                                    <Image
                                         src={tab.icon}
-                                        className={`w-4 ${selectedFilterTab === tab.id ? `` : `invert`
-                                            }`}
+                                        className={`w-4 ${selectedFilterTab === tab.id ? `` : `invert`}`}
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        width={15}
+                                        height={15}
                                     />
                                     <span>{tab.label}</span>
                                 </span>
@@ -345,23 +337,29 @@ const FilterDesigns: NextPage = () => {
                                         onClick={() => handleSelectFilterDesign(filterDesign)}
                                     >
                                         {filterDesign.author && (
-                                            <img
-                                                src="/assets/images/icons/trash.svg"
-                                                className="absolute z-20 w-4 top-2 right-2 invert"
-                                                onClick={(e) =>
-                                                    handleDeleteFilterDesign(e, filterDesign._id)
-                                                }
+                                            <TrashIcon
+                                                className="absolute z-20 w-5 h-5 top-2 right-2"
+                                                onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id) }
                                             />
                                         )}
-                                        <img
+                                        <Image
                                             src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
+                                            loader={({ src, width }) => { return src + "?w=" + width }}
                                             className="absolute top-0 left-0 w-full h-full object-cover"
-                                            // width={}
+                                            quality={50}
+                                            priority={true}
+                                            width={filterDesign?.type == 'story' ? 290 : 350}
+                                            height={filterDesign?.type == 'story' ? 350 : 350}
                                         />
                                         {filterDesign.image && (
-                                            <img
+                                            <Image
                                                 src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filterDesign.image}`}
+                                                loader={({ src, width }) => { return src + "?w=" + width }}
                                                 className="relative z-10"
+                                                quality={50}
+                                                priority={true}
+                                                width={filterDesign?.type == 'story' ? 290 : 350}
+                                                height={filterDesign?.type == 'story' ? 350 : 350}
                                             />
                                         )}
                                     </div>
@@ -377,7 +375,7 @@ const FilterDesigns: NextPage = () => {
                         className="!px-2 flex md:hidden"
                         onClick={handlePreview}
                     >
-                        <img src="/assets/images/icons/arrow-right.svg" className="w-5" />
+                        <ArrowRightIcon className="w-5"/>
                     </Button>
                     <Button
                         color="white"
@@ -427,13 +425,13 @@ const FilterDesigns: NextPage = () => {
                                             className="bg-white w-10 h-10 rounded p-2 border opacity-50 hover:opacity-100 transition "
                                             onClick={() => handleToggleEditMode(i)}
                                         >
-                                            <img src="/assets/images/icons/select.svg" />
+                                            <ViewfinderCircleIcon />
                                         </button>
                                         <button
                                             className="bg-white w-10 h-10 rounded p-2 border opacity-50 hover:opacity-100 transition "
                                             onClick={() => handleCancelNewFilter(i)}
                                         >
-                                            <img src="/assets/images/icons/trash.svg" />
+                                            <TrashIcon />
                                         </button>
                                         <button
                                             className="bg-white w-10 h-10 rounded p-2 border opacity-50 hover:opacity-100 transition "
@@ -441,7 +439,7 @@ const FilterDesigns: NextPage = () => {
                                                 handleOpenSettingButtonModal(filter.button, i)
                                             }
                                         >
-                                            <img src="/assets/images/icons/setting.svg" />
+                                            <Cog8ToothIcon />
                                         </button>
                                     </div>
                                     <div
@@ -492,18 +490,25 @@ const FilterDesigns: NextPage = () => {
                                                 </Rnd>
                                             )}
                                             {filter?.filter_design && (
-                                                <img
-                                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                                <div
                                                     className="relative z-10 pointer-events-none"
-                                                    id={`filter-design-${i}`}
                                                     style={{
                                                         borderTopLeftRadius: campaignData.edge ?? 14 - 3,
                                                         borderTopRightRadius: campaignData.edge ?? 14 - 3,
                                                     }}
-                                                />
+                                                >
+                                                    <Image
+                                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                                        id={`filter-design-${i}`}
+                                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                                        quality={50}
+                                                        priority={true}
+                                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                                    />
+                                                </div>
                                             )}
-                                            <img
-                                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
+                                            <div
                                                 className="absolute object-cover pointer-events-none max-w-none"
                                                 style={{
                                                     width: `${filter?.rnd?.w}%`,
@@ -511,7 +516,16 @@ const FilterDesigns: NextPage = () => {
                                                     left: `${filter?.rnd?.x}%`,
                                                     top: `${filter?.rnd?.y}%`,
                                                 }}
-                                            />
+                                            >
+                                                <Image
+                                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
+                                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                                    quality={50}
+                                                    priority={true}
+                                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                                />
+                                            </div>
                                         </div>
                                         <div className="flex justify-center p-6">
                                             <div className="relative">
@@ -523,11 +537,18 @@ const FilterDesigns: NextPage = () => {
                                                     }
                                                 >
                                                     {filter?.button?.icon
-                                                        ? <img
-                                                            src={filter?.button?.icon}
-                                                            className="!w-5 invert"
-                                                            style={{ color: filter?.button?.textcolor ?? "#000"}}
-                                                        />
+                                                        ?
+                                                        <div style={{ color: filter?.button?.textcolor ?? "#000"}}>
+                                                            <Image
+                                                                src={filter?.button?.icon}
+                                                                loader={({ src, width }) => { return src + "?w=" + width }}
+                                                                className="!w-5 invert"
+                                                                quality={50}
+                                                                width={15}
+                                                                height={15}
+                                                            />
+                                                        </div> 
+                                                            
                                                         : <CameraIcon
                                                             className="!h-5 !w-5 text-gray-500"
                                                             aria-hidden="true"

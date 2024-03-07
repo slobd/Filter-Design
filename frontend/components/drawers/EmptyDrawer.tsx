@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-export type DrawerProps = {
+export type EmptyDrawerProps = {
   open: boolean;
   setOpen: (e: any) => void;
   children?: React.ReactNode;
@@ -13,7 +13,7 @@ export type DrawerProps = {
   size?: string | null;
 };
 
-const Drawer: NextPage<DrawerProps> = ({
+const EmptyDrawerProps: NextPage<EmptyDrawerProps> = ({
   open,
   setOpen,
   children,
@@ -108,4 +108,4 @@ const Drawer: NextPage<DrawerProps> = ({
   );
 };
 
-export default Drawer;
+export default EmptyDrawerProps;

@@ -3,96 +3,16 @@ import { useRef, useState } from "react";
 import Image from 'next/image'
 import TextField from "./common/TextField";
 import Button from "./common/Button";
-// import GalleryImage1 from "assets/images/gallery/1.jpeg";
-// import GalleryImage2 from "assets/images/gallery/2.jpeg";
-// import GalleryImage3 from "assets/images/gallery/3.jpeg";
-// import GalleryImage4 from "assets/images/gallery/4.jpeg";
-// import GalleryImage5 from "assets/images/gallery/5.jpeg";
-// import GalleryImage6 from "assets/images/gallery/6.jpeg";
-// import GalleryImage7 from "assets/images/gallery/7.jpeg";
-// import GalleryImage8 from "assets/images/gallery/8.jpeg";
-// import GalleryImage9 from "assets/images/gallery/9.jpeg";
+import { CameraIcon } from "@heroicons/react/24/outline";
+import { FaLinkedin } from "react-icons/fa";
 
 const PhotoGallery: NextPage = () => {
   const [image, setImage] = useState<any>();
   const fileRef = useRef<any>();
-  const items: any[] = [
-    // {
-    //   id: 1,
-    //   avatar: GalleryImage1,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 2,
-    //   avatar: GalleryImage2,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 3,
-    //   avatar: GalleryImage3,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 4,
-    //   avatar: GalleryImage4,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 5,
-    //   avatar: GalleryImage5,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 6,
-    //   avatar: GalleryImage6,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 7,
-    //   avatar: GalleryImage7,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 8,
-    //   avatar: GalleryImage8,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-    // {
-    //   id: 9,
-    //   avatar: GalleryImage9,
-    //   name: "Joachin Meyer",
-    //   profile: "https://linkedin.com",
-    //   role: "CEO",
-    //   location: "McDonalds Switzerland",
-    // },
-  ];
+  const items: any[] = [];
 
   const handleChange = (e: any) => {
-    // setImage(URL.createObjectURL(e.target.files[0]));
+    setImage(URL.createObjectURL(e.target.files[0]));
   };
 
   return (
@@ -107,7 +27,7 @@ const PhotoGallery: NextPage = () => {
               className="bg-white flex items-center justify-center gap-2.5 text-black shadow border border-gray-100 text-base rounded-md h-11 px-4 hover:opacity-60 transition"
               onClick={() => fileRef.current.click()}
             >
-              <Image src="/assets/images/icons/camera.svg" className="w-5" alt=""/>
+              <CameraIcon className="w-5"/>
               <span className="font-medium text-sm">Upload / Take Photo</span>
             </button>
           </div>
@@ -182,7 +102,7 @@ const PhotoGallery: NextPage = () => {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center bg-white rounded px-1.5 shadow"
                 >
-                  <Image src="/assets/images/icons/profile-link.svg" width={35} height={35} className="w-3" alt=""/>
+                  <FaLinkedin className="text-lg"/>
                 </a>
               </div>
               <span className="inline-block bg-white rounded px-2 py-1 font-regular text-xs shadow">

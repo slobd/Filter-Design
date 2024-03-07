@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
 import { Fragment, useEffect, useState } from "react";
-// import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRouter } from 'next/router';
 import {
   Bars3Icon,
@@ -114,14 +113,6 @@ const CreatorLayout: NextPage = () => {
                           aria-hidden="true"
                         />
                         {item.name}
-                        {/* {item?.count && (
-                          <span
-                            className="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200"
-                            aria-hidden="true"
-                          >
-                            {item?.count}
-                          </span>
-                        )} */}
                       </span>
                     </li>
                     {item.underline && <hr className="!my-2.5" />}
@@ -136,9 +127,6 @@ const CreatorLayout: NextPage = () => {
         onClick={() => setOpen(!open)}
         className="w-6 flex md:hidden absolute top-5 left-4 cursor-pointer"
       />
-      {/* <div className="w-full md:pl-72">
-        <Outlet />
-      </div> */}
     </>
   );
 };

@@ -17,13 +17,10 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import TextField from "../../../components/common/TextField";
 import Button from "../../../components/common/Button";
-// import Logo from "/assets/images/logo.png";
-// import LinkedinIcon from "/assets/images/icons/linkedin.svg";
-// import FacebookIcon from "/assets/images/icons/facebook.svg";
-// import TwitterIcon from "/assets/images/icons/twitter-sm.svg";
-// import WhatsappIcon from "/assets/images/icons/whatsapp.svg";
-// import WhiteSaveIcon from "/assets/images/icons/save-white.svg";
-// import WhiteDownloadIcon from "/assets/images/icons/download-white.svg";
+import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
+import { FaXTwitter  } from "react-icons/fa6";
+import { FiSave } from "react-icons/fi";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { filterDesignWidths } from "../../../utils/constants";
 import { CampaignType, GalleryType, FilterType } from '../../../utils/types';
 
@@ -96,7 +93,6 @@ const User: NextPage = () => {
     };
 
     const handleGenerate = () => {
-        console.log("handleGenerate", fileRef.current.files[0]);
         let clonedImage = [...image];
         clonedImage[selectedIndex] = fileRef.current.files[0];
         setImage([...clonedImage]);
@@ -160,7 +156,6 @@ const User: NextPage = () => {
     };
 
     const changeCarouselHeight = () => {
-        console.log("changeCarouselHeight")
         const _timer = setTimeout(() => {
             const currentItem = document.querySelector(`.campaign-preview-carousel .slide.selected .carousel-item`);
             if (currentItem) {
@@ -181,7 +176,6 @@ const User: NextPage = () => {
     };
 
     useEffect(() => {
-        console.log("useEffect", campaign)
         if (carouselHeight < 500) return;
         const slideWrapper = document.querySelector<HTMLElement>(`.campaign-preview-carousel .slider-wrapper`);
         if (slideWrapper) {
@@ -190,7 +184,6 @@ const User: NextPage = () => {
     }, [carouselHeight])
 
     useEffect(() => {
-        console.log("useEffect", campaign)
         APIService.filter.getAll().then((filters: any[]) => {
             if (query?.slug && query?.slug !== undefined) {
                 APIService.campaign.getBySlug(query?.slug).then((res: any) => {
@@ -201,7 +194,6 @@ const User: NextPage = () => {
     }, [query?.slug]);
 
     useEffect(() => {
-        console.log("useEffect", campaign)
         if (campaign?.filters) {
             setImage(campaign?.filters.map(i => null))
             const squareFilters = campaign?.filters.filter(i => i.filter_design?.type == 'square');
@@ -272,15 +264,19 @@ const User: NextPage = () => {
                                     <Image
                                         src={URL.createObjectURL(image[i])}
                                         loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
                                     />
                                 ) : (
                                     <Image
                                         src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
                                         loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
                                     />
                                 )}
                             </div>
@@ -288,8 +284,10 @@ const User: NextPage = () => {
                                 <Image
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                                     loader={({ src, width }) => { return src + "?w=" + width }}
+                                    quality={50}
+                                    priority={true}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 400 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
                                     onLoad={imageLoaded}
                                 />
                             </div>
@@ -306,27 +304,16 @@ const User: NextPage = () => {
                                     </span>
                                     <div className="flex gap-3">
                                         {campaign?.sharing_options?.linkedin && (
-                                            <img
-                                                src="/assets/images/icons/linkedin.svg"
-                                                className="!w-11 transition hover:opacity-60 cursor-pointer"
-                                            />
+                                            <FaLinkedin  className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer"/>
                                         )}
                                         {campaign?.sharing_options?.facebook && (
-                                            <img
-                                                src="/assets/images/icons/facebook.svg"
-                                                className="!w-11 transition hover:opacity-60 cursor-pointer"
-                                            />
+                                            <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
                                         {campaign?.sharing_options?.twitter && (
-                                            <div className="w-11 h-11 bg-black flex items-center justify-center rounded-md transition hover:opacity-60 cursor-pointer">
-                                                <img src="/assets/images/icons/twitter-sm.svg" className="!w-6 invert" />
-                                            </div>
+                                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer"/>
                                         )}
                                         {campaign?.sharing_options?.whatsapp && (
-                                            <img
-                                                src="/assets/images/icons/whatsapp.svg"
-                                                className="!w-11 transition hover:opacity-60 cursor-pointer"
-                                            />
+                                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer"/>
                                         )}
                                     </div>
                                     {tab === "download" && campaign?.sharing_options?.download && (
@@ -334,7 +321,7 @@ const User: NextPage = () => {
                                             className="!bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60"
                                             onClick={() => handleDownload(i)}
                                         >
-                                            <img src="/assets/images/icons/download-white.svg" className="!w-5 text-white" />
+                                            <ArrowDownTrayIcon className="!w-5 text-white"/>
                                             <span className="font-medium text-white break-all">
                                                 {campaign?.download_image}
                                             </span>
@@ -362,11 +349,20 @@ const User: NextPage = () => {
                                     style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
                                 >
                                     {filter?.button?.icon
-                                        ? <img
-                                            src={filter.button.icon}
-                                            className="!w-5 invert"
+                                        ? 
+                                        <div
                                             style={{ color: filter?.button?.textcolor ?? "#000" }}
-                                        />
+                                        >
+                                            <Image
+                                                src={filter.button.icon}
+                                                className="!w-5 invert"
+                                                loader={({ src, width }) => { return src + "?w=" + width }}
+                                                quality={50}
+                                                width={15}
+                                                height={15}
+                                            /> 
+                                        </div>
+                                        
                                         : <CameraIcon
                                             className="!h-5 !w-5 text-gray-500"
                                             aria-hidden="true"
@@ -390,8 +386,7 @@ const User: NextPage = () => {
                         // id={`card-${i}`}
                     >
                         {image[i] && (
-                            <img
-                                src={URL.createObjectURL(image[i])}
+                            <div
                                 className="object-cover absolute max-w-none"
                                 style={{
                                     width: `${filter?.rnd?.w}%`,
@@ -399,11 +394,25 @@ const User: NextPage = () => {
                                     left: `${filter?.rnd?.x}%`,
                                     top: `${filter?.rnd?.y}%`,
                                 }}
-                            />
+                            >
+                                <Image
+                                    src={URL.createObjectURL(image[i])}
+                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    quality={50}
+                                    priority={true}
+                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                />
+                            </div>
                         )}
-                        <img
+                        <Image
                             src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                             className="relative z-10"
+                            loader={({ src, width }) => { return src + "?w=" + width }}
+                            quality={50}
+                            priority={true}
+                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
                         />
                     </div>
                 </div>
@@ -420,7 +429,7 @@ const User: NextPage = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <img src="/assets/images/logo.png" className="w-10 h-10" />
+                    <Image src="/assets/images/logo.png" className="w-10 h-10" width={35} height={35}/>
                 </a>
                 <a
                     href="http://www.livedab.de/"
@@ -503,7 +512,7 @@ const User: NextPage = () => {
             )} */}
             <div className={`${campaign?.dark_mode ? `dark` : ``}`}>
                 <div
-                    className="dark:bg-gray-800 relative"
+                    className={`dark:bg-gray-800 relative ${campaign?.dark_mode ? "!bg-gray-800" : ""}`}
                     style={{
                         background:
                             campaign?.background?.type === "color"
@@ -520,15 +529,23 @@ const User: NextPage = () => {
                     </div>
                     <div className="py-10 px-5 md:px-20 flex flex-col items-center relative z-10">
                         {campaign?.logo && (
-                            <img
-                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaign?.logo}`}
+                            <div
                                 style={{
                                     width: (campaign.logo_setting?.size ?? 80) * 1,
                                     borderRadius: (campaign.logo_setting?.radius ?? 0) * 1,
                                     marginTop: (campaign.logo_setting?.padding_top ?? 0) * 1,
                                     marginBottom: (campaign.logo_setting?.padding_bottom  ?? 20) * 1,
                                 }}
-                            />
+                            >
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaign?.logo}`}
+                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    quality={50}
+                                    priority={true}
+                                    width={70}
+                                    height={70}
+                                />
+                            </div>
                         )}
                         {campaign?.title && (
                             <h2
@@ -598,7 +615,7 @@ const User: NextPage = () => {
                                                 className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                 onClick={() => copy(campaign?.share_text ?? "")}
                                             >
-                                                <img src="/assets/images/icons/save-white.svg" className="!w-4 dark:invert mr-2" />
+                                                <FiSave className="text-xl mr-2"/>
                                                 Copy Text
                                             </button>
                                         </div>
@@ -629,7 +646,7 @@ const User: NextPage = () => {
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign.share_text ?? "")}
                                                     >
-                                                        <img src="/assets/images/icons/save-white.svg" className="!w-4 dark:invert mr-2" />
+                                                        <FiSave className="text-xl mr-2"/>
                                                         Copy Text
                                                     </button>
                                                 </div>
@@ -647,7 +664,6 @@ const User: NextPage = () => {
                                         transitionTime={0}
                                         stopOnHover={true}
                                         onChange={handleSlideChange}
-                                        // dynamicHeight={true}
                                         renderArrowPrev={(onClickHandler, hasPrev, label) =>
                                             hasPrev &&
                                             <div className="absolute top-0 z-10 w-7 h-[85%] mt-10 mb-20 flex items-center justify-center">
@@ -694,7 +710,7 @@ const User: NextPage = () => {
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign?.share_text ?? "")}
                                                     >
-                                                        <img src="/assets/images/icons/save-white.svg" className="!w-4 dark:invert mr-2" />
+                                                        <FiSave className="text-xl mr-2"/>
                                                         Copy Text
                                                     </button>
                                                 </div>

@@ -2,11 +2,8 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from 'next/image'
 import { ClipboardDocumentIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import QrcodeImage from "assets/images/qr.png";
-import LinkedinIcon from "assets/images/icons/linkedin.svg";
-import FacebookIcon from "assets/images/icons/facebook.svg";
-import TwitterIcon from "assets/images/icons/twitter.svg";
-import WhatsappIcon from "assets/images/icons/whatsapp.svg";
+import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
+import { FaXTwitter  } from "react-icons/fa6";
 
 const QRCodeModal = ({ open, setOpen }) => {
   const cancelButtonRef = useRef(null);
@@ -61,7 +58,7 @@ const QRCodeModal = ({ open, setOpen }) => {
                 </div>
                 <div className="flex justify-center">
                   <div className="bg-gray-100 p-5 rounded">
-                    <Image src={QrcodeImage} alt=""/>
+                    <Image src="/assets/images/qr.png" width={50} height={50} alt=""/>
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
@@ -95,26 +92,10 @@ const QRCodeModal = ({ open, setOpen }) => {
                   </div>
                 </div>
                 <div className="flex justify-center gap-3 mt-4">
-                  <Image
-                    src={LinkedinIcon}
-                    className="w-10 transition hover:opacity-60 cursor-pointer"
-                    alt=""
-                  />
-                  <Image
-                    src={FacebookIcon}
-                    className="w-10 transition hover:opacity-60 cursor-pointer"
-                    alt=""
-                  />
-                  <Image
-                    src={TwitterIcon}
-                    className="w-10 transition hover:opacity-60 cursor-pointer"
-                    alt=""
-                  />
-                  <Image
-                    src={WhatsappIcon}
-                    className="w-10 transition hover:opacity-60 cursor-pointer"
-                    alt=""
-                  />
+                  <FaLinkedin className="text-[#0077B5] w-10 transition hover:opacity-60 cursor-pointer"/>
+                  <FaFacebookSquare className="text-[#3A559F] w-10 transition hover:opacity-60 cursor-pointer" />
+                  <FaXTwitter className="text-white w-10 transition hover:opacity-60 cursor-pointer"/>
+                  <FaWhatsappSquare className="text-[#29A71A] w-10 transition hover:opacity-60 cursor-pointer"/>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

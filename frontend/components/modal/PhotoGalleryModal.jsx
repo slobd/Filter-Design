@@ -4,16 +4,17 @@ import Image from 'next/image'
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ClipboardDocumentIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import GalleryImage1 from "assets/images/gallery/1.jpeg";
-import GalleryImage2 from "assets/images/gallery/2.jpeg";
-import GalleryImage3 from "assets/images/gallery/3.jpeg";
-import GalleryImage4 from "assets/images/gallery/4.jpeg";
-import GalleryImage5 from "assets/images/gallery/5.jpeg";
-import GalleryImage6 from "assets/images/gallery/6.jpeg";
-import GalleryImage7 from "assets/images/gallery/7.jpeg";
-import GalleryImage8 from "assets/images/gallery/8.jpeg";
-import GalleryImage9 from "assets/images/gallery/9.jpeg";
-import LinkedinIcon from "assets/images/icons/profile-link.svg";
+import GalleryImage1 from "/assets/images/gallery/1.jpeg";
+import GalleryImage2 from "/assets/images/gallery/2.jpeg";
+import GalleryImage3 from "/assets/images/gallery/3.jpeg";
+import GalleryImage4 from "/assets/images/gallery/4.jpeg";
+import GalleryImage5 from "/assets/images/gallery/5.jpeg";
+import GalleryImage6 from "/assets/images/gallery/6.jpeg";
+import GalleryImage7 from "/assets/images/gallery/7.jpeg";
+import GalleryImage8 from "/assets/images/gallery/8.jpeg";
+import GalleryImage9 from "/assets/images/gallery/9.jpeg";
+import { FaLinkedin } from "react-icons/fa";
+
 
 const code = `function createStyleObject(classNames, style) {
   return classNames.reduce((styleObject, className) => {
@@ -42,7 +43,7 @@ function createElement({ node, style, useInlineStyles, key }) {
   }
 }`;
 
-const PhotoGallery = ({ open, setOpen }) => {
+const PhotoGalleryModal = ({ open, setOpen }) => {
   const [selectedTab, setSelectedTab] = useState(1);
   const cancelButtonRef = useRef(null);
   const tabs = [
@@ -207,7 +208,7 @@ const PhotoGallery = ({ open, setOpen }) => {
                                   rel="noreferrer"
                                   className="inline-flex items-center justify-center bg-white rounded px-1.5 shadow"
                                 >
-                                  <Image src={LinkedinIcon} className="w-3" alt=""/>
+                                  <FaLinkedin className="w-3"/>
                                 </a>
                               </div>
                               <span className="inline-block bg-white rounded px-2 py-1 font-regular text-xs shadow">
@@ -249,4 +250,4 @@ const PhotoGallery = ({ open, setOpen }) => {
   );
 };
 
-export default PhotoGallery;
+export default PhotoGalleryModal;

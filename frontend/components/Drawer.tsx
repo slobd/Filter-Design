@@ -7,8 +7,7 @@ import ToggleSwitch from "./common/ToggleSwitch";
 import Button from "./common/Button";
 import ColorPicker from "./common/ColorPicker";
 import DropdownButton from "./common/DropdownButton";
-// import PlaceholderImage from "assets/images/placeholder.jpg";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, Cog8ToothIcon } from "@heroicons/react/24/outline";
 
 const Drawer: NextPage = () => {
   const [open, setOpen] = useState(false);
@@ -31,7 +30,7 @@ const Drawer: NextPage = () => {
         className="flex md:hidden absolute top-20 left-4 !px-2 z-10"
         onClick={() => setOpen(!open)}
       >
-        <Image src="/assets/images/icons/setting.svg" width={35} height={35} className="w-5" alt="" />
+        <Cog8ToothIcon className="w-5"/>
       </Button>
       <div
         className={`transition fixed z-20 left-0 top-0 w-full max-w-[320px] md:max-w-[400px] flex h-screen flex-col divide-y divide-gray-200 bg-white border-r ${

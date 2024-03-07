@@ -1,32 +1,26 @@
 import { NextPage } from "next";
 import React, { useEffect, useRef, useState, Suspense } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useAuth0 } from "@auth0/auth0-react";
 import BeatLoader from "react-spinners/BeatLoader";
 import copy from "copy-to-clipboard";
 import Button from "../../../components/common/Button";
 import ToggleSwitch from "../../../components/common/ToggleSwitch";
-import { EyeIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
-// import EmailIcon from "/assets/images/icons/email.png";
-// import DownloadIcon from "/assets/images/icons/download.svg";
-// import WhiteDownloadIcon from "/assets/images/icons/download-white.svg";
-// import LinkedinIcon from "/assets/images/icons/linkedin.svg";
-// import FacebookIcon from "/assets/images/icons/facebook.svg";
-// import SmTwitterIcon from "/assets/images/icons/twitter-sm.svg";
-// import WhatsappIcon from "/assets/images/icons/whatsapp.svg";
-// import CameraIcon from "/assets/images/icons/camera.svg";
-// import SettingIcon from "/assets/images/icons/setting-lines.svg";
-// import WhiteSaveIcon from "/assets/images/icons/save-white.svg";
-// import ArrowRightIcon from "/assets/images/icons/arrow-right.svg";
+import { EyeIcon, RocketLaunchIcon, ArrowDownTrayIcon, ArrowRightIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
+import { FaXTwitter  } from "react-icons/fa6";
+import { FiSave } from "react-icons/fi";
+import { AiOutlineMail } from "react-icons/ai";
 import CreatorLayout from '../../../components/Layout/Creator';
 import EmptyDrawer from "../../../components/drawers/EmptyDrawer";
 import { APIService } from "../../../api";
 import TextField from "../../../components/common/TextField";
 import ColorPicker from "../../../components/common/ColorPicker";
 import { useAppContext } from "../../../context/context";
-import { FilterType, FilterDesignType, LogoType, PlaceholderType, TextType, sharingOptionType } from '../../../utils/types';
-import { textTypeDefaultValue, logoTypeDefaultValue, filterDesignWidths} from '../../../utils/constants';
+import { FilterType, PlaceholderType } from '../../../utils/types';
+import { filterDesignWidths} from '../../../utils/constants';
 import { Font } from "@samuelmeuli/font-manager";
 
 const FontPicker = dynamic(() => import('font-picker-react'), { ssr: false });
@@ -49,32 +43,8 @@ const Settings: NextPage = () => {
   const [openDescriptionPanel, setOpenDescriptionPanel] = useState(false);
   const [password, setPassword] = useState("");
   const [edge, setEdge] = useState(14);
-  // const [shareTitle, setShareTitle] = useState("");
-  // const [shareText, setShareText] = useState("");
   const [logo, setLogo] = useState(campaignData?.logo);
-  // const [title, setTitle] = useState<TextType>(campaignData?.title
-  //   ?? {
-  //     ...textTypeDefaultValue,
-  //     text: "Share your Photo with your Network and Friends",
-  //   }
-  // );
-  // const [logoSetting, setLogoSetting] = useState<LogoType>(logoTypeDefaultValue);
-  // const [description, setDescription] = useState<TextType>(
-  //   campaignData?.description
-  //   ?? {
-  //     ...textTypeDefaultValue,
-  //     text: "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
-  //   }
-  // );
   const [showPassword, setShowPassword] = useState(false);
-  // const [sharingOptions, setSharingOptions] = useState<sharingOptionType>({
-  //   twitter: false,
-  //   linkedin: false,
-  //   whatsapp: false,
-  //   facebook: false,
-  //   download: true,
-  //   email: false,
-  // });
   const [selectedPlaceholderImage, setSelectedPlaceholderImage] = useState("");
   const [selectedPlaceholderImageForStory, setSelectedPlaceholderImageForStory] = useState("");
   const [settingOptions, setSettingOptions] = useState({
@@ -90,7 +60,6 @@ const Settings: NextPage = () => {
     activeSliderMode: false,
   });
   const [placeholders, setPlaceholders] = useState<PlaceholderType[]>([]);
-  const [filterDesigns, setFilterDesigns] = useState<FilterDesignType[]>([]); 
   const [loading, setLoading] = useState(false);
 
   const handleChangeLogo = (target: any, value: any) => {
@@ -186,7 +155,10 @@ const Settings: NextPage = () => {
   const handleUploadPlaceholderImage = (e: any) => {
     APIService.placeholder.create({ image: e.target.files[0], type: 'square' })
       .then((res: any) => {
-        setPlaceholders(res.data);
+        setPlaceholders([
+          ...placeholders,
+          res.data
+        ]);
         setSelectedPlaceholderImage(res.data.image);
       });
   };
@@ -194,7 +166,10 @@ const Settings: NextPage = () => {
   const handleUploadPlaceholderImageForStory = (e: any) => {
     APIService.placeholder.create({ image: e.target.files[0], type: 'story' })
     .then((res: any) => {
-      setPlaceholders(res.data);
+      setPlaceholders([
+        ...placeholders,
+        res.data
+      ]);
       setSelectedPlaceholderImageForStory(res.data.image);
     });
   };
@@ -214,6 +189,8 @@ const Settings: NextPage = () => {
       });
     }
   };
+
+  console.log("placeholders", placeholders)
 
   const handleChangeBackgroundColor = (e: any) => {
     setBackgroundColor(e);
@@ -288,80 +265,19 @@ const Settings: NextPage = () => {
     contextCampaignData({
       ...campaignData,
       logo: settingOptions.showLogo && logo ? logo : null,
-      // title: settingOptions.showTitle
-      //   ? {
-      //       ...title,
-      //       text:
-      //         title?.text !== ""
-      //           ? title?.text
-      //           : "Share your Photo with your Network and Friends",
-      //     }
-      //   : {
-      //       text: "",
-      //       font_family: "Inter",
-      //       font_weight: 700,
-      //       font_size: 30,
-      //       color: "#000",
-      //       letter_spacing: 0,
-      //       line_height: 45,
-      //       padding_top: 0,
-      //       padding_bottom: 0,
-      //     },
-      // logo_setting: { ...campaignData?.logo_setting, ...logoSetting },
-      // description: settingOptions.showDescription
-      //   ? {
-      //       ...description,
-      //       text:
-      //         description?.text !== ""
-      //           ? description?.text
-      //           : "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
-      //     }
-      //   : {
-      //       text: "",
-      //       font_family: "Inter",
-      //       font_weight: 400,
-      //       font_size: 14,
-      //       color: "#000",
-      //       letter_spacing: 0,
-      //       line_height: 21,
-      //       padding_top: 0,
-      //       padding_bottom: 20,
-      //     },
       dark_mode: settingOptions.lightMode,
       hide_size_buttons: settingOptions.hideSizeButtons,
       active_slider_mode: settingOptions.activeSliderMode,
       password: settingOptions.passwordProtected ? password : null,
       edge: settingOptions.enableEdge ? edge * 1 : 0,
-      // share_title: shareTitle,
-      // share_text: shareText,
-      // sharing_options: settingOptions.downloadOptions
-      //   ? { ...sharingOptions }
-      //   : {
-      //       twitter: false,
-      //       linkedin: false,
-      //       whatsapp: false,
-      //       facebook: false,
-      //       download: true,
-      //       email: false,
-      //     },
       show_gallery: settingOptions.showGallery,
-      // placeholder_image: selectedPlaceholderImage,
-      // placeholder_story_image: selectedPlaceholderImageForStory,
     })
   }
   , [ 
     logo,
-    // logoSetting,
-  //   title,
-  //   description,
     password,
     settingOptions,
-  //   selectedPlaceholderImage,
-  //   selectedPlaceholderImageForStory,
-  //   sharingOptions,
     edge,
-  //   shareTitle,
-  //   shareText, 
   ]);
 
   const getActiveSocial = (data: any) => {
@@ -369,7 +285,7 @@ const Settings: NextPage = () => {
       data.twitter ||
       data.linkedin ||
       data.whatsapp ||
-      data.linkedin ||
+      data.facebook ||
       data.download
     );
   };
@@ -398,16 +314,8 @@ const Settings: NextPage = () => {
           enableEdge: res.data?.edge != 0 ? true : false,
         });
         setEdge(res.data?.edge ?? 14);
-        // setShareTitle(res.data?.share_title ?? "");
-        // setShareText(res.data?.share_text ?? "");
         res.data?.logo && setLogo(res.data.logo);
-        // setTitle({ ...res.data?.title ?? textTypeDefaultValue});
-        // setLogoSetting({ ...res.data?.logo_setting ?? logoTypeDefaultValue });
-        // setDescription({ ...res.data?.description ?? textTypeDefaultValue });
-        // res.data?.description && setDescription(res.data?.description);
         res.data?.password && setPassword(res.data?.password);
-        // res.data?.sharing_options &&
-        // setSharingOptions({ ...res.data?.sharing_options });
         res.data?.placeholder_image &&
         setSelectedPlaceholderImage(res.data?.placeholder_image);
         res.data?.placeholder_story_image &&
@@ -416,17 +324,11 @@ const Settings: NextPage = () => {
         setBackgroundColor(res.data?.background.value ?? "#FFF");
       }
     });
-  }, []);
+  }, [query?.slug]);
 
   const handleChangeText = (text: any) => {
     contextCampaignData({ change_photo: text });
   };
-
-  useEffect(() => {
-    APIService.filter.getAll(user?.email).then((res: any) => {
-      setFilterDesigns(res.data);
-    });
-  }, []);
 
   useEffect(() => {
     const loadFontPicker = async () => {
@@ -450,12 +352,7 @@ const Settings: NextPage = () => {
           className="w-10 h-10 flex md:hidden items-center justify-center bg-white shadow absolute top-20 right-0 translate-x-full rounded-r-lg"
           onClick={() => setOpenSidebar(!openSidebar)}
         >
-          <img
-            src="/assets/images/icons/arrow-right.svg"
-            className={`w-6 ${
-              !openSidebar ? `rotate-0` : `rotate-180`
-            } transition`}
-          />
+          <ArrowRightIcon className="w-5"/>
         </button>
         <div className="flex flex-col h-full py-5 overflow-y-auto">
           <h2 className="font-semibold text-lg mb-4 px-4">Settings</h2>
@@ -468,9 +365,8 @@ const Settings: NextPage = () => {
                 <span>Show Logo</span>
                 <div className="flex items-center gap-3">
                   {settingOptions.showLogo && (
-                    <img
-                      src="/assets/images/icons/setting-lines.svg"
-                      className="w-5 brightness-0 opacity-60 cursor-pointer"
+                    <AdjustmentsHorizontalIcon 
+                      className="w-7 brightness-0 opacity-80 cursor-pointer"
                       onClick={() => setOpenLogoPanel(true)}
                     />
                   )}
@@ -486,9 +382,8 @@ const Settings: NextPage = () => {
                 <span>Show Title</span>
                 <div className="flex items-center gap-3">
                   {settingOptions.showTitle && (
-                    <img
-                      src="/assets/images/icons/setting-lines.svg"
-                      className="w-5 brightness-0 opacity-60 cursor-pointer"
+                    <AdjustmentsHorizontalIcon 
+                      className="w-7 brightness-0 opacity-80 cursor-pointer"
                       onClick={() => setOpenTitlePanel(true)}
                     />
                   )}
@@ -504,9 +399,8 @@ const Settings: NextPage = () => {
                 <span>Show Description</span>{" "}
                 <div className="flex items-center gap-3">
                   {settingOptions.showDescription && (
-                    <img
-                      src="/assets/images/icons/setting-lines.svg"
-                      className="w-5 brightness-0 opacity-60 cursor-pointer"
+                    <AdjustmentsHorizontalIcon 
+                      className="w-7 brightness-0 opacity-80 cursor-pointer"
                       onClick={() => setOpenDescriptionPanel(true)}
                     />
                   )}
@@ -628,7 +522,7 @@ const Settings: NextPage = () => {
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
                         <div className="w-4 h-4 bg-black flex items-center justify-center rounded-[3px]">
-                          <img src="/assets/images/icons/twitter-sm.svg" className="w-2 invert" />
+                          <FaXTwitter className="text-white"/>
                         </div>
                         <span className="font-medium text-gray-900">
                           Twitter
@@ -651,7 +545,7 @@ const Settings: NextPage = () => {
                         htmlFor="linkedin"
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
-                        <img src="/assets/images/icons/linkedin.svg" className="w-4" />
+                        <FaLinkedin className="text-[#0077B5] text-lg"/>
                         <span className="font-medium text-gray-900">
                           Linkedin
                         </span>
@@ -673,7 +567,7 @@ const Settings: NextPage = () => {
                         htmlFor="whatsapp"
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
-                        <img src="/assets/images/icons/whatsapp.svg" className="w-4" />
+                        <FaWhatsappSquare className="text-[#29A71A] text-lg"/>
                         <span className="font-medium text-gray-900">
                           WhatsApp
                         </span>
@@ -695,7 +589,7 @@ const Settings: NextPage = () => {
                         htmlFor="facebook"
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
-                        <img src="/assets/images/icons/facebook.svg" className="w-4" />
+                        <FaFacebookSquare className="text-[#3A559F] text-lg" />
                         <span className="font-medium text-gray-900">
                           Facebook
                         </span>
@@ -717,7 +611,7 @@ const Settings: NextPage = () => {
                         htmlFor="download"
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
-                        <img src="/assets/images/icons/download.svg" className="w-4" />
+                        <ArrowDownTrayIcon className="h-5 w-4 text-gray-black" />
                         <span className="font-medium text-gray-900">
                           Download
                         </span>
@@ -739,7 +633,7 @@ const Settings: NextPage = () => {
                         htmlFor="email"
                         className="ml-3 text-sm leading-6 flex items-center gap-1"
                       >
-                        <img src="/assets/images/icons/email.png" className="w-4" />
+                        <AiOutlineMail className="h-5 w-4 text-md"/>
                         <span className="font-medium text-gray-900">Email</span>
                       </label>
                     </div>
@@ -794,23 +688,33 @@ const Settings: NextPage = () => {
                   Select Placeholder Image
                 </span>
                 <div className="grid grid-cols-4 gap-2 mb-4">
-                  {placeholders.filter(i => i.type == 'square').map((placeholder) => (
-                    <React.Fragment key={placeholder._id}>
-                      {placeholder.image && (
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${placeholder.image}`}
-                          className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 ${
-                            placeholder.image === selectedPlaceholderImage
-                              ? `border-indigo-600`
-                              : `border-transparent`
-                          }`}
-                          onClick={() =>
-                            handleChangePlaceholderImage(placeholder.image)
-                          }
-                        />
-                      )}
-                    </React.Fragment>
-                  ))}
+                  {placeholders?.length 
+                    ? placeholders?.filter(i => i.type == 'square').map((placeholder) => (
+                      <React.Fragment key={placeholder._id}>
+                        {placeholder.image && (
+                          <div
+                            className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 w-12 h-12 ${
+                              placeholder.image === selectedPlaceholderImage
+                                ? `border-indigo-600`
+                                : `border-transparent`
+                            }`}
+                            onClick={() =>
+                              handleChangePlaceholderImage(placeholder.image)
+                            }
+                          >
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${placeholder.image}`}
+                              loader={({ src, width }) => { return src + "?w=" + width }}
+                              quality={50}
+                              priority={true}
+                              width={70}
+                              height={70}
+                            />
+                          </div>
+                          )}
+                    </React.Fragment>))
+                  : null
+                }
                 </div>
                 <Button color="white" onClick={() => imageRef.current.click()}>
                   Upload Custom Image
@@ -828,23 +732,34 @@ const Settings: NextPage = () => {
                   Select Placeholder Image For Story
                 </span>
                 <div className="grid grid-cols-4 gap-2 mb-4">
-                  {placeholders.filter(i => i.type == 'story').map((placeholder) => (
-                    <React.Fragment key={placeholder._id}>
-                      {placeholder.image && (
-                        <img
-                          src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${placeholder.image}`}
-                          className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 ${
-                            placeholder.image === selectedPlaceholderImage
-                              ? `border-indigo-600`
-                              : `border-transparent`
-                          }`}
-                          onClick={() =>
-                            handleChangePlaceholderImageForStory(placeholder.image)
-                          }
-                        />
-                      )}
-                    </React.Fragment>
-                  ))}
+                  {placeholders?.length 
+                    ? placeholders?.filter(i => i.type == 'story').map((placeholder) => (
+                      <React.Fragment key={placeholder._id}>
+                        {placeholder.image && (
+                          <div
+                            className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 w-12 h-12 ${
+                              placeholder.image === selectedPlaceholderImageForStory
+                                ? `border-indigo-600`
+                                : `border-transparent`
+                            }`}
+                            onClick={() =>
+                              handleChangePlaceholderImageForStory(placeholder.image)
+                            }
+                          >
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${placeholder.image}`}
+                              loader={({ src, width }) => { return src + "?w=" + width }}
+                              quality={50}
+                              priority={true}
+                              width={70}
+                              height={70}
+                            />
+                          </div>
+                          
+                        )}
+                      </React.Fragment>))
+                    : null
+                  }
                 </div>
                 <Button color="white" onClick={() => imageRefForStory.current.click()}>
                   Upload Custom Image For Story
@@ -892,7 +807,7 @@ const Settings: NextPage = () => {
             className="!px-2 flex md:hidden"
             onClick={handleNext}
           >
-            <img src="/assets/images/icons/arrow-right.svg" className="w-5" />
+            <ArrowRightIcon className="text-black w-4" />
           </Button>
           <Button
             color="white"
@@ -958,15 +873,24 @@ const Settings: NextPage = () => {
               {settingOptions.showLogo && (
                 <>
                   {campaignData?.logo ? (
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.logo}`}
-                      className="cursor-pointer"
+                    <div
                       onClick={() => logoRef.current.click()}
+                      className="cursor-pointer"
                       style={{
                         width: (campaignData?.logo_setting?.size ?? 80) * 1,
                         borderRadius: (campaignData?.logo_setting?.radius ?? 0) * 1,
                       }}
-                    />
+                    >
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.logo}`}
+                        loader={({ src, width }) => { return src + "?w=" + width }}
+                        quality={50}
+                        priority={true}
+                        width={70}
+                        height={70}
+                      />
+                    </div>
+                    
                   ) : (
                     <>
                       <div className="w-full border-t-2 border-dashed h-0 absolute left-0 top-1/2"></div>
@@ -1045,8 +969,7 @@ const Settings: NextPage = () => {
                       >
                         
                         {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && (
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImage}`}
+                          <div
                             className="absolute object-cover max-w-none"
                             style={{
                               width: `${filter?.rnd?.w}%`,
@@ -1054,11 +977,20 @@ const Settings: NextPage = () => {
                               left: `${filter?.rnd?.x}%`,
                               top: `${filter?.rnd?.y}%`,
                             }}
-                          />
+                          >
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImage}`}
+                              loader={({ src, width }) => { return src + "?w=" + width }}
+                              quality={50}
+                              priority={true}
+                              width={filter?.filter_design?.type == 'square' ? 350 : 290}
+                              height={filter?.filter_design?.type == 'square' ? 350 : 350}
+                            />
+                          </div>
+                          
                         )}
                         {filter?.filter_design?.type == 'story' && selectedPlaceholderImageForStory && (
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImageForStory}`}
+                          <div
                             className="absolute object-cover max-w-none"
                             style={{
                               width: `${filter?.rnd?.w}%`,
@@ -1066,17 +998,34 @@ const Settings: NextPage = () => {
                               left: `${filter?.rnd?.x}%`,
                               top: `${filter?.rnd?.y}%`,
                             }}
-                          />
+                          >
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImageForStory}`}
+                              loader={({ src, width }) => { return src + "?w=" + width }}
+                              quality={50}
+                              priority={true}
+                              width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                              height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                            />
+                          </div>
                         )}
                         {filter?.filter_design?.image && (
-                          <img
-                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                          <div
                             className="relative z-10"
                             style={{
                               borderTopLeftRadius:  campaignData?.edge ?? 14,
                               borderTopRightRadius:  campaignData?.edge ?? 14,
                             }}
-                          />
+                          >
+                            <Image
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                              loader={({ src, width }) => { return src + "?w=" + width }}
+                              quality={50}
+                              priority={true}
+                              width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                              height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                            />
+                          </div>
                         )}
                       </div>
                       <div className="flex flex-col items-center p-4 pb-6 relative gap-2">
@@ -1095,37 +1044,23 @@ const Settings: NextPage = () => {
                         </p>
                         <div className="flex gap-3 mb-1">
                           {campaignData?.sharing_options?.linkedin && (
-                            <img
-                              src="/assets/images/icons/linkedin.svg"
-                              className="w-11 transition hover:opacity-60 cursor-pointer"
-                            />
+                            <FaLinkedin  className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer"/>
                           )}
                           {campaignData?.sharing_options?.facebook && (
-                            <img
-                              src="/assets/images/icons/facebook.svg"
-                              className="w-11 transition hover:opacity-60 cursor-pointer"
-                            />
+                            <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
                           )}
                           {campaignData?.sharing_options?.twitter && (
-                            <div className="w-11 h-11 bg-black flex items-center justify-center rounded-md cursor-pointer transition hover:opacity-60">
-                              <img src="/assets/images/icons/twitter-sm.svg" className="w-6 invert" />
-                            </div>
+                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer"/>
                           )}
                           {campaignData?.sharing_options?.whatsapp && (
-                            <img
-                              src="/assets/images/icons/whatsapp.svg"
-                              className="w-11 transition hover:opacity-60 cursor-pointer"
-                            />
+                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer"/>
                           )}
                         </div>
                         {campaignData?.sharing_options?.download && (
-                          <button className={`bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : ""}`}>
-                            <img
-                              src="/assets/images/icons/download-white.svg"
-                              className="w-5"
-                            />
+                          <button className={`bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : "border-gray-800"}`}>
+                            <ArrowDownTrayIcon className="w-5" />
                             <span
-                              className="font-medium text-white break-all"
+                              className="font-medium break-all"
                               contentEditable
                               onBlur={(e) =>
                                 contextCampaignData({
@@ -1167,11 +1102,7 @@ const Settings: NextPage = () => {
                   className="text-sm hover:opacity-70 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                   onClick={() => copy(campaignData?.share_text ?? "")}
                 >
-                  <img 
-                    src="/assets/images/icons/save-white.svg" 
-                    // className={`!w-4 dark:invert mr-2 ${campaignData?.dark_mode ? "invert" : ""}`}
-                    className={`!w-4 dark:invert mr-2`} 
-                  />
+                  <FiSave className="text-xl mr-2"/>
                   Copy Text
                 </button>
               </div>
@@ -1225,7 +1156,7 @@ const Settings: NextPage = () => {
         setOpen={setOpenTitlePanel}
         title="Title Options"
       >
-        <div className="mb-2">
+        {/* <div className="mb-2">
           <label className="inline-block font-medium text-sm mb-2">
             Font Family
           </label>
@@ -1246,7 +1177,7 @@ const Settings: NextPage = () => {
               sort={"alphabet"}            
             />
           }
-        </div>
+        </div> */}
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
@@ -1312,7 +1243,7 @@ const Settings: NextPage = () => {
         setOpen={setOpenDescriptionPanel}
         title="Description Options"
       >
-        <div className="mb-2">
+        {/* <div className="mb-2">
           <label className="inline-block font-medium text-sm mb-2">
             Font Family
           </label>
@@ -1332,7 +1263,7 @@ const Settings: NextPage = () => {
               sort={"alphabet"}
             />
           }
-        </div>
+        </div> */}
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select

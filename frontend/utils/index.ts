@@ -1,3 +1,5 @@
+import { sizeTypes } from "./constants";
+
 export const getBase64 = (file: any, cb: any) => {
     let reader = new FileReader();
     reader.readAsDataURL(file);
@@ -51,4 +53,14 @@ export const getBase64 = (file: any, cb: any) => {
     });
     return index;
   };
+
+  export const getFilterType = (file: any, cb: any) => {
+    var img = new Image();
+    let type;
+    img.onload = () => {
+        type = sizeTypes[`${img.width}x${img.height}`];
+        cb(type || "custom");
+    };
+    img.src = URL.createObjectURL(file);
+};
   

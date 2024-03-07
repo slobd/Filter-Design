@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sidebar from "../../components/Layout/Sidebar";
@@ -83,36 +84,52 @@ const ContactDetail: NextPage = () => {
                 <div className="grid grid-cols-4 gap-4">
                   <div className="col-span-1 flex flex-col items-center gap-3">
                     {contact?.company_logo && (
-                      <img
+                      <Image
                         src={getImageUrl(contact?.company_logo)}
                         className="w-full rounded-lg"
+                        loader={({ src, width }) => { return src + "?w=" + width }}
+                        quality={50}
+                        width={35}
+                        height={35}
                       />
                     )}
                     <span>Company Logo</span>
                   </div>
                   <div className="col-span-1 flex flex-col items-center gap-3">
                     {contact?.company_logo && (
-                      <img
+                      <Image
                         src={getImageUrl(contact?.company_logo)}
                         className="w-full rounded-lg"
+                        loader={({ src, width }) => { return src + "?w=" + width }}
+                        quality={50}
+                        width={35}
+                        height={35}
                       />
                     )}
                     <span>Square Image</span>
                   </div>
                   <div className="col-span-1 flex flex-col items-center gap-3">
                     {contact?.company_logo && (
-                      <img
+                      <Image
                         src={getImageUrl(contact?.company_logo)}
                         className="w-full rounded-lg"
+                        loader={({ src, width }) => { return src + "?w=" + width }}
+                        quality={50}
+                        width={35}
+                        height={35}
                       />
                     )}
                     <span>Story Image</span>
                   </div>
                   <div className="col-span-1 flex flex-col items-center gap-3">
                     {contact?.company_logo && (
-                      <img
+                      <Image
                         src={getImageUrl(contact?.company_logo)}
                         className="w-full rounded-lg"
+                        loader={({ src, width }) => { return src + "?w=" + width }}
+                        quality={50}
+                        width={35}
+                        height={35}
                       />
                     )}
                     <span>Square Video</span>
