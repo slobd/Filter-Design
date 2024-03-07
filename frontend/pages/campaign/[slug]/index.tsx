@@ -98,7 +98,7 @@ const User: NextPage = () => {
         setImage([...clonedImage]);
         setOpen(false);
         setPassed(true);
-        changeCarouselHeight();
+        // changeCarouselHeight();
         setTimeout(() => {
             console.log(selectedIndex, "selectedIndex", fileRef.current.files[0])
             const dom = document.querySelector<HTMLDivElement>(`#card-${selectedIndex}`);
@@ -127,7 +127,7 @@ const User: NextPage = () => {
                     .catch(function (error: any) {
                         console.error('Error generating image: ', error);
                     });
-                changeCarouselHeight();
+                // changeCarouselHeight();
                 fileRef.current.value = "";
             }
         }, 1000);
@@ -155,33 +155,33 @@ const User: NextPage = () => {
         fileRef.current.value = "";
     };
 
-    const changeCarouselHeight = () => {
-        const _timer = setTimeout(() => {
-            const currentItem = document.querySelector(`.campaign-preview-carousel .slide.selected .carousel-item`);
-            if (currentItem) {
-                setCarouselHeight(currentItem.clientHeight);
-                setFilterloaded(prev => prev + 1);
-            }
-        }, 10);
-        setTimer(_timer);
-    }
+    // const changeCarouselHeight = () => {
+    //     const _timer = setTimeout(() => {
+    //         const currentItem = document.querySelector(`.campaign-preview-carousel .slide.selected .carousel-item`);
+    //         if (currentItem) {
+    //             setCarouselHeight(currentItem.clientHeight);
+    //             setFilterloaded(prev => prev + 1);
+    //         }
+    //     }, 10);
+    //     setTimer(_timer);
+    // }
 
-    const imageLoaded = () => {
-        if (filterloaded > 0 || timer) return;
-        changeCarouselHeight();
-    }
+    // const imageLoaded = () => {
+    //     if (filterloaded > 0 || timer) return;
+    //     // changeCarouselHeight();
+    // }
 
     const handleSlideChange = (index: any) => {
-        changeCarouselHeight();
+        // changeCarouselHeight();
     };
 
-    useEffect(() => {
-        if (carouselHeight < 500) return;
-        const slideWrapper = document.querySelector<HTMLElement>(`.campaign-preview-carousel .slider-wrapper`);
-        if (slideWrapper) {
-            slideWrapper.style.height = carouselHeight + 'px';
-        }
-    }, [carouselHeight])
+    // useEffect(() => {
+    //     if (carouselHeight < 500) return;
+    //     const slideWrapper = document.querySelector<HTMLElement>(`.campaign-preview-carousel .slider-wrapper`);
+    //     if (slideWrapper) {
+    //         slideWrapper.style.height = carouselHeight + 'px';
+    //     }
+    // }, [carouselHeight])
 
     useEffect(() => {
         APIService.filter.getAll().then((filters: any[]) => {
@@ -288,7 +288,7 @@ const User: NextPage = () => {
                                     priority={true}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                     height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    onLoad={imageLoaded}
+                                    // onLoad={imageLoaded}
                                 />
                             </div>
                         </div>
