@@ -342,25 +342,28 @@ const FilterDesigns: NextPage = () => {
                                                 onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id) }
                                             />
                                         )}
-                                        <Image
-                                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
-                                            loader={({ src, width }) => { return src + "?w=" + width }}
-                                            className="absolute top-0 left-0 w-full h-full object-cover"
-                                            quality={50}
-                                            priority={true}
-                                            width={filterDesign?.type == 'story' ? 290 : 350}
-                                            height={filterDesign?.type == 'story' ? 350 : 350}
-                                        />
-                                        {filterDesign.image && (
+                                        <div className="absolute top-0 left-0 w-full h-full object-cover">
                                             <Image
-                                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filterDesign.image}`}
+                                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
                                                 loader={({ src, width }) => { return src + "?w=" + width }}
-                                                className="relative z-10"
                                                 quality={50}
                                                 priority={true}
                                                 width={filterDesign?.type == 'story' ? 290 : 350}
                                                 height={filterDesign?.type == 'story' ? 350 : 350}
                                             />
+                                        </div>
+                                        {filterDesign.image && (
+                                            <div className="relative z-10">
+                                                <Image
+                                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filterDesign.image}`}
+                                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                                    
+                                                    quality={50}
+                                                    priority={true}
+                                                    width={filterDesign?.type == 'story' ? 290 : 350}
+                                                    height={filterDesign?.type == 'story' ? 350 : 350}
+                                                />
+                                            </div>
                                         )}
                                     </div>
                                 ))}
