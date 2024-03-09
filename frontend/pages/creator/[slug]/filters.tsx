@@ -9,12 +9,12 @@ import {
     Cog8ToothIcon,
     EyeIcon,
     RocketLaunchIcon,
-    CameraIcon, 
     ArrowRightIcon, 
     ArrowDownTrayIcon, 
     TrashIcon,
     ViewfinderCircleIcon
 } from "@heroicons/react/24/outline";
+import { CameraIcon } from '@heroicons/react/20/solid';
 import Button from "../../../components/common/Button";
 import ColorPicker from "../../../components/common/ColorPicker";
 import EmptyDrawer from "../../../components/drawers/EmptyDrawer";
@@ -342,14 +342,14 @@ const FilterDesigns: NextPage = () => {
                                                 onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id) }
                                             />
                                         )}
-                                        <div className="absolute top-0 left-0 w-full h-full object-cover">
+                                        <div className="absolute top-0 left-0 object-cover">
                                             <Image
                                                 src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
                                                 loader={({ src, width }) => { return src + "?w=" + width }}
                                                 quality={50}
                                                 priority={true}
                                                 width={filterDesign?.type == 'story' ? 290 : 350}
-                                                height={filterDesign?.type == 'story' ? 350 : 350}
+                                                height={350}
                                             />
                                         </div>
                                         {filterDesign.image && (
@@ -357,11 +357,10 @@ const FilterDesigns: NextPage = () => {
                                                 <Image
                                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filterDesign.image}`}
                                                     loader={({ src, width }) => { return src + "?w=" + width }}
-                                                    
                                                     quality={50}
                                                     priority={true}
                                                     width={filterDesign?.type == 'story' ? 290 : 350}
-                                                    height={filterDesign?.type == 'story' ? 350 : 350}
+                                                    height={350}
                                                 />
                                             </div>
                                         )}

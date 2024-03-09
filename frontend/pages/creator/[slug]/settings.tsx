@@ -8,7 +8,14 @@ import BeatLoader from "react-spinners/BeatLoader";
 import copy from "copy-to-clipboard";
 import Button from "../../../components/common/Button";
 import ToggleSwitch from "../../../components/common/ToggleSwitch";
-import { EyeIcon, RocketLaunchIcon, ArrowDownTrayIcon, ArrowRightIcon, AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { 
+  EyeIcon,
+  RocketLaunchIcon, 
+  ArrowDownTrayIcon, 
+  ArrowRightIcon, 
+  AdjustmentsHorizontalIcon,
+  CameraIcon,
+} from "@heroicons/react/24/outline";
 import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
 import { FaXTwitter  } from "react-icons/fa6";
 import { FiSave } from "react-icons/fi";
