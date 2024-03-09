@@ -1,9 +1,7 @@
 import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { useAuth0 } from "@auth0/auth0-react";
 import { CampaignType, FilterType } from '../utils/types';
 import { APIService } from '../api';
-import { filterDesignWidths } from '../utils/constants';
 
 type ContextType = {
     campaigns: CampaignType[] | [],
@@ -21,12 +19,9 @@ type Props = {
 
 const campaignDefaultValue: CampaignType = {
   name: "",
-  // description: textType | undefined,
-  // logo_setting: logoType | undefined,
   edge: 14,
   share_title: "",
   share_text: "",
-  // sharing_options: sharingOptionType | undefined,
   placeholder_image: "uploads/default_placeholder_image.png",
   placeholder_story_image: "uploads/default_placeholder_image.png",
   change_photo: "Change Photo",
@@ -35,7 +30,6 @@ const campaignDefaultValue: CampaignType = {
   start_date: "",
   location: "",
   event_name: "event",
-  // background: backgroundType | undefined,
   imprint_link: "https://livedab.com/imprint",
   data_privacy_link: "https://livedab.com/privacy",
 }
@@ -53,11 +47,11 @@ const contextDefaultValues: ContextType = {
 const AppContext = createContext<ContextType>(contextDefaultValues);
 
 export function ContextWrapper({ children } : Props) {
-    const { user } = useAuth0();
+    const { user, getAccessTokenSilently } = useAuth0();
     const [loading, setLoading] = useState(true); 
     const [campaigns, setCampaigns] = useState<CampaignType[]>([]);
     const [campaignData, setCampaignData] = useState<CampaignType>(campaignDefaultValue);
-
+    
     useEffect(() => {
       getInitData();
     }, [user]);
@@ -68,8 +62,7 @@ export function ContextWrapper({ children } : Props) {
         .then((res: any) =>{
           console.log("context campaigns", res.data);
           if(res.data) setCampaigns(res.data);
-        })
-        
+      })
     }
 
     const loadingHandle = (e:boolean) => {

@@ -18,12 +18,11 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import TextField from "../../../components/common/TextField";
 import Button from "../../../components/common/Button";
 import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
-import { FaXTwitter  } from "react-icons/fa6";
+import { FaXTwitter } from "react-icons/fa6";
 import { FiSave } from "react-icons/fi";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { filterDesignWidths } from "../../../utils/constants";
 import { CampaignType, GalleryType, FilterType } from '../../../utils/types';
-
 interface FilterCardProps {
     filter: FilterType;
     i: number;
@@ -288,7 +287,7 @@ const User: NextPage = () => {
                                     priority={true}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                     height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    // onLoad={imageLoaded}
+                                // onLoad={imageLoaded}
                                 />
                             </div>
                         </div>
@@ -304,16 +303,16 @@ const User: NextPage = () => {
                                     </span>
                                     <div className="flex gap-3">
                                         {campaign?.sharing_options?.linkedin && (
-                                            <FaLinkedin  className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer"/>
+                                            <FaLinkedin className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
                                         {campaign?.sharing_options?.facebook && (
                                             <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
                                         {campaign?.sharing_options?.twitter && (
-                                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer"/>
+                                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer" />
                                         )}
                                         {campaign?.sharing_options?.whatsapp && (
-                                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer"/>
+                                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
                                     </div>
                                     {tab === "download" && campaign?.sharing_options?.download && (
@@ -321,7 +320,7 @@ const User: NextPage = () => {
                                             className="!bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60"
                                             onClick={() => handleDownload(i)}
                                         >
-                                            <ArrowDownTrayIcon className="!w-5 text-white"/>
+                                            <ArrowDownTrayIcon className="!w-5 text-white" />
                                             <span className="font-medium text-white break-all">
                                                 {campaign?.download_image}
                                             </span>
@@ -349,7 +348,7 @@ const User: NextPage = () => {
                                     style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
                                 >
                                     {filter?.button?.icon
-                                        ? 
+                                        ?
                                         <div
                                             style={{ color: filter?.button?.textcolor ?? "#000" }}
                                         >
@@ -360,9 +359,9 @@ const User: NextPage = () => {
                                                 quality={50}
                                                 width={15}
                                                 height={15}
-                                            /> 
+                                            />
                                         </div>
-                                        
+
                                         : <CameraIcon
                                             className="!h-5 !w-5 text-gray-500"
                                             aria-hidden="true"
@@ -383,7 +382,7 @@ const User: NextPage = () => {
                 <div className="w-0 h-0 overflow-hidden" >
                     <div
                         className={`w-max h-max relative overflow-hidden`}
-                        // id={`card-${i}`}
+                    // id={`card-${i}`}
                     >
                         {image[i] && (
                             <div
@@ -429,7 +428,7 @@ const User: NextPage = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <Image src="/assets/images/logo.png" className="w-10 h-10" width={35} height={35}/>
+                    <Image src="/assets/images/logo.png" className="w-10 h-10" width={35} height={35} />
                 </a>
                 <a
                     href="http://www.livedab.de/"
@@ -534,7 +533,7 @@ const User: NextPage = () => {
                                     width: (campaign.logo_setting?.size ?? 80) * 1,
                                     borderRadius: (campaign.logo_setting?.radius ?? 0) * 1,
                                     marginTop: (campaign.logo_setting?.padding_top ?? 0) * 1,
-                                    marginBottom: (campaign.logo_setting?.padding_bottom  ?? 20) * 1,
+                                    marginBottom: (campaign.logo_setting?.padding_bottom ?? 20) * 1,
                                 }}
                             >
                                 <Image
@@ -615,7 +614,7 @@ const User: NextPage = () => {
                                                 className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                 onClick={() => copy(campaign?.share_text ?? "")}
                                             >
-                                                <FiSave className="text-xl mr-2"/>
+                                                <FiSave className="text-xl mr-2" />
                                                 Copy Text
                                             </button>
                                         </div>
@@ -646,7 +645,7 @@ const User: NextPage = () => {
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign.share_text ?? "")}
                                                     >
-                                                        <FiSave className="text-xl mr-2"/>
+                                                        <FiSave className="text-xl mr-2" />
                                                         Copy Text
                                                     </button>
                                                 </div>
@@ -661,7 +660,7 @@ const User: NextPage = () => {
                                         showArrows={true}
                                         showThumbs={false}
                                         interval={undefined}
-                                        transitionTime={0}
+                                        // transitionTime={0}
                                         stopOnHover={true}
                                         onChange={handleSlideChange}
                                         renderArrowPrev={(onClickHandler, hasPrev, label) =>
@@ -710,7 +709,7 @@ const User: NextPage = () => {
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign?.share_text ?? "")}
                                                     >
-                                                        <FiSave className="text-xl mr-2"/>
+                                                        <FiSave className="text-xl mr-2" />
                                                         Copy Text
                                                     </button>
                                                 </div>
