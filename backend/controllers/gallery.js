@@ -9,6 +9,7 @@ const getGalleries = async (req, res) => {
   if (id) {
     const galleries = await Gallery.find({ campaign: id })
       .populate("campaign")
+      .populate("filter_design")
       .sort({
         updatedAt: -1,
       });
@@ -19,6 +20,7 @@ const getGalleries = async (req, res) => {
       campaign: { $in: campaigns.map((campaign) => campaign._id) },
     })
       .populate("campaign")
+      .populate("filter_design")
       .sort({ updatedAt: -1 });
     return res.status(200).json(galleries);
   }
@@ -27,6 +29,7 @@ const getGalleries = async (req, res) => {
 const createGallery = async (req, res) => {
   const gallery = new Gallery({
     campaign: req.body.campaign_id,
+    filter_design: req.body.filter_design_id,
     author: req.body.author,
     path: req.file.path,
   });

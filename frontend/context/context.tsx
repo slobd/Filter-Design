@@ -25,7 +25,6 @@ const campaignDefaultValue: CampaignType = {
   placeholder_image: "uploads/default_placeholder_image.png",
   placeholder_story_image: "uploads/default_placeholder_image.png",
   change_photo: "Change Photo",
-  download_image: "Download Photo",
   download_share: "Download and Share!",
   start_date: "",
   location: "",

@@ -36,6 +36,7 @@ const backgroundSchema = Schema({
 });
 
 const textSchema = Schema({
+  icon: { type: String},
   text: { type: String },
   font_family: { type: String },
   font_weight: { type: Number },
@@ -61,8 +62,9 @@ const campaignSchema = Schema(
     title: {
       type: textSchema,
       default: {
+        icon: "",
         text: "Share your Photo with your Network and Friends",
-        font_family: "Inter",
+        font_family: "inherit",
         font_weight: 700,
         font_size: 30,
         line_height: 45,
@@ -75,8 +77,9 @@ const campaignSchema = Schema(
     description: {
       type: textSchema,
       default: {
+        icon: "",
         text: "It’s easy! Just upload a photo and get a visual filter to share with your network and friends.",
-        font_family: "Inter",
+        font_family: "inherit",
         font_weight: 400,
         font_size: 14,
         line_height: 21,
@@ -128,7 +131,21 @@ const campaignSchema = Schema(
     status: { type: String, enum: ["draft", "published"], default: "draft" },
     author: { type: String, required: true },
     change_photo: { type: String, default: "Change Photo" },
-    download_image: { type: String, default: "Download Photo" },
+    download_image: {
+      type: textSchema,
+      default: {
+        icon: "",
+        text: "Download Photo",
+        font_family: "inherit",
+        font_weight: 500,
+        font_size: 16,
+        line_height: 24,
+        color: "#FFF",
+        padding_top: 0,
+        padding_bottom: 20,
+        letter_spacing: 0,
+      },
+    },
     download_share: { type: String, default: "Download and Share!" },
     category: { type: String, default: "event" },
     start_date: { type: String },

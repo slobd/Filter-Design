@@ -48,6 +48,7 @@ const Settings: NextPage = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [openLogoPanel, setOpenLogoPanel] = useState(false);
   const [openTitlePanel, setOpenTitlePanel] = useState(false);
+  const [openDownloadPanel, setOpenDownloadPanel] = useState(false);
   const [openDescriptionPanel, setOpenDescriptionPanel] = useState(false);
   const [password, setPassword] = useState("");
   const [edge, setEdge] = useState(14);
@@ -100,6 +101,16 @@ const Settings: NextPage = () => {
     if(metaDescription) {
        metaDescription.setAttribute('content', value);
     }
+  };
+
+  const handleChangeDownloadImage = (target: any, value: any) => {
+    contextCampaignData({
+      ...campaignData,
+      download_image: { 
+        ...campaignData?.download_image, 
+        [target]: value,
+      }
+    });
   };
 
   const handleChangeSharingOptions = (e: any) => {
@@ -1099,20 +1110,25 @@ const Settings: NextPage = () => {
                           )}
                         </div>
                         {campaignData?.sharing_options?.download && (
-                          <button className={`bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : "border-gray-800"}`}>
+                          <button 
+                            className={`!bg-blue-900 max-w-full min-w-[232px] !flex !justify-center !items-center gap-2 min-h-11 rounded shadow !px-3 !py-[6px] border border-gray-100 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : "border-gray-800"}`}
+                            onClick={() => setOpenDownloadPanel(true)}
+                            style={{
+                              fontFamily: campaignData?.download_image?.font_family ?? "Inter",
+                              fontWeight: (campaignData?.download_image?.font_weight ?? 400) * 1,
+                              fontSize: (campaignData?.download_image?.font_size ?? 14) * 1,
+                              color: (campaignData?.download_image?.color ?? "#FFF"),
+                              paddingTop: (campaignData?.download_image?.padding_top ?? 0) * 1,
+                              paddingBottom: (campaignData?.download_image?.padding_bottom ?? 20) * 1,
+                              letterSpacing: (campaignData?.download_image?.letter_spacing ?? 0) * 1,
+                              lineHeight: `${campaignData?.download_image?.line_height}px`,
+                            }}
+                          >
                             <ArrowDownTrayIcon className="w-5" />
                             <span
-                              className="font-medium break-words"
-                              contentEditable
-                              onBlur={(e) =>
-                                contextCampaignData({
-                                  ...campaignData,
-                                  download_image: e.target.innerText,
-                                })
-                              }
-                              suppressContentEditableWarning={true}
+                              className="break-words"
                             >
-                              {campaignData?.download_image}
+                              {campaignData?.download_image?.text}
                             </span>
                           </button>
                         )}
@@ -1368,6 +1384,165 @@ const Settings: NextPage = () => {
             label="Bottom"
             onChange={(e: any) =>
               handleChangeDescription("padding_bottom", e.target.value)
+            }
+          />
+        </div>
+      </EmptyDrawer>
+      {/* title setting panel */}
+      <EmptyDrawer
+        open={openTitlePanel}
+        setOpen={setOpenTitlePanel}
+        title="Title Options"
+      >
+        {/* <div className="mb-2">
+          <label className="inline-block font-medium text-sm mb-2">
+            Font Family
+          </label>
+          {typeof window !== 'undefined' && 
+            <FontPicker
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
+              activeFontFamily={campaignData?.title?.font_family ?? "Inter"}
+              onChange={(font: any) => handleChangeTitle("font_family", font.family)} 
+              pickerId={""} 
+              families={[]} 
+              categories={[]} 
+              scripts={[]} 
+              variants={[]} 
+              filter={function (font: Font): boolean {
+                throw new Error("Function not implemented.");
+              } } 
+              limit={0}
+              sort={"alphabet"}            
+            />
+          }
+        </div> */}
+        <div className="mb-2">
+          <label className="block font-medium text-sm mb-2">Font Weight</label>
+          <select
+            value={campaignData?.title?.font_weight ?? 400}
+            onChange={(e) => handleChangeTitle("font_weight", e.target.value)}
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          >
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+          </select>
+        </div>
+        <TextField
+          type="number"
+          value={campaignData?.title?.font_size}
+          label="Font Size"
+          onChange={(e: any) => handleChangeTitle("font_size", e.target.value)}
+        />
+        <TextField
+          type="number"
+          value={campaignData?.title?.letter_spacing}
+          label="Letter Spacing"
+          onChange={(e: any) => handleChangeTitle("letter_spacing", e.target.value)}
+        />
+        <TextField
+          type="number"
+          value={campaignData?.title?.line_height}
+          label="Line Height"
+          onChange={(e: any) => handleChangeTitle("line_height", e.target.value)}
+        />
+        <ColorPicker
+          value={campaignData?.title?.color ?? "#000"}
+          label="Color"
+          onChange={(e: any) => handleChangeTitle("color", e)}
+        />
+        <p className="text-sm font-medium leading-6 border-t mt-4 pt-2">
+          Padding
+        </p>
+        <div className="flex gap-3">
+          <TextField
+            type="number"
+            value={campaignData?.title?.padding_top}
+            label="Top"
+            onChange={(e: any) => handleChangeTitle("padding_top", e.target.value)}
+          />
+          <TextField
+            type="number"
+            value={campaignData?.title?.padding_bottom}
+            label="Bottom"
+            onChange={(e: any) =>
+              handleChangeTitle("padding_bottom", e.target.value)
+            }
+          />
+        </div>
+      </EmptyDrawer>
+
+      {/* download setting panel */}
+      <EmptyDrawer
+        open={openDownloadPanel}
+        setOpen={setOpenDownloadPanel}
+        title="Download Image Options"
+      >
+        <div className="mb-2">
+          <label className="block font-medium text-sm mb-2">Font Weight</label>
+          <select
+            value={campaignData?.download_image?.font_weight ?? 400}
+            onChange={(e: any) =>
+              handleChangeDownloadImage("font_weight", e.target.value)
+            }
+            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          >
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+          </select>
+        </div>
+        <TextField
+          type="number"
+          value={campaignData?.download_image?.font_size}
+          label="Font Size"
+          onChange={(e: any) => handleChangeDownloadImage("font_size", e.target.value)}
+        />
+        <TextField
+          type="number"
+          value={campaignData?.download_image?.letter_spacing}
+          label="Letter Spacing"
+          onChange={(e: any) =>
+            handleChangeDownloadImage("letter_spacing", e.target.value)
+          }
+        />
+        <TextField
+          type="number"
+          value={campaignData?.download_image?.line_height}
+          label="Line Height"
+          onChange={(e: any) =>
+            handleChangeDownloadImage("line_height", e.target.value)
+          }
+        />
+        <ColorPicker
+          value={campaignData?.download_image?.color ?? "#000"}
+          label="Color"
+          onChange={(e: any) => handleChangeDownloadImage("color", e)}
+        />
+        <p className="text-sm font-medium leading-6 border-t mt-4 pt-2">
+          Padding
+        </p>
+        <div className="flex gap-3">
+          <TextField
+            type="number"
+            value={campaignData?.download_image?.padding_top}
+            label="Top"
+            onChange={(e: any) =>
+              handleChangeDownloadImage("padding_top", e.target.value)
+            }
+          />
+          <TextField
+            type="number"
+            value={campaignData?.download_image?.padding_bottom}
+            label="Bottom"
+            onChange={(e: any) =>
+              handleChangeDownloadImage("padding_bottom", e.target.value)
             }
           />
         </div>

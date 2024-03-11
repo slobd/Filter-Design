@@ -97,7 +97,7 @@ export type CampaignType = {
   status?: string | null,
   author?: string | null,
   change_photo?: string | null,
-  download_image?: string | null,
+  download_image?: TextType | undefined,
   download_share?: string | null,
   category?: string | null,
   start_date?: string | null,
@@ -141,6 +141,7 @@ export type FilterDesignPlaceholderType = {
 export type GalleryType = {
   _id?: number | null,
   campaign: string | null,
+  filter_design?: string | null,
   path: string | null,
   updatedAt?: string,
 }
