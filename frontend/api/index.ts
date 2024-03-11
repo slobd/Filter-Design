@@ -34,7 +34,7 @@ const APIService = {
           },
         }
       ),
-    delete: (data: any) => API.delete("/filter", { params: { id: data } }),
+    delete: (data: any) => API.delete("/filter", { params: { ...data } }),
   },
 
   campaign: {
@@ -58,7 +58,7 @@ const APIService = {
           },
         }
       ),
-    delete: (data: any) => API.delete("/campaign", { params: { id: data } }),
+    delete: (data: any) => API.delete("/campaign", { params: { ...data } }),
     get: (data?: any) => API.get("/campaign", { params: { id: data } }),
     getBySlug: (data: any) => API.get("/campaign", { params: { slug: data } }),
     getAll: (data?: any) => API.get("/campaigns", { params: { author: data } }),
@@ -81,7 +81,7 @@ const APIService = {
           },
         }
       ),
-    delete: (data: any) => API.delete("/gallery", { params: { id: data } }),
+    delete: (data: any) => API.delete("/gallery", { params: { ...data } }),
   },
 
   file: {
@@ -130,7 +130,7 @@ const APIService = {
         }
       ),
     bulkImport: (data: any) => API.post("/contact/import", { contacts: data }),
-    delete: (data: any) => API.delete("/contact", { params: { id: data } }),
+    delete: (data: any) => API.delete("/contact", { params: { ...data } }),
   },
 
   uniqueLink: {

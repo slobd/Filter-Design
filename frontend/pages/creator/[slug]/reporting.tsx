@@ -22,7 +22,7 @@ const Reporting: NextPage = () => {
         startDate: new Date(),
         endDate: new Date(),
     });
-    const [filterDesignReport, setFilterDesignReport] = useState<any>();
+    const [filterDesignReport, setFilterDesignReport] = useState<any>({});
 
     const handleChangeDateRange = (target: any, value: any) => {
         setDateRange({ ...dateRange, [target]: value });

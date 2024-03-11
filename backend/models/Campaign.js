@@ -130,7 +130,7 @@ const campaignSchema = Schema(
     invitations: { type: Number, required: true, default: 0 },
     status: { type: String, enum: ["draft", "published"], default: "draft" },
     author: { type: String, required: true },
-    change_photo: { type: String, default: "Change Photo" },
+    change_photo: { type: String, default: "Upload new Photo" },
     download_image: {
       type: textSchema,
       default: {

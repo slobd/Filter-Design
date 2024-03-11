@@ -115,6 +115,8 @@ const editCampaign = async (req, res) => {
 };
 
 const deleteCampaign = async (req, res) => {
+  const _campaign = await Campaign.findOne({ _id: req.query.id })
+  if(req.query.email != _campaign.author) return;
   const response = await Campaign.findOneAndDelete({ _id: req.query.id });
   await UniqueLink.deleteMany({ campaign: response._id });
   const galleries = await Gallery.find({campaign: req.query.id});

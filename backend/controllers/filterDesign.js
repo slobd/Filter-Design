@@ -35,6 +35,8 @@ const getFilter = async (req, res) => {
 };
 
 const deleteFilter = async (req, res) => {
+  const _filter = await FilterDesign.findOne({ _id: req.query.id });
+  if(_filter.author != req.query.email) return;
   const response = await FilterDesign.deleteOne({ _id: req.query.id });
   return res.status(200).json(response);
 };
