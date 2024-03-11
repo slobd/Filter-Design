@@ -46,6 +46,7 @@ const createGallery = async (req, res) => {
 
 const deleteGallery = async (req, res) => {
   const gallery = await Gallery.findOne({ _id: req.query.id });
+  if(gallery.author != req.query.email) return;
   const path = `${appRootRir}/${gallery.path}`;
   fs.unlink(path, async () => {
     const response = await Gallery.deleteOne({ _id: req.query.id });

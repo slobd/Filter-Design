@@ -81,15 +81,17 @@ const Signup: NextPage = () => {
 
   const deleteConfirmed = (value: any) => {
     setDeleteConfirmModal(false);
-    if(value && deleteId)
-    APIService.campaign.delete(deleteId).then((res: any) => {
-      if (res.data) {
-        getInitData();
-        setNotificationTitle("Delete Success!");
-        setNotificationContent("You have successfully deleted a campaign")
-        setShowNotification(true);
-      }
-    });
+    if(value && deleteId) {
+      APIService.campaign.delete({id: deleteId, email: user?.email}).then((res: any) => {
+        if (res.data) {
+          getInitData();
+          setNotificationTitle("Delete Success!");
+          setNotificationContent("You have successfully deleted a campaign")
+          setShowNotification(true);
+        }
+      });
+    }
+    
   }
 
   const handleDeleteCampaign = (id: any) => {
@@ -129,7 +131,7 @@ const Signup: NextPage = () => {
   };
 
   const handleDeleteGallery = (id: any) => {
-    APIService.gallery.delete(id).then((res: any) => {
+    APIService.gallery.delete({id: id, email: user?.email}).then((res: any) => {
       const { acknowledged, deletedCount } = res.data;
       if (acknowledged === true && deletedCount > 0) {
         fetchGalleries();

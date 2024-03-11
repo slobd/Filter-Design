@@ -49,6 +49,7 @@ export type BackgroundType = {
 }
 
 export type TextType = {
+  icon?: string | null,
   text?: string | null | undefined,
   font_family?: string | null | undefined,
   font_weight?: number | null | undefined,

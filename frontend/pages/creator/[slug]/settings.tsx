@@ -345,8 +345,11 @@ const Settings: NextPage = () => {
     });
   }, [query?.slug]);
 
-  const handleChangeText = (text: any) => {
-    contextCampaignData({ change_photo: text });
+  const handleChangePhotoText = (text: any) => {
+    contextCampaignData({
+      ...campaignData,
+      change_photo: text 
+    });
   };
 
   // useEffect(() => {
@@ -1481,6 +1484,18 @@ const Settings: NextPage = () => {
         setOpen={setOpenDownloadPanel}
         title="Download Image Options"
       >
+        <TextField
+          type="text"
+          value={campaignData?.download_image?.text}
+          label="Download Image Button Text"
+          onChange={(e: any) => handleChangeDownloadImage("text", e.target.value)}
+        />
+        <TextField
+          type="text"
+          value={campaignData?.change_photo}
+          label="Change Image Button Text"
+          onChange={(e: any) => handleChangePhotoText(e.target.value)}
+        />
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select

@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState, Suspense } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
-// import domtoimage from "dom-to-image";
+import domtoimage from "dom-to-image";
 import html2canvas from 'html2canvas';
 import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
@@ -25,6 +25,7 @@ import Button from "../../../components/common/Button";
 import Notification from "../../../components/Notification";
 import { filterDesignWidths } from "../../../utils/constants";
 import { CampaignType, GalleryType, FilterType } from '../../../utils/types';
+import { useAppContext } from "../../../context/context";
 interface FilterCardProps {
     filter: FilterType;
     i: number;
@@ -34,6 +35,7 @@ const User: NextPage = () => {
     const { user } = useAuth0();
     const router = useRouter();
     const { pathname, query } = router;
+    const { campaigns } = useAppContext();
     const [error, setError] = useState(false);
     const [email, setEmail] = useState("");
     const [passed, setPassed] = useState(false);
@@ -73,20 +75,21 @@ const User: NextPage = () => {
             gallery: `${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery[i]}`,
         });
     };
+    console.log("laoded", loaded)
 
     const handleDownload = (i: any) => {
-        const dom = document.querySelector<HTMLDivElement>(`#card-${i}`);
+        const dom = document.querySelector(`#card-${i}`);
         if (dom) {
             const { width, height } = dom.getBoundingClientRect();
             !image
                 ? alert("Please select an image")
-                // : domtoimage
-                //     .toPng(dom, { quality: 0.95, width, height })
-                : html2canvas(dom)
+                : domtoimage
+                    .toPng(dom, { quality: 0.95, width, height })
+                // : html2canvas(dom)
                     .then((canvas: any) => {
                         var link = document.createElement("a");
                         link.download = "image.png";
-                        link.href = canvas.toDataURL('image/png');
+                        link.href = canvas;
                         link.click();
                         setShowNotification(true);
                     });
@@ -107,16 +110,15 @@ const User: NextPage = () => {
         setPassed(true);
         // changeCarouselHeight();
         setTimeout(() => {
+            
             console.log(selectedIndex, "selectedIndex", fileRef.current.files[0])
-            const dom = document.querySelector<HTMLDivElement>(`#card-${selectedIndex}`);
+            const dom = document.querySelector(`#card-${selectedIndex}`);
             if (dom) {
-                // domtoimage
-                //     .toPng(dom, {
-                //         quality: 0.95,
-                //         width,
-                //         height,
-                //     })
-                html2canvas(dom)
+                const { width, height } = dom.getBoundingClientRect();
+                console.log("dom", dom)
+                domtoimage
+                    .toPng(dom, { quality: 0.95, width, height })
+                // html2canvas(dom)
                     .then((canvas: any) => {
                         const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
                         APIService.gallery
@@ -124,7 +126,8 @@ const User: NextPage = () => {
                                 campaign_id: campaign?._id,
                                 filter_design_id: _filter_design_id,
                                 author: user?.email,
-                                image: dataURLtoFile(canvas.toDataURL('image/png'), fileRef.current.files[0]?.name),
+                                image: dataURLtoFile(canvas, fileRef.current.files[0]?.name),
+                                // .toDataURL('image/png')
                             })
                             .then((res: any) => {
                                 console.log(" gallery created", res.data)
@@ -139,7 +142,7 @@ const User: NextPage = () => {
                 // changeCarouselHeight();
                 fileRef.current.value = "";
             }
-        }, 1000);
+        }, 10000);
     };
 
     const handleConfirm = () => {
@@ -232,10 +235,15 @@ const User: NextPage = () => {
     }, [campaign]);
 
     useEffect(() => {
-        setTimeout(() => {
-            setLoaded(true);
-        }, 2000)
-    }, [])
+        console.log("user and campa", user?.email, "::::::::", campaigns.length)
+        if(!user?.email != undefined && campaigns.length > 0) {
+            console.log("setLoaded  soon")
+            setTimeout(() => {
+                setLoaded(true);
+            }, 2500)
+        }
+        
+    }, [user?.email, campaigns])
 
     // useEffect(() => {
     //   const handleScroll = () => {
@@ -284,9 +292,9 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} ${loaded ? '!visible' : ''} invisible h-[350px] relative flex-shrink-0 overflow-hidden`}>
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} ${loaded ? 'visible' : 'invisible'} h-[350px] relative flex-shrink-0 overflow-hidden`}>
                             <div
-                                className="object-cover absolute max-w-none"
+                                className="absolute"
                                 style={{
                                     width: `${filter?.rnd?.w}%`,
                                     height: `${filter?.rnd?.h}%`,
@@ -302,6 +310,7 @@ const User: NextPage = () => {
                                         priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                         height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        alt=""
                                     />
                                 ) : (
                                     <Image
@@ -311,19 +320,25 @@ const User: NextPage = () => {
                                         priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                         height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        alt=""
                                     />
                                 )}
                             </div>
-                            <div className="relative z-10">
-                                <Image
+                            <div className="absolute z-10">
+                                <img
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                />
+                                {/* <Image
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                    loader={({ src, width }) => { return src }}
                                     quality={50}
                                     priority={true}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                     height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                // onLoad={imageLoaded}
-                                />
+                                    alt=""
+                                /> */}
                             </div>
                         </div>
 
@@ -390,15 +405,16 @@ const User: NextPage = () => {
                                 <button
                                     className="!border !border-gray-500 bg-white max-w-full min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
                                     onClick={() => handleClickUploadButton(i)}
-                                    style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
+                                    style={{
+                                        background: filter?.button?.bgcolor ?? "#FFF",
+                                        color: filter?.button?.textcolor ?? "#000"
+                                    }}
                                 >
                                     {filter?.button?.icon
                                         ?
-                                        <div
-                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
-                                        >
+                                        <div >
                                             <Image
-                                                src={filter.button.icon}
+                                                src={filter?.button?.icon}
                                                 className="!w-5 invert"
                                                 loader={({ src, width }) => { return src + "?w=" + width }}
                                                 quality={50}
@@ -410,24 +426,21 @@ const User: NextPage = () => {
                                         : <CameraIcon
                                             className="!h-5 !w-5 text-gray-500"
                                             aria-hidden="true"
-                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
                                         />
                                     }
                                     <span
                                         className="text-gray-600 font-medium text-md break-all"
-                                        style={{ color: filter?.button?.textcolor ?? "#000" }}
                                     >
-                                        {image[i] ? "Upload new Photo" : filter?.button?.text}
+                                        {image[i] ? campaign?.change_photo : filter?.button?.text}
                                     </span>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="w-0 h-0 overflow-hidden" >
+                {/* <div className="w-0 h-0 overflow-hidden" >
                     <div
-                        className={`w-max h-max relative overflow-hidden`}
-                    // id={`card-${i}`}
+                        className={`w-max h-max relative overflow-hidden invisible  ${loaded ? 'visible' : 'invisible'}`}
                     >
                         {image[i] && (
                             <div
@@ -459,7 +472,7 @@ const User: NextPage = () => {
                             height={filter?.filter_design?.type == 'story' ? 350 : 350}
                         />
                     </div>
-                </div>
+                </div> */}
             </>
         );
     };

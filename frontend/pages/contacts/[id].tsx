@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import Sidebar from "../../components/Layout/Sidebar";
 import Button from "../../components/common/Button";
 import Badge from "../../components/common/Badge";
@@ -11,6 +12,7 @@ import { ContactType } from "../../utils/types";
 
 const ContactDetail: NextPage = () => {
   const router = useRouter();
+  const { user } = useAuth0();
   const {pathname, query} = router;
   const [contact, setContact] = useState<ContactType>();
 
@@ -22,7 +24,7 @@ const ContactDetail: NextPage = () => {
   }, [query]);
 
   const handleDelete = () => {
-    APIService.contact.delete(query?.id).then(() => {
+    APIService.contact.delete({id: query?.id, email: user?.email}).then(() => {
       router.push("/contacts");
     });
   };

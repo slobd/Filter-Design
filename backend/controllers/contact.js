@@ -38,6 +38,8 @@ const createContact = async (req, res) => {
 };
 
 const deleteContact = async (req, res) => {
+  const _contact = await Contact.findOne({ _id: req.query.id });
+  if(_contact.author != req.query.email) return;
   const response = await Contact.deleteOne({
     _id: req.query.id,
   });
