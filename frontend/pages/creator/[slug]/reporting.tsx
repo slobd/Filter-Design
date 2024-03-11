@@ -6,6 +6,7 @@ import DatePicker from "../../../components/common/DatePicker";
 import { APIService } from "../../../api";
 import moment from "moment";
 import CreatorLayout from "../../../components/Layout/Creator";
+import { FilterDesignType } from "../../../utils/types";
 
 const Reporting: NextPage = () => {
     const router = useRouter();
@@ -21,6 +22,7 @@ const Reporting: NextPage = () => {
         startDate: new Date(),
         endDate: new Date(),
     });
+    const [filterDesignReport, setFilterDesignReport] = useState<any>();
 
     const handleChangeDateRange = (target: any, value: any) => {
         setDateRange({ ...dateRange, [target]: value });
@@ -36,6 +38,15 @@ const Reporting: NextPage = () => {
             })
             .then((res: any) => {
                 setReport({ ...res.data });
+                const _filterDesigns = res.data?.galleries?.map((i: any) => i.filter_design);
+                const _filterDesignReports = _filterDesigns.reduce((acc: any, item: any) => {
+                    const key = item?.image;
+                    acc[key] = (acc[key] || 0) + 1;
+                    return acc;
+                }, {});
+                console.log("_filterDesignReports", Object.keys(_filterDesignReports))
+                setFilterDesignReport(_filterDesignReports)
+
             })
             .catch((error: any) => console.log(error));
     }, [dateRange, query?.slug]);
@@ -100,27 +111,52 @@ const Reporting: NextPage = () => {
                         </dd>
                     </div>
                 </dl>
-                <div>
-                    <h3 className="font-medium mb-5">Photo Gallery</h3>
-                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                        {report.galleries.map((gallery: any, i) => (
-                            <div className="relative group" key={gallery._id}>
-                                <Image
-                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
-                                    className="rounded-lg cursor-pointer"
-                                    loader={({ src, width }) => { return src + "?w=" + width }}
-                                    quality={50}
-                                    width={350}
-                                    height={350}
-                                />
-                            </div>
-                        ))}
+                <div className="flex flex-row w-full gap-5">
+                    <div className="w-3/4 border p-5">
+                        <h3 className="font-medium mb-5 text-center">Photo Gallery</h3>
+                        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                            {report.galleries.map((gallery: any, i) => (
+                                <div className="relative group" key={gallery._id}>
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
+                                        className="rounded-lg cursor-pointer"
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        width={150}
+                                        height={150}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        {report.galleries.length === 0 && (
+                            <span className="text-xs text-gray-500">
+                                No Photos uploaded yet
+                            </span>
+                        )}
                     </div>
-                    {report.galleries.length === 0 && (
-                        <span className="text-xs text-gray-500">
-                            No Photos uploaded yet
-                        </span>
-                    )}
+                    <div className="w-1/4 max-w-[250px] border p-5">
+                        <h3 className="font-medium mb-5 text-center">Filter Designs</h3>
+                        <div className="flex flex-col items-center justify-content">
+                            {Object.keys(filterDesignReport).map((item: any, i) => (
+                                <div className="relative group w-[150px] text-center" key={i}>
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${item}`}
+                                        className="rounded-lg cursor-pointer"
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        width={130}
+                                        height={130}
+                                    />
+                                    <div className="">{filterDesignReport[item]} time(s) used</div>
+                                </div>
+                            ))}
+                        </div>
+                        {report.galleries.length === 0 && (
+                            <span className="text-xs text-gray-500">
+                                No Filters are used
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

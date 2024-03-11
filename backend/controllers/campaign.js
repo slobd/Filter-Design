@@ -187,6 +187,7 @@ const getReporting = async (req, res) => {
       },
     })
       .populate("campaign")
+      .populate("filter_design")
       .sort({
         updatedAt: -1,
       });

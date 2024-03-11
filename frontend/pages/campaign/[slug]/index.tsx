@@ -118,9 +118,11 @@ const User: NextPage = () => {
                 //     })
                 html2canvas(dom)
                     .then((canvas: any) => {
+                        const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
                         APIService.gallery
                             .create({
                                 campaign_id: campaign?._id,
+                                filter_design_id: _filter_design_id,
                                 author: user?.email,
                                 image: dataURLtoFile(canvas.toDataURL('image/png'), fileRef.current.files[0]?.name),
                             })
@@ -263,157 +265,165 @@ const User: NextPage = () => {
         const [tab, setTab] = useState("download");
         return (
             <>
-                <ThreeDots
-                    visible={!loaded}
-                    height="80"
-                    width="80"
-                    color="#4fa94d"
-                    radius="9"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                />
-                { loaded && 
+                <div
+                    className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
+                    key={i}
+                    style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
+                >
                     <div
-                        className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
-                        key={i}
-                        style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
+                        className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
+                        style={{ borderRadius: campaign?.edge ?? 14 }}
                     >
-                        <div
-                            className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
-                            style={{ borderRadius: campaign?.edge ?? 14 }}
-                        >
-                            <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} h-[350px] relative flex-shrink-0 overflow-hidden`}>
-                                <div
-                                    className="object-cover absolute max-w-none"
-                                    style={{
-                                        width: `${filter?.rnd?.w}%`,
-                                        height: `${filter?.rnd?.h}%`,
-                                        left: `${filter?.rnd?.x}%`,
-                                        top: `${filter?.rnd?.y}%`,
-                                    }}
-                                >
-                                    {image[i] ? (
-                                        <Image
-                                            src={URL.createObjectURL(image[i])}
-                                            loader={({ src, width }) => { return src + "?w=" + width }}
-                                            quality={50}
-                                            priority={true}
-                                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                        />
-                                    ) : (
-                                        <Image
-                                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
-                                            loader={({ src, width }) => { return src + "?w=" + width }}
-                                            quality={50}
-                                            priority={true}
-                                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                        />
-                                    )}
-                                </div>
-                                <div className="relative z-10">
+                        <ThreeDots
+                            visible={!loaded}
+                            height="80"
+                            width="80"
+                            color="#E7E8EA"
+                            radius="9"
+                            ariaLabel="three-dots-loading"
+                            wrapperStyle={{}}
+                            wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
+                        />
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} ${loaded ? '!visible' : ''} invisible h-[350px] relative flex-shrink-0 overflow-hidden`}>
+                            <div
+                                className="object-cover absolute max-w-none"
+                                style={{
+                                    width: `${filter?.rnd?.w}%`,
+                                    height: `${filter?.rnd?.h}%`,
+                                    left: `${filter?.rnd?.x}%`,
+                                    top: `${filter?.rnd?.y}%`,
+                                }}
+                            >
+                                {image[i] ? (
                                     <Image
-                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                        src={URL.createObjectURL(image[i])}
                                         loader={({ src, width }) => { return src + "?w=" + width }}
                                         quality={50}
                                         priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                         height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    // onLoad={imageLoaded}
                                     />
-                                </div>
+                                ) : (
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        priority={true}
+                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                    />
+                                )}
                             </div>
+                            <div className="relative z-10">
+                                <Image
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                    quality={50}
+                                    priority={true}
+                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                // onLoad={imageLoaded}
+                                />
+                            </div>
+                        </div>
 
-                            <div
-                                className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
-                                    }`}
-                            >
-                                {image[i] ? (
-                                    <>
-                                        <span className="text-[13px] dark:text-white">
-                                            {campaign?.download_share}
-                                        </span>
-                                        <div className="flex gap-3">
-                                            {campaign?.sharing_options?.linkedin && (
-                                                <FaLinkedin className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                            )}
-                                            {campaign?.sharing_options?.facebook && (
-                                                <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                            )}
-                                            {campaign?.sharing_options?.twitter && (
-                                                <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer" />
-                                            )}
-                                            {campaign?.sharing_options?.whatsapp && (
-                                                <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                            )}
-                                        </div>
-                                        {tab === "download" && campaign?.sharing_options?.download && (
-                                            <button
-                                                className="!bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60"
-                                                onClick={() => handleDownload(i)}
-                                            >
-                                                <ArrowDownTrayIcon className="!w-5 text-white" />
-                                                <span className="font-medium text-white break-all">
-                                                    {campaign?.download_image}
-                                                </span>
-                                            </button>
+                        <div
+                            className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
+                                }`}
+                        >
+                            {image[i] ? (
+                                <>
+                                    <span className="text-[13px] dark:text-white">
+                                        {campaign?.download_share}
+                                    </span>
+                                    <div className="flex gap-3">
+                                        {campaign?.sharing_options?.linkedin && (
+                                            <FaLinkedin className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
-                                        {tab === "email" && campaign?.sharing_options?.email && (
-                                            <div className="flex items-center gap-2">
-                                                <TextField
-                                                    placeholder="E-Mail Address"
-                                                    className="text-center"
-                                                    wrapperClassName="!mb-0"
-                                                    value={email}
-                                                    onChange={(e: any) => setEmail(e.target.value)}
-                                                />
-                                                <Button onClick={() => handleSendEmail(i)}>Send</Button>
-                                            </div>
+                                        {campaign?.sharing_options?.facebook && (
+                                            <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
                                         )}
-                                    </>
-                                ) : null}
-
-                                <div className="relative">
-                                    <button
-                                        className="!border !border-gray-500 bg-white max-w-full min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
-                                        onClick={() => handleClickUploadButton(i)}
-                                        style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
-                                    >
-                                        {filter?.button?.icon
-                                            ?
-                                            <div
-                                                style={{ color: filter?.button?.textcolor ?? "#000" }}
-                                            >
-                                                <Image
-                                                    src={filter.button.icon}
-                                                    className="!w-5 invert"
-                                                    loader={({ src, width }) => { return src + "?w=" + width }}
-                                                    quality={50}
-                                                    width={15}
-                                                    height={15}
-                                                />
-                                            </div>
-
-                                            : <CameraIcon
-                                                className="!h-5 !w-5 text-gray-500"
-                                                aria-hidden="true"
-                                                style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                        {campaign?.sharing_options?.twitter && (
+                                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer" />
+                                        )}
+                                        {campaign?.sharing_options?.whatsapp && (
+                                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer" />
+                                        )}
+                                    </div>
+                                    {tab === "download" && campaign?.sharing_options?.download && (
+                                        <button
+                                            className="!bg-blue-900 max-w-full min-w-[232px] !flex !justify-center !items-center gap-2 min-h-11 rounded shadow !px-3 !py-[6px] border border-gray-100 transition hover:opacity-60"
+                                            onClick={() => handleDownload(i)}
+                                            style={{
+                                                fontFamily: campaign?.download_image?.font_family ?? "Inter",
+                                                fontWeight: (campaign?.download_image?.font_weight ?? 400) * 1,
+                                                fontSize: (campaign?.download_image?.font_size ?? 14) * 1,
+                                                color: (campaign?.download_image?.color ?? "#FFF"),
+                                                paddingTop: (campaign?.download_image?.padding_top ?? 0) * 1,
+                                                paddingBottom: (campaign?.download_image?.padding_bottom ?? 20) * 1,
+                                                letterSpacing: (campaign?.download_image?.letter_spacing ?? 0) * 1,
+                                                lineHeight: `${campaign?.download_image?.line_height}px`,
+                                            }}
+                                        >
+                                            <ArrowDownTrayIcon className="!w-5" />
+                                            <span className="break-all">
+                                                {campaign?.download_image?.text}
+                                            </span>
+                                        </button>
+                                    )}
+                                    {tab === "email" && campaign?.sharing_options?.email && (
+                                        <div className="flex items-center gap-2">
+                                            <TextField
+                                                placeholder="E-Mail Address"
+                                                className="text-center"
+                                                wrapperClassName="!mb-0"
+                                                value={email}
+                                                onChange={(e: any) => setEmail(e.target.value)}
                                             />
-                                        }
-                                        <span
-                                            className="text-gray-600 font-medium text-md break-all"
+                                            <Button onClick={() => handleSendEmail(i)}>Send</Button>
+                                        </div>
+                                    )}
+                                </>
+                            ) : null}
+
+                            <div className="relative">
+                                <button
+                                    className="!border !border-gray-500 bg-white max-w-full min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
+                                    onClick={() => handleClickUploadButton(i)}
+                                    style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
+                                >
+                                    {filter?.button?.icon
+                                        ?
+                                        <div
                                             style={{ color: filter?.button?.textcolor ?? "#000" }}
                                         >
-                                            {image[i] ? "Upload new Photo" : filter?.button?.text}
-                                        </span>
-                                    </button>
-                                </div>
+                                            <Image
+                                                src={filter.button.icon}
+                                                className="!w-5 invert"
+                                                loader={({ src, width }) => { return src + "?w=" + width }}
+                                                quality={50}
+                                                width={15}
+                                                height={15}
+                                            />
+                                        </div>
+
+                                        : <CameraIcon
+                                            className="!h-5 !w-5 text-gray-500"
+                                            aria-hidden="true"
+                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                        />
+                                    }
+                                    <span
+                                        className="text-gray-600 font-medium text-md break-all"
+                                        style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                    >
+                                        {image[i] ? "Upload new Photo" : filter?.button?.text}
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
                 <div className="w-0 h-0 overflow-hidden" >
                     <div
                         className={`w-max h-max relative overflow-hidden`}
@@ -622,7 +632,7 @@ const User: NextPage = () => {
                                         className={`${stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(true);
-                                        setActiveCarouselIndex(0);
+                                        campaign?.activate_filters && setActiveCarouselIndex(0);
                                     }}
                                     >
                                         Square Size
@@ -631,7 +641,7 @@ const User: NextPage = () => {
                                         className={`${!stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(false);
-                                        setActiveCarouselIndex(0);
+                                        campaign?.activate_filters && setActiveCarouselIndex(0);
                                     }}
                                     >
                                         Story Size
@@ -666,7 +676,7 @@ const User: NextPage = () => {
                             {!campaign?.active_slider_mode || filters?.length == 1 ?
                                 <div className="items-center flex flex-col" ref={filterTabRef}>
                                     {filters?.map((filter: any, i: any) => (
-                                        <div key={i} className="pt-8 pb-12">
+                                        <div key={i} className="relative pt-8 pb-12">
                                             <FilterCard filter={filter} i={i} />
                                         </div>
                                     ))}

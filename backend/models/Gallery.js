@@ -8,6 +8,11 @@ const gallerySchema = Schema(
       required: true,
       ref: "Campaign",
     },
+    filter_design: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "FilterDesign",
+    },
     author: { type: String, required: true },
     path: { type: String, required: true },
   },
