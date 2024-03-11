@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import Image  from "next/image";
+import Image from "next/image";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/router";
@@ -9,8 +9,8 @@ import {
     Cog8ToothIcon,
     EyeIcon,
     RocketLaunchIcon,
-    ArrowRightIcon, 
-    ArrowDownTrayIcon, 
+    ArrowRightIcon,
+    ArrowDownTrayIcon,
     TrashIcon,
     ViewfinderCircleIcon
 } from "@heroicons/react/24/outline";
@@ -21,16 +21,19 @@ import EmptyDrawer from "../../../components/drawers/EmptyDrawer";
 import ImagePicker from "../../../components/common/ImagePicker";
 import TextField from "../../../components/common/TextField";
 import CreatorLayout from '../../../components/Layout/Creator';
+import ToggleSwitch from "../../../components/common/ToggleSwitch";
 import { useAppContext } from "../../../context/context";
 import { FilterDesignType, ButtonType } from '../../../utils/types';
 import { APIService } from "../../../api";
 import { getFilterType } from "../../../utils";
+import ConfirmModal from '../../../components/modal/confirmModal';
+import Notification from "../../../components/Notification";
 
 const tabs = [
-    { 
-        id: "square", 
-        label: "Square", 
-        icon: "/assets/images/icons/square.svg", 
+    {
+        id: "square",
+        label: "Square",
+        icon: "/assets/images/icons/square.svg",
         width: "max-w-[350px]",
     },
     {
@@ -67,31 +70,51 @@ const FilterDesigns: NextPage = () => {
         width: 0,
         height: 0,
     });
-    const { getInitData, campaignData, contextCampaignData } = useAppContext();
+    const { campaignData, contextCampaignData } = useAppContext();
     const [filterDesigns, setFilterDesigns] = useState<FilterDesignType[]>([])
     const [open, setOpen] = useState(false);
     const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
     const [openSidebar, setOpenSidebar] = useState(false);
     const [selectedFilterTab, setSelectedFilterTab] = useState("square");
     const [buttonStyle, setButtonStyle] = useState<ButtonType>();
+    const [filterPosition, setFilterPosition] = useState(1);
+    const [allowRedirect, setAllowRedirect] = useState(true);
+    const [redirectURL, setRedirectURL] = useState("");
+    const [userConfirmed, setUserConfirmed] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     const handleUpdateButtonStyle = (target: any, value: any) => {
         setButtonStyle({ ...buttonStyle, [target]: value });
     };
-    
-    const textStyleSave = () => {
+
+    const changeFilterPosition = (destination: any) => {
+        let _filters = campaignData?.filters ?? [];
+        if (destination == "" || !Number.isNaN(Number(destination)) && parseInt(destination) > 0 && parseInt(destination) <= _filters.length) {
+            setFilterPosition(destination);
+        }
+    }
+
+    const saveSettings = () => {
+        setAllowRedirect(false);
         let _filters = campaignData?.filters ?? [];
         const cloneFilters = [..._filters];
         cloneFilters[selectedFilterIndex] = {
             ...cloneFilters[selectedFilterIndex],
             button: buttonStyle,
         };
+        // change order of the filters
+        if (filterPosition && filterPosition != selectedFilterIndex + 1) {
+            let _currentFilter: any = cloneFilters.splice(selectedFilterIndex, 1)?.[0];
+            cloneFilters.splice(filterPosition - 1, 0, _currentFilter);
+        }
+
         _filters = cloneFilters;
         contextCampaignData({ ...campaignData, filters: _filters });
     }
 
     const handleUploadFilterDesign = (e: any) => {
-        if(!e.target.files[0]) return;
+        if (!e.target.files[0]) return;
         getFilterType(e.target.files[0], (type: any) => {
             if (e.target.files[0]) {
                 APIService.filter
@@ -138,11 +161,13 @@ const FilterDesigns: NextPage = () => {
             filter_design: filterDesign,
         };
         _filters = cloneFilters;
-        contextCampaignData({ ...campaignData, filters: _filters })
+        contextCampaignData({ ...campaignData, filters: _filters });
+        setAllowRedirect(false);
     };
 
     const handleOpenSettingButtonModal = (style: any, i: any) => {
-        setSelectedFilterIndex(i)
+        setSelectedFilterIndex(i);
+        setFilterPosition(i + 1);
         setOpen(true);
         setButtonStyle({ ...style });
     };
@@ -161,9 +186,10 @@ const FilterDesigns: NextPage = () => {
     };
 
     const handleCancelNewFilter = (index: any) => {
+        setAllowRedirect(false);
         let _filters = [...(campaignData?.filters ?? [])];
         _filters.splice(index, 1);
-        contextCampaignData({ ...campaignData, filters: _filters })
+        contextCampaignData({ ...campaignData, filters: _filters });
     }
 
     const handleToggleEditMode = (i: any) => {
@@ -172,6 +198,7 @@ const FilterDesigns: NextPage = () => {
     };
 
     const handleRnd = (x: any, y: any, w?: any, h?: any) => {
+        setAllowRedirect(false);
         const _filters = [...(campaignData?.filters ?? [])];
         if (_filters?.length > 0) {
             const cloneFilters = [..._filters];
@@ -193,6 +220,7 @@ const FilterDesigns: NextPage = () => {
     };
 
     const handleSave = (callback: any, params = {}) => {
+        setAllowRedirect(true);
         if (!user) {
             loginWithRedirect({
                 appState: {
@@ -208,7 +236,8 @@ const FilterDesigns: NextPage = () => {
                 ...params,
             })
             .then((res: any) => {
-                getInitData();
+                setShowNotification(true);
+                contextCampaignData(res?.data);
                 callback && callback(res);
             })
             .catch((err: any) => console.log(err));
@@ -263,6 +292,33 @@ const FilterDesigns: NextPage = () => {
         });
     }
 
+    const confirmed = async (value: any) => {
+        setShowConfirmModal(false);
+        if(value) {
+            setUserConfirmed(true)
+            router.push(redirectURL);
+        }
+    }
+
+    useEffect(() => {
+        const routeChangeStart = (url: any) => {
+            setRedirectURL(url);
+            setShowConfirmModal(true);
+            router.events.emit('routeChangeError');
+            throw 'Abort route change. Please ignore this error.';
+        };
+
+        if(allowRedirect || userConfirmed) {
+            router.events.off('routeChangeStart', routeChangeStart);
+        } else {
+            router.events.on('routeChangeStart', routeChangeStart);
+        }
+
+        return () => {
+            router.events.off('routeChangeStart', routeChangeStart);
+        };
+    }, [allowRedirect, userConfirmed]);
+
     return (
         <div className="w-full bg-gray-100 min-h-screen flex flex-row">
             <CreatorLayout />
@@ -274,14 +330,14 @@ const FilterDesigns: NextPage = () => {
                     className="w-10 h-10 flex md:hidden items-center justify-center bg-white shadow absolute top-20 right-0 translate-x-full rounded-r-lg"
                     onClick={() => setOpenSidebar(!openSidebar)}
                 >
-                    <ArrowRightIcon className={`w-6 ${!openSidebar ? `rotate-0` : `rotate-180`} transition`}/>
+                    <ArrowRightIcon className={`w-6 ${!openSidebar ? `rotate-0` : `rotate-180`} transition`} />
                 </button>
                 <div className="flex flex-col h-full p-4 bg-[#18191A] text-white">
                     <Button
                         className="w-full h-12 !text-lg mb-5 gap-2 !font-medium"
                         onClick={() => filterRef.current.click()}
                     >
-                        <ArrowDownTrayIcon className="w-6"/>
+                        <ArrowDownTrayIcon className="w-6" />
                         <span>Upload Filter Design</span>
                     </Button>
                     <input
@@ -291,6 +347,13 @@ const FilterDesigns: NextPage = () => {
                         accept=".png,.gif,.svg"
                         className="hidden"
                     />
+                    <div className="flex items-center justify-between px-4 py-1">
+                        <span>Show Filter in Tabs</span>
+                        <ToggleSwitch
+                            checked={campaignData?.activate_filters ?? false}
+                            onChange={(value) => handleSave(null, { activate_filters: value })}
+                        />
+                    </div>
                     <h2 className="text-base pb-[5px]">Select a Filter Template</h2>
                     <div className="h-12 mb-2">
                         <nav
@@ -302,8 +365,8 @@ const FilterDesigns: NextPage = () => {
                                     key={tab.id}
                                     onClick={() => setSelectedFilterTab(tab.id)}
                                     className={`${selectedFilterTab === tab.id
-                                            ? "text-black bg-white"
-                                            : "text-white bg-gray-700"
+                                        ? "text-black bg-white"
+                                        : "text-white bg-gray-700"
                                         } w-full group inline-flex justify-center items-center gap-1 py-2 text-[0.8rem] cursor-pointer px-2 border-black border-r last:border-0`}
                                 >
                                     <Image
@@ -339,7 +402,7 @@ const FilterDesigns: NextPage = () => {
                                         {filterDesign.author && (
                                             <TrashIcon
                                                 className="absolute z-20 w-5 h-5 top-2 right-2"
-                                                onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id) }
+                                                onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id)}
                                             />
                                         )}
                                         <div className="absolute top-0 left-0 object-cover">
@@ -377,7 +440,7 @@ const FilterDesigns: NextPage = () => {
                         className="!px-2 flex md:hidden"
                         onClick={handlePreview}
                     >
-                        <ArrowRightIcon className="w-5"/>
+                        <ArrowRightIcon className="w-5" />
                     </Button>
                     <Button
                         color="white"
@@ -447,8 +510,8 @@ const FilterDesigns: NextPage = () => {
                                     <div
                                         onClick={() => setSelectedFilterIndex(i)}
                                         className={`p-auto m-auto cursor-pointer ${!editMode && selectedFilterIndex === i
-                                                ? `hover:opacity-80`
-                                                : ``
+                                            ? `hover:opacity-80`
+                                            : ``
                                             } transition ${tabs.filter((item) => item.id === filter?.filter_design?.type)[0]?.width
                                             } bg-white shadow-lg ${selectedFilterIndex === i && `border-2 border-purple-600`
                                             }`}
@@ -534,13 +597,11 @@ const FilterDesigns: NextPage = () => {
                                                 <button
                                                     className="border border-gray-500 bg-white min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
                                                     style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
-                                                    onClick={() => 
-                                                        handleOpenSettingButtonModal(filter.button, i)
-                                                    }
+                                                // onClick={() =>  handleOpenSettingButtonModal(filter.button, i) }
                                                 >
                                                     {filter?.button?.icon
                                                         ?
-                                                        <div style={{ color: filter?.button?.textcolor ?? "#000"}}>
+                                                        <div style={{ color: filter?.button?.textcolor ?? "#000" }}>
                                                             <Image
                                                                 src={filter?.button?.icon}
                                                                 loader={({ src, width }) => { return src + "?w=" + width }}
@@ -549,18 +610,17 @@ const FilterDesigns: NextPage = () => {
                                                                 width={15}
                                                                 height={15}
                                                             />
-                                                        </div> 
-                                                            
+                                                        </div>
                                                         : <CameraIcon
                                                             className="!h-5 !w-5 text-gray-500"
                                                             aria-hidden="true"
-                                                            style={{ color: filter?.button?.textcolor ?? "#000"}}
+                                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
                                                         />
                                                     }
 
                                                     <span
                                                         className="text-gray-600 font-medium text-md break-all"
-                                                        style={{  color: filter?.button?.textcolor ?? "#000"}}
+                                                        style={{ color: filter?.button?.textcolor ?? "#000" }}
                                                     >
                                                         {filter?.button?.text}
                                                     </span>
@@ -583,8 +643,15 @@ const FilterDesigns: NextPage = () => {
                     </div>
                 )}
             </div>
-            <EmptyDrawer open={open} setOpen={setOpen} onSave={textStyleSave} title="Setting Button">
+            <EmptyDrawer open={open} setOpen={setOpen} onSave={saveSettings} title="Setting">
                 <div>
+                    <h2 className="text-center font-medium my-5">Filter Position</h2>
+                    <TextField
+                        label="Position"
+                        value={filterPosition}
+                        onChange={(e: any) => changeFilterPosition(e.target.value)}
+                    />
+                    <h2 className="text-center font-medium my-5">Button Settings</h2>
                     <TextField
                         label="Text on Button"
                         value={buttonStyle?.text}
@@ -611,6 +678,20 @@ const FilterDesigns: NextPage = () => {
                     />
                 </div>
             </EmptyDrawer>
+            <ConfirmModal
+                open={showConfirmModal}
+                setOpen={setShowConfirmModal}
+                handler={confirmed}
+                title={"Warning!"}
+                description={"Changes you made may not be saved."}
+            />
+            <Notification
+                show={showNotification}
+                onClose={() => setShowNotification(false)}
+                type="success"
+                title="Save Success!"
+                content="You have successfully saved the content."
+            />
         </div>
     );
 };

@@ -29,6 +29,7 @@ import { useAppContext } from "../../../context/context";
 import { FilterType, PlaceholderType } from '../../../utils/types';
 import { filterDesignWidths} from '../../../utils/constants';
 import { Font } from "@samuelmeuli/font-manager";
+import Notification from '../../../components/Notification';
 
 const FontPicker = dynamic(() => import('font-picker-react'), { ssr: false });
 
@@ -337,15 +338,15 @@ const Settings: NextPage = () => {
     contextCampaignData({ change_photo: text });
   };
 
-  useEffect(() => {
-    const loadFontPicker = async () => {
-        const FontPicker = (await import('font-picker-react')).default;
-        // Use FontPicker here
-    };
-    if (typeof window !== 'undefined') {
-        loadFontPicker();
-    }
-  }, []);
+  // useEffect(() => {
+  //   const loadFontPicker = async () => {
+  //       const FontPicker = (await import('font-picker-react')).default;
+  //       // Use FontPicker here
+  //   };
+  //   if (typeof window !== 'undefined') {
+  //       loadFontPicker();
+  //   }
+  // }, []);
 
   return (
     <div className="w-full bg-gray-100 min-h-screen flex flex-row">
@@ -670,12 +671,46 @@ const Settings: NextPage = () => {
                 </div>
                 <div className="relative rounded-md shadow-sm mb-2">
                   <textarea
-                    className="pl-3 block min-h-[160px] w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="pl-3 block min-h-[100px] w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     value={campaignData?.share_text ?? ""}
                     onChange={(e: any) => {
                       contextCampaignData({
                         ...campaignData,
                         share_text: e.target.value
+                      })
+                    }}
+                  />
+                </div>
+              </li>
+              <li className="px-4 py-1">
+                <div className="flex items-center justify-between mb-2">
+                  <span>Notification Title</span>
+                </div>
+                <div className="relative rounded-md shadow-sm mb-2">
+                  <textarea
+                    className="pl-3 block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    value={campaignData?.notification_title ?? ""}
+                    onChange={(e: any) => {
+                      contextCampaignData({
+                        ...campaignData,
+                        notification_title: e.target.value
+                      })
+                    }}
+                  />
+                </div>
+              </li>
+              <li className="px-4 py-1">
+                <div className="flex items-center justify-between mb-2">
+                  <span>Notification Text</span>
+                </div>
+                <div className="relative rounded-md shadow-sm mb-2">
+                  <textarea
+                    className="pl-3 block min-h-[100px] w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    value={campaignData?.notification_text ?? ""}
+                    onChange={(e: any) => {
+                      contextCampaignData({
+                        ...campaignData,
+                        notification_text: e.target.value
                       })
                     }}
                   />
@@ -1067,7 +1102,7 @@ const Settings: NextPage = () => {
                           <button className={`bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : "border-gray-800"}`}>
                             <ArrowDownTrayIcon className="w-5" />
                             <span
-                              className="font-medium break-all"
+                              className="font-medium break-words"
                               contentEditable
                               onBlur={(e) =>
                                 contextCampaignData({
@@ -1098,13 +1133,13 @@ const Settings: NextPage = () => {
             </div>
             <div className="w-full bg-white rounded-lg max-w-[350px]">
               {campaignData?.share_title && (
-                <h2 className="break-all w-full font-semibold text-lg p-3">
+                <h2 className="break-words w-full font-semibold text-lg p-3">
                   {campaignData?.share_title}
                 </h2>
               )}
               {campaignData?.share_text && (
                 <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                <span className="break-all mb-3 opacity-80 text-xs">{campaignData?.share_text}</span>
+                <span className="break-words mb-3 opacity-80 text-xs">{campaignData?.share_text}</span>
                 <button
                   className="text-sm hover:opacity-70 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                   onClick={() => copy(campaignData?.share_text ?? "")}

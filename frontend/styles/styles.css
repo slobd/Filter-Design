@@ -1,3 +1,10 @@
 .campaign-preview-carousel .carousel-status {
     right: 45px !important;
 }
+
+.campaign-preview-carousel .carousel .control-dots .dot {
+    width: 20px !important;
+    height: 4px !important;
+    margin: 0 5px !important;
+    border-radius: 0 !important;
+}

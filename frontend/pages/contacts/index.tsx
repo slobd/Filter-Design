@@ -28,7 +28,7 @@ const Contacts: NextPage = () => {
     setIsOpenAddContactDrawer(location.search.includes("add_contact"));
 
     fetchContacts();
-  }, []);
+  }, [user]);
 
   const fetchContacts = () => {
     APIService.contact.getAll(user?.email).then((res: any) => {
@@ -73,8 +73,8 @@ const Contacts: NextPage = () => {
     { id: "first_name", label: "First Name" },
     { id: "last_name", label: "Last Name" },
     { id: "company", label: "Company" },
-    { id: "campaigns", label: "Campaigns" },
-    { id: "created_at", label: "Date Added" },
+    // { id: "campaigns", label: "Campaigns" },
+    { id: "createdAt", label: "Date Added" },
     { id: "tags", label: "Tags" },
   ];
 

@@ -4,15 +4,6 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Transition } from "@headlessui/react";
 
-export type GalleryLightboxProps = {
-  show: boolean;
-  onClose: () => void;
-  items: any;
-  onDelete: (id: any) => void;
-  start: number;
-  imageHeight: number;
-};
-
 export type NotificationProps = {
   type: string;
   title: string;

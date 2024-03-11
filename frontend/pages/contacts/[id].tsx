@@ -17,8 +17,9 @@ const ContactDetail: NextPage = () => {
   useEffect(() => {
     APIService.contact.get(query?.id).then((res: any) => {
       setContact({ ...res.data });
+      console.log("data", res.data)
     });
-  }, []);
+  }, [query]);
 
   const handleDelete = () => {
     APIService.contact.delete(query?.id).then(() => {

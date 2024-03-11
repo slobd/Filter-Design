@@ -79,10 +79,13 @@ export type CampaignType = {
   active_slider_mode?: boolean | null,
   hide_size_buttons?: boolean | null,
   dark_mode?: boolean | null,
+  activate_filters?: boolean | null,
   password?: string | null,
   edge?: number | null,
   share_title?: string | null,
   share_text?: string | null,
+  notification_title?: string | null,
+  notification_text?: string | null,
   sharing_options?: sharingOptionType | undefined,
   show_gallery?: boolean | null,
   placeholder_image?: string | null,
@@ -139,6 +142,7 @@ export type GalleryType = {
   _id?: number | null,
   campaign: string | null,
   path: string | null,
+  updatedAt?: string,
 }
 
 export type TagType = {
