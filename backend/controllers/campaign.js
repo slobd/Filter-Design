@@ -19,6 +19,7 @@ const createCampaign = async (req, res) => {
         logo: req.file?.path || null,
         logo_setting: req.body.logo_setting,
         dark_mode: req.body.dark_mode,
+        activate_filters: req.body.activate_filters,
         password: hash,
         sharing_options: req.body.sharing_options,
         show_gallery: req.body.show_gallery,
@@ -32,6 +33,8 @@ const createCampaign = async (req, res) => {
         edge: req.body.edge,
         share_title: req.body.share_title,
         share_text: req.body.share_text,
+        notification_title: req.body.notification_title,
+        notification_text: req.body.notification_text,
         author: req.body.author,
         category: req.body.category,
         start_date: req.body.start_date,
@@ -82,6 +85,8 @@ const editCampaign = async (req, res) => {
       campaign.edge = req.body.edge ?? 14;
       campaign.share_title = req.body.share_title;
       campaign.share_text = req.body.share_text;
+      campaign.notification_title = req.body.notification_title;
+      campaign.notification_text = req.body.notification_text;
       campaign.author = req.body.author;
       campaign.category = req.body.category;
       campaign.start_date = req.body.start_date;
@@ -95,9 +100,13 @@ const editCampaign = async (req, res) => {
       campaign.data_privacy_link = req.body.data_privacy_link;
       campaign.active_slider_mode = req.body.active_slider_mode;
       campaign.hide_size_buttons = req.body.hide_size_buttons;
+      campaign.activate_filters = req.body.activate_filters;
       try {
         const dataToSave = await campaign.save();
-        res.status(200).json(campaign);
+        const _campaign = await Campaign.findOne({ _id: req.body._id }).populate(
+          "filters.filter_design"
+        );
+        res.status(200).json(_campaign);
       } catch (error) {
         res.status(200).json({ message: error.message });
       }

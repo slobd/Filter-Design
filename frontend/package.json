@@ -19,7 +19,6 @@
     "@types/react-syntax-highlighter": "^15.5.11",
     "axios": "^1.6.5",
     "copy-to-clipboard": "^3.3.3",
-    "crc": "^4.3.2",
     "dom-to-image": "^2.6.0",
     "dotenv": "^16.4.5",
     "flowbite-react": "^0.7.2",

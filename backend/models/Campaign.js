@@ -100,10 +100,13 @@ const campaignSchema = Schema(
     active_slider_mode: {type: Boolean, default: false},
     hide_size_buttons: {type: Boolean, default: false},
     dark_mode: { type: Boolean, default: false },
+    activate_filters: { type: Boolean, default: false},
     password: { type: String },
     edge: { type: Number, default: 14 },
     share_title: { type: String, default: "" },
     share_text: { type: String, default: "" },
+    notification_title: { type: String, default: "Download Success" },
+    notification_text: { type: String, default: "You have successfully downloaded the image." },
     sharing_options: {
       type: sharingOptionSchema,
       default: {

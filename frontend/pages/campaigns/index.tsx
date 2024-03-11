@@ -13,7 +13,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import crc from "crc";
+import { v4 as uuidv4 } from 'uuid';
 import Sidebar from "../../components/Layout/Sidebar";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
@@ -23,6 +23,7 @@ import Notification from "../../components/Notification";
 import { APIService } from "../../api";
 import { CampaignType, ColumnType, GalleryType } from '../../utils/types';
 import { useAppContext } from '../../context/context';
+import ConfirmModal from '../../components/modal/confirmModal';
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -30,14 +31,17 @@ function classNames(...classes: any) {
 
 const Signup: NextPage = () => {
   const router = useRouter();
-  const { user } = useAuth0();
+  const { user, loginWithRedirect } = useAuth0();
   const { campaigns, getInitData, contextCampaignData, contextResetCampaignData } = useAppContext();
   const [galleries, setGalleries] = useState<GalleryType[]>([]);
   const [showGallery, setShowGallery] = useState(false);
-  const [show, setShow] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-
-  const [imageHeight, setImageHeight] = useState(288);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationType, setNotificationType] = useState("success");
+  const [notificationTitle, setNotificationTitle] = useState("");
+  const [notificationContent, setNotificationContent] = useState("");
 
   const cols: ColumnType[] = [
     { id: "name", label: "Campaign Details" },
@@ -55,8 +59,7 @@ const Signup: NextPage = () => {
   }, [campaigns]);
 
   const handleCopyCampaign = (row: CampaignType) => {
-    console.log("copy campaign", row)
-    let slug = crc.crc32(moment().valueOf().toString());
+    let slug = uuidv4(); //crc.crc32(moment().valueOf().toString());
     APIService.campaign
       .create({
         ...row,
@@ -64,6 +67,9 @@ const Signup: NextPage = () => {
         slug: slug,
       })
       .then((res: any) => {
+        setNotificationTitle("Duplication Success!");
+        setNotificationContent("You have successfully duplicated a campaign")
+        setShowNotification(true);
         getInitData();
       });
   };
@@ -73,18 +79,27 @@ const Signup: NextPage = () => {
     setStartIndex(i);
   };
 
-  const handleDeleteCampaign = (id: any) => {
-    APIService.campaign.delete(id).then((res: any) => {
+  const deleteConfirmed = (value: any) => {
+    setDeleteConfirmModal(false);
+    if(value && deleteId)
+    APIService.campaign.delete(deleteId).then((res: any) => {
       if (res.data) {
         getInitData();
-        setShow(true);
+        setNotificationTitle("Delete Success!");
+        setNotificationContent("You have successfully deleted a campaign")
+        setShowNotification(true);
       }
     });
+  }
+
+  const handleDeleteCampaign = (id: any) => {
+    setDeleteId(id);
+    setDeleteConfirmModal(true);
   };
 
   const handleCreateFilterCampaign = () => {
     contextResetCampaignData();
-    let slug = crc.crc32(moment().valueOf().toString());
+    let slug = uuidv4(); //crc.crc32(moment().valueOf().toString());
     APIService.filter.getAll().then((filterRes: any) => {
       const filter = filterRes.data?.filter((i: any) => i.author == '')?.[0];
       APIService.campaign
@@ -108,11 +123,6 @@ const Signup: NextPage = () => {
         .then((res: any) => {
           if(res.data.slug) {
             router.push(`/creator/${res.data.slug}/basic`);
-            // APIService.uniqueLink
-            //   .create({ campaign: res.data._id })
-            //   .then((res) => {
-            //     // console.log(res);
-            //   });
           }
         });
     });
@@ -123,7 +133,7 @@ const Signup: NextPage = () => {
       const { acknowledged, deletedCount } = res.data;
       if (acknowledged === true && deletedCount > 0) {
         fetchGalleries();
-        setShow(true);
+        setShowNotification(true);
       }
     });
   };
@@ -133,6 +143,7 @@ const Signup: NextPage = () => {
       .getAll(user?.email)
       .then((res: any) => setGalleries(res.data));
   };
+  console.log("galleries", galleries)
 
   const renderRow = (row: CampaignType) => {
     return (
@@ -307,22 +318,23 @@ const Signup: NextPage = () => {
             <div className={`${galleries.length > 5 ? `-mx-2` : ``}`}>
               <div className="grid gap-4 grid-cols-2">
                 {galleries.slice(0, 8).map((gallery, i) => (
-                  <div className="relative group" key={gallery._id}>
+                  <div className="relative group" key={gallery?._id}>
                     <button
-                      className="absolute top-2 right-2 cursor-pointer opacity-0 transition group-hover:opacity-100 p-1.5 rounded bg-black"
-                      onClick={() => handleDeleteGallery(gallery._id)}
+                      className="p-[3px] z-10 absolute top-2 right-4 cursor-pointer opacity-0 transition group-hover:opacity-100 p-1.5 rounded bg-black"
+                      onClick={() => handleDeleteGallery(gallery?._id)}
                     >
-                      <TrashIcon className="w-5 text-white" />
+                      <TrashIcon className="w-4 text-white" />
                     </button>
-                      <Image
-                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery.path}`}
-                        className="rounded-lg cursor-pointer"
-                        onClick={() => handleShowGalleryLightbox(i)}
-                        width={120}
-                        height={120}
-                        alt=""
-                        loader={({ src, width }) => { return src + "?w=" + width }}
-                      />
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery?.path}`}
+                      className="rounded-lg cursor-pointer"
+                      onClick={() => handleShowGalleryLightbox(i)}
+                      width={120}
+                      height={120}
+                      alt=""
+                      loader={({ src, width }) => { return src + "?w=" + width }}
+                    />
+                    <div className='text-white text-[12px]'>{gallery?.updatedAt?.slice(0, 19).replace("T", " ")}</div>
                   </div>
                 ))}
               </div>
@@ -337,19 +349,26 @@ const Signup: NextPage = () => {
       </div>
 
       <Notification
-        show={show}
-        onClose={() => setShow(false)}
-        type="success"
-        title="Successfully deleted!"
-        content="Dummy content"
+        show={showNotification}
+        onClose={() => setShowNotification(false)}
+        type={notificationType}
+        title={notificationTitle}
+        content={notificationContent}
       />
+      
       <GalleryLightbox
         show={showGallery}
         onClose={() => setShowGallery(false)}
         onDelete={handleDeleteGallery}
         start={startIndex}
         items={galleries}
-        imageHeight={imageHeight}
+      />
+      <ConfirmModal
+          open={deleteConfirmModal}
+          setOpen={setDeleteConfirmModal}
+          handler={deleteConfirmed}
+          title={"Warning!"}
+          description={"Do you confirm to delete this campaign."}
       />
     </div>    
   )

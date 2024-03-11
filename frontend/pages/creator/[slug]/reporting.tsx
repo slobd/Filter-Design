@@ -110,8 +110,8 @@ const Reporting: NextPage = () => {
                                     className="rounded-lg cursor-pointer"
                                     loader={({ src, width }) => { return src + "?w=" + width }}
                                     quality={50}
-                                    width={15}
-                                    height={15}
+                                    width={350}
+                                    height={350}
                                 />
                             </div>
                         ))}

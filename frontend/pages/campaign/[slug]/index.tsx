@@ -9,18 +9,20 @@ import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
 import copy from "copy-to-clipboard";
+import { ThreeDots } from 'react-loader-spinner'
 import { dataURLtoFile } from "../../../utils";
 import { APIService } from "../../../api";
 import { CameraIcon } from '@heroicons/react/20/solid';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
+import { ArrowLeftIcon, ArrowRightIcon, } from '@heroicons/react/20/solid';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import TextField from "../../../components/common/TextField";
-import Button from "../../../components/common/Button";
 import { FaLinkedin, FaWhatsappSquare, FaFacebookSquare } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { FiSave } from "react-icons/fi";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import TextField from "../../../components/common/TextField";
+import Button from "../../../components/common/Button";
+import Notification from "../../../components/Notification";
 import { filterDesignWidths } from "../../../utils/constants";
 import { CampaignType, GalleryType, FilterType } from '../../../utils/types';
 interface FilterCardProps {
@@ -47,6 +49,11 @@ const User: NextPage = () => {
     const [filterloaded, setFilterloaded] = useState(0);
     const [timer, setTimer] = useState<any>(null);
     const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+    const [stackedViewMode, setStackedViewMode] = useState(true);
+    const [filters, setFilters] = useState<any>();
+    const [activeCarouselIndex, setActiveCarouselIndex] = useState(0)
+    const [showNotification, setShowNotification] = useState(false);
 
     const fileRef = useRef<any>();
     const filterTabRef = useRef<any>();
@@ -81,6 +88,7 @@ const User: NextPage = () => {
                         link.download = "image.png";
                         link.href = canvas.toDataURL('image/png');
                         link.click();
+                        setShowNotification(true);
                     });
         }
 
@@ -171,7 +179,7 @@ const User: NextPage = () => {
     // }
 
     const handleSlideChange = (index: any) => {
-        // changeCarouselHeight();
+        setActiveCarouselIndex(index)
     };
 
     // useEffect(() => {
@@ -183,14 +191,25 @@ const User: NextPage = () => {
     // }, [carouselHeight])
 
     useEffect(() => {
-        APIService.filter.getAll().then((filters: any[]) => {
-            if (query?.slug && query?.slug !== undefined) {
-                APIService.campaign.getBySlug(query?.slug).then((res: any) => {
-                    setCampaign({ ...res.data });
-                });
-            }
-        });
+        if (query?.slug && query?.slug !== undefined) {
+            APIService.campaign.getBySlug(query?.slug).then((res: any) => {
+                setCampaign({ ...res.data });
+                setFilters(res.data.filters);
+                if(res.data.activate_filters) {
+                    setFilters(res.data.filters?.filter((i: any) => i?.filter_design.type == 'square'))
+                }
+            });
+        }
     }, [query?.slug]);
+
+    useEffect(() => {
+        if(stackedViewMode) {
+            setFilters(campaign?.filters?.filter((i: any) => i.filter_design.type == 'square'))
+        } else {
+            setFilters(campaign?.filters?.filter((i: any) => i.filter_design.type == 'story'))
+        }
+        console.log("filters", filters)
+    }, [stackedViewMode])
 
     useEffect(() => {
         if (campaign?.filters) {
@@ -209,6 +228,12 @@ const User: NextPage = () => {
             if (campaign?.filters.length <= 1) setVisibileSizeButtons(false);
         }
     }, [campaign]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoaded(true);
+        }, 2000)
+    }, [])
 
     // useEffect(() => {
     //   const handleScroll = () => {
@@ -238,147 +263,157 @@ const User: NextPage = () => {
         const [tab, setTab] = useState("download");
         return (
             <>
-                <div
-                    className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
-                    key={i}
-                    style={{
-                        maxWidth: filter.filter_design?.type == "square" ? 350 : 290
-                    }}
-                >
+                <ThreeDots
+                    visible={!loaded}
+                    height="80"
+                    width="80"
+                    color="#4fa94d"
+                    radius="9"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                />
+                { loaded && 
                     <div
-                        className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
-                        style={{ borderRadius: campaign?.edge ?? 14 }}
+                        className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
+                        key={i}
+                        style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
                     >
-                        <div id={`card-${i}`} className={`w-full relative flex-shrink-0`}>
+                        <div
+                            className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
+                            style={{ borderRadius: campaign?.edge ?? 14 }}
+                        >
+                            <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} h-[350px] relative flex-shrink-0 overflow-hidden`}>
+                                <div
+                                    className="object-cover absolute max-w-none"
+                                    style={{
+                                        width: `${filter?.rnd?.w}%`,
+                                        height: `${filter?.rnd?.h}%`,
+                                        left: `${filter?.rnd?.x}%`,
+                                        top: `${filter?.rnd?.y}%`,
+                                    }}
+                                >
+                                    {image[i] ? (
+                                        <Image
+                                            src={URL.createObjectURL(image[i])}
+                                            loader={({ src, width }) => { return src + "?w=" + width }}
+                                            quality={50}
+                                            priority={true}
+                                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
+                                            loader={({ src, width }) => { return src + "?w=" + width }}
+                                            quality={50}
+                                            priority={true}
+                                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        />
+                                    )}
+                                </div>
+                                <div className="relative z-10">
+                                    <Image
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                        loader={({ src, width }) => { return src + "?w=" + width }}
+                                        quality={50}
+                                        priority={true}
+                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                    // onLoad={imageLoaded}
+                                    />
+                                </div>
+                            </div>
+
                             <div
-                                className="object-cover absolute max-w-none"
-                                style={{
-                                    width: `${filter?.rnd?.w}%`,
-                                    height: `${filter?.rnd?.h}%`,
-                                    left: `${filter?.rnd?.x}%`,
-                                    top: `${filter?.rnd?.y}%`,
-                                }}
+                                className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
+                                    }`}
                             >
                                 {image[i] ? (
-                                    <Image
-                                        src={URL.createObjectURL(image[i])}
-                                        loader={({ src, width }) => { return src + "?w=" + width }}
-                                        quality={50}
-                                        priority={true}
-                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    />
-                                ) : (
-                                    <Image
-                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
-                                        loader={({ src, width }) => { return src + "?w=" + width }}
-                                        quality={50}
-                                        priority={true}
-                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    />
-                                )}
-                            </div>
-                            <div className="relative z-10">
-                                <Image
-                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                    loader={({ src, width }) => { return src + "?w=" + width }}
-                                    quality={50}
-                                    priority={true}
-                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                // onLoad={imageLoaded}
-                                />
-                            </div>
-                        </div>
-
-                        <div
-                            className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
-                                }`}
-                        >
-                            {image[i] ? (
-                                <>
-                                    <span className="text-[13px] dark:text-white">
-                                        {campaign?.download_share}
-                                    </span>
-                                    <div className="flex gap-3">
-                                        {campaign?.sharing_options?.linkedin && (
-                                            <FaLinkedin className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                        )}
-                                        {campaign?.sharing_options?.facebook && (
-                                            <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                        )}
-                                        {campaign?.sharing_options?.twitter && (
-                                            <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer" />
-                                        )}
-                                        {campaign?.sharing_options?.whatsapp && (
-                                            <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer" />
-                                        )}
-                                    </div>
-                                    {tab === "download" && campaign?.sharing_options?.download && (
-                                        <button
-                                            className="!bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60"
-                                            onClick={() => handleDownload(i)}
-                                        >
-                                            <ArrowDownTrayIcon className="!w-5 text-white" />
-                                            <span className="font-medium text-white break-all">
-                                                {campaign?.download_image}
-                                            </span>
-                                        </button>
-                                    )}
-                                    {tab === "email" && campaign?.sharing_options?.email && (
-                                        <div className="flex items-center gap-2">
-                                            <TextField
-                                                placeholder="E-Mail Address"
-                                                className="text-center"
-                                                wrapperClassName="!mb-0"
-                                                value={email}
-                                                onChange={(e: any) => setEmail(e.target.value)}
-                                            />
-                                            <Button onClick={() => handleSendEmail(i)}>Send</Button>
+                                    <>
+                                        <span className="text-[13px] dark:text-white">
+                                            {campaign?.download_share}
+                                        </span>
+                                        <div className="flex gap-3">
+                                            {campaign?.sharing_options?.linkedin && (
+                                                <FaLinkedin className="text-[#0077B5] text-[50px] transition hover:opacity-70 cursor-pointer" />
+                                            )}
+                                            {campaign?.sharing_options?.facebook && (
+                                                <FaFacebookSquare className="text-[#3A559F] text-[50px] transition hover:opacity-70 cursor-pointer" />
+                                            )}
+                                            {campaign?.sharing_options?.twitter && (
+                                                <FaXTwitter className="mt-[3px] text-white bg-black text-[44px] rounded-md transition hover:opacity-70 cursor-pointer" />
+                                            )}
+                                            {campaign?.sharing_options?.whatsapp && (
+                                                <FaWhatsappSquare className="text-[#29A71A] text-[50px] transition hover:opacity-70 cursor-pointer" />
+                                            )}
                                         </div>
-                                    )}
-                                </>
-                            ) : null}
+                                        {tab === "download" && campaign?.sharing_options?.download && (
+                                            <button
+                                                className="!bg-blue-900 max-w-full min-w-[232px] flex justify-center items-center gap-2 min-h-11 rounded shadow px-3 py-[6px] bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-800 transition hover:opacity-60"
+                                                onClick={() => handleDownload(i)}
+                                            >
+                                                <ArrowDownTrayIcon className="!w-5 text-white" />
+                                                <span className="font-medium text-white break-all">
+                                                    {campaign?.download_image}
+                                                </span>
+                                            </button>
+                                        )}
+                                        {tab === "email" && campaign?.sharing_options?.email && (
+                                            <div className="flex items-center gap-2">
+                                                <TextField
+                                                    placeholder="E-Mail Address"
+                                                    className="text-center"
+                                                    wrapperClassName="!mb-0"
+                                                    value={email}
+                                                    onChange={(e: any) => setEmail(e.target.value)}
+                                                />
+                                                <Button onClick={() => handleSendEmail(i)}>Send</Button>
+                                            </div>
+                                        )}
+                                    </>
+                                ) : null}
 
-                            <div className="relative">
-                                <button
-                                    className="!border !border-gray-500 bg-white max-w-full min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
-                                    onClick={() => handleClickUploadButton(i)}
-                                    style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
-                                >
-                                    {filter?.button?.icon
-                                        ?
-                                        <div
-                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
-                                        >
-                                            <Image
-                                                src={filter.button.icon}
-                                                className="!w-5 invert"
-                                                loader={({ src, width }) => { return src + "?w=" + width }}
-                                                quality={50}
-                                                width={15}
-                                                height={15}
-                                            />
-                                        </div>
-
-                                        : <CameraIcon
-                                            className="!h-5 !w-5 text-gray-500"
-                                            aria-hidden="true"
-                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
-                                        />
-                                    }
-                                    <span
-                                        className="text-gray-600 font-medium text-md break-all"
-                                        style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                <div className="relative">
+                                    <button
+                                        className="!border !border-gray-500 bg-white max-w-full min-w-[232px] flex justify-center items-center gap-2 rounded shadow p-2 transition hover:opacity-60"
+                                        onClick={() => handleClickUploadButton(i)}
+                                        style={{ background: filter?.button?.bgcolor ?? "#FFF" }}
                                     >
-                                        {image[i] ? "Upload new Photo" : filter?.button?.text}
-                                    </span>
-                                </button>
+                                        {filter?.button?.icon
+                                            ?
+                                            <div
+                                                style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                            >
+                                                <Image
+                                                    src={filter.button.icon}
+                                                    className="!w-5 invert"
+                                                    loader={({ src, width }) => { return src + "?w=" + width }}
+                                                    quality={50}
+                                                    width={15}
+                                                    height={15}
+                                                />
+                                            </div>
+
+                                            : <CameraIcon
+                                                className="!h-5 !w-5 text-gray-500"
+                                                aria-hidden="true"
+                                                style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                            />
+                                        }
+                                        <span
+                                            className="text-gray-600 font-medium text-md break-all"
+                                            style={{ color: filter?.button?.textcolor ?? "#000" }}
+                                        >
+                                            {image[i] ? "Upload new Photo" : filter?.button?.text}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
                 <div className="w-0 h-0 overflow-hidden" >
                     <div
                         className={`w-max h-max relative overflow-hidden`}
@@ -582,16 +617,22 @@ const User: NextPage = () => {
                         )}
                         <div className="relative flex flex-col items-center z-10 w-full">
                             {!campaign?.hide_size_buttons && visibileSizeButtons ?
-                                <div className="flex gap-4">
+                                loaded && <div className="flex gap-4">
                                     <Button
-                                        className={`${!campaign?.active_slider_mode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
-                                    // onClick={() => setStackedViewMode(true)}
+                                        className={`${stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
+                                    onClick={() => {
+                                        campaign?.activate_filters && setStackedViewMode(true);
+                                        setActiveCarouselIndex(0);
+                                    }}
                                     >
                                         Square Size
                                     </Button>
                                     <Button
-                                        className={`${campaign?.active_slider_mode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
-                                    // onClick={() => setStackedViewMode(false)}
+                                        className={`${!stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
+                                    onClick={() => {
+                                        campaign?.activate_filters && setStackedViewMode(false);
+                                        setActiveCarouselIndex(0);
+                                    }}
                                     >
                                         Story Size
                                     </Button>
@@ -603,13 +644,13 @@ const User: NextPage = () => {
                                     className="z-10 md:fixed !ml-[680px] hidden md:inline-block !top-[504px] gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg"
                                 >
                                     {campaign?.share_title && (
-                                        <h2 className="break-all w-full font-semibold text-lg p-3">
+                                        <h2 className="break-words w-full font-semibold text-lg p-3">
                                             {campaign.share_title}
                                         </h2>
                                     )}
                                     {campaign?.share_text && (
                                         <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                                            <span className="break-all mb-3 opacity-80 text-xs">{campaign.share_text}</span>
+                                            <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
                                             <button
                                                 className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                 onClick={() => copy(campaign?.share_text ?? "")}
@@ -622,9 +663,9 @@ const User: NextPage = () => {
                                 </div>
                                 : null
                             }
-                            {!campaign?.active_slider_mode || campaign?.filters?.length == 1 ?
+                            {!campaign?.active_slider_mode || filters?.length == 1 ?
                                 <div className="items-center flex flex-col" ref={filterTabRef}>
-                                    {campaign?.filters?.map((filter, i) => (
+                                    {filters?.map((filter: any, i: any) => (
                                         <div key={i} className="pt-8 pb-12">
                                             <FilterCard filter={filter} i={i} />
                                         </div>
@@ -634,13 +675,13 @@ const User: NextPage = () => {
                                             className="z-10 justify-content md:hidden m relative gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg"
                                         >
                                             {campaign?.share_title && (
-                                                <h2 className="break-all w-full font-semibold text-lg p-3">
+                                                <h2 className="break-words w-full font-semibold text-lg p-3">
                                                     {campaign.share_title}
                                                 </h2>
                                             )}
                                             {campaign?.share_text && (
                                                 <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                                                    <span className="break-all mb-3 opacity-80 text-xs">{campaign.share_text}</span>
+                                                    <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
                                                     <button
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign.share_text ?? "")}
@@ -661,33 +702,33 @@ const User: NextPage = () => {
                                         showThumbs={false}
                                         interval={undefined}
                                         // transitionTime={0}
+                                        selectedItem={activeCarouselIndex}
                                         stopOnHover={true}
                                         onChange={handleSlideChange}
                                         renderArrowPrev={(onClickHandler, hasPrev, label) =>
                                             hasPrev &&
-                                            <div className="absolute top-0 z-10 w-7 h-[85%] mt-10 mb-20 flex items-center justify-center">
+                                            <div className="absolute top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
-                                                    className="bg-gray-300 rounded cursor-pointer w-6 h-20 flex flex-col justify-center items-center"
+                                                    className="hover:bg-white bg-gray-300 rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
                                                 >
-                                                    <ChevronLeftIcon className="!h-7 !w-7 !text-gray-800" />
+                                                    <ArrowLeftIcon className="!h-5 !w-5 !text-gray-800" />
                                                 </div>
                                             </div>
                                         }
                                         renderArrowNext={(onClickHandler, hasNext, label) =>
                                             hasNext &&
-                                            <div className="absolute right-0 top-0 z-10 w-7 h-[85%] mt-10 mb-20 flex items-center justify-center">
+                                            <div className="absolute right-0 top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
-                                                    className="bg-gray-300 rounded cursor-pointer w-6 h-20 flex flex-col justify-center items-center"
+                                                    className="hover:bg-white bg-gray-300 rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
                                                 >
-                                                    <ChevronRightIcon className="!h-7 !w-7 !text-gray-800" />
+                                                    <ArrowRightIcon className="!h-5 !w-5 !text-gray-800" />
                                                 </div>
                                             </div>
-
                                         }
                                     >
-                                        {campaign?.filters?.map((filter, i) => (
+                                        {filters?.map((filter: any, i: any) => (
                                             <div key={i} className=" carousel-item pt-8 pb-12 flex justify-center">
                                                 <FilterCard filter={filter} i={i} />
                                             </div>
@@ -698,13 +739,13 @@ const User: NextPage = () => {
                                             className="z-10 sm:absolute relative gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg bottom-10 sm:left-[445px] left-0 sm:mt-40 mt-20 ml-auto mr-auto"
                                         >
                                             {campaign?.share_title && (
-                                                <h2 className="break-all w-full font-semibold text-lg p-3">
+                                                <h2 className="break-words w-full font-semibold text-lg p-3">
                                                     {campaign.share_title}
                                                 </h2>
                                             )}
                                             {campaign?.share_text && (
                                                 <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                                                    <span className="break-all mb-3 opacity-80 text-xs">{campaign.share_text}</span>
+                                                    <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
                                                     <button
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
                                                         onClick={() => copy(campaign?.share_text ?? "")}
@@ -792,6 +833,13 @@ const User: NextPage = () => {
                     </div>
                 </Dialog>
             </Transition.Root>
+            <Notification
+                show={showNotification}
+                onClose={() => setShowNotification(false)}
+                type="success"
+                title={campaign?.notification_title ?? ""}
+                content={campaign?.notification_text ?? ""}
+            />
         </>
     );
 };
