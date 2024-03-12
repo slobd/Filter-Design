@@ -350,6 +350,13 @@ const Settings: NextPage = () => {
     });
   };
 
+  const handleCopyTextButtonText = (text: any) => {
+    contextCampaignData({
+      ...campaignData,
+      copy_text: text 
+    });
+  };
+
   // useEffect(() => {
   //   const loadFontPicker = async () => {
   //       const FontPicker = (await import('font-picker-react')).default;
@@ -1175,7 +1182,7 @@ const Settings: NextPage = () => {
             </div>
             <div className="w-full bg-white rounded-lg max-w-[350px]">
               {campaignData?.share_title && (
-                <h2 className="break-words w-full font-semibold text-lg p-3">
+                <h2 className="break-words w-full font-semibold text-lg p-3 leading-normal">
                   {campaignData?.share_title}
                 </h2>
               )}
@@ -1184,10 +1191,10 @@ const Settings: NextPage = () => {
                 <span className="break-words mb-3 opacity-80 text-xs">{campaignData?.share_text}</span>
                 <button
                   className="text-sm hover:opacity-70 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
-                  onClick={() => copy(campaignData?.share_text ?? "")}
+                  onClick={() => setOpenDownloadPanel(true)}
                 >
                   <FiSave className="text-xl mr-2"/>
-                  Copy Text
+                  { campaignData?.copy_text ?? "Copy Text"}
                 </button>
               </div>
               )}
@@ -1440,19 +1447,26 @@ const Settings: NextPage = () => {
       <EmptyDrawer
         open={openDownloadPanel}
         setOpen={setOpenDownloadPanel}
-        title="Download Image Options"
+        title="Button Options"
       >
-        <TextField
-          type="text"
-          value={campaignData?.download_image?.text}
-          label="Download Image Button Text"
-          onChange={(e: any) => handleChangeDownloadImage("text", e.target.value)}
-        />
         <TextField
           type="text"
           value={campaignData?.change_photo}
           label="Change Image Button Text"
           onChange={(e: any) => handleChangePhotoText(e.target.value)}
+        />
+        <TextField
+          type="text"
+          value={campaignData?.copy_text}
+          label="Copy Text Button Text"
+          onChange={(e: any) => handleCopyTextButtonText(e.target.value)}
+        />
+        <hr className="my-5"/>
+        <TextField
+          type="text"
+          value={campaignData?.download_image?.text}
+          label="Download Image Button Text"
+          onChange={(e: any) => handleChangeDownloadImage("text", e.target.value)}
         />
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
