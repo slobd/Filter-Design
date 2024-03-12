@@ -29,8 +29,8 @@ const campaignDefaultValue: CampaignType = {
   start_date: "",
   location: "",
   event_name: "event",
-  imprint_link: "https://livedab.com/imprint",
-  data_privacy_link: "https://livedab.com/privacy",
+  imprint_link: "https://about.livedab.com/impressum/",
+  data_privacy_link: "https://about.livedab.com/datenschutzbestimmungen/",
 }
 
 const contextDefaultValues: ContextType = {

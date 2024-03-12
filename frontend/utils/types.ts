@@ -108,6 +108,7 @@ export type CampaignType = {
   imprint_link?: string | null,
   data_privacy_link?: string | null,
   updatedAt?: string | null,
+  createdAt?: string | null,
 }
 
 export type ContactType = {

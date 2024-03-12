@@ -154,7 +154,7 @@ const Settings: NextPage = () => {
           ...campaignData?.title,
           text: campaignData?.title?.text != ""
             ? campaignData?.title?.text
-            : "Share your Photo with your Network and Friends"
+            : "Share your Photo with network and friends"
         }
       })
     }
@@ -966,12 +966,12 @@ const Settings: NextPage = () => {
                 suppressContentEditableWarning={true}
                 onBlur={(e) => handleChangeTitle("text", e.target.innerText)}
                 style={{
-                  fontFamily: campaignData?.title?.font_family ?? "Inter",
+                  fontFamily: campaignData?.title?.font_family ?? "inherit",
                   fontWeight: (campaignData?.title?.font_weight ?? 700) * 1,
                   fontSize: (campaignData?.title?.font_size ?? 30) * 1,
                   color: (campaignData?.title?.color ?? "#000"),
                   paddingTop: (campaignData?.title?.padding_top ?? 0) * 1,
-                  paddingBottom: (campaignData?.title?.padding_bottom ?? 20) * 1,
+                  paddingBottom: (campaignData?.title?.padding_bottom ?? 5) * 1,
                   letterSpacing: (campaignData?.title?.letter_spacing ?? 0) * 1,
                   lineHeight: `${campaignData?.title?.line_height}px`,
                 }}
@@ -988,12 +988,12 @@ const Settings: NextPage = () => {
                   handleChangeDescription("text", e.target.innerText)
                 }
                 style={{
-                  fontFamily: campaignData?.description?.font_family ?? "Inter",
+                  fontFamily: campaignData?.description?.font_family ?? "inherit",
                   fontWeight: (campaignData?.description?.font_weight ?? 400) * 1,
                   fontSize: (campaignData?.description?.font_size ?? 14) * 1,
                   color: (campaignData?.description?.color ?? "#000"),
                   paddingTop: (campaignData?.description?.padding_top ?? 0) * 1,
-                  paddingBottom: (campaignData?.description?.padding_bottom ?? 20) * 1,
+                  paddingBottom: (campaignData?.description?.padding_bottom ?? 0) * 1,
                   letterSpacing: (campaignData?.description?.letter_spacing ?? 0) * 1,
                   lineHeight: `${campaignData?.description?.line_height}px`,
                 }}
@@ -1140,7 +1140,7 @@ const Settings: NextPage = () => {
                             className={`!bg-blue-900 max-w-full min-w-[232px] !flex !justify-center !items-center gap-2 min-h-11 rounded shadow !px-3 !py-[6px] border border-gray-100 transition hover:opacity-60 ${campaignData?.dark_mode ? "bg-gray-800 border-gray-800" : "border-gray-800"}`}
                             onClick={() => setOpenDownloadPanel(true)}
                             style={{
-                              fontFamily: campaignData?.download_image?.font_family ?? "Inter",
+                              fontFamily: campaignData?.download_image?.font_family ?? "inherit",
                               fontWeight: (campaignData?.download_image?.font_weight ?? 400) * 1,
                               fontSize: (campaignData?.download_image?.font_size ?? 14) * 1,
                               color: (campaignData?.download_image?.color ?? "#FFF"),
@@ -1240,28 +1240,6 @@ const Settings: NextPage = () => {
         setOpen={setOpenTitlePanel}
         title="Title Options"
       >
-        {/* <div className="mb-2">
-          <label className="inline-block font-medium text-sm mb-2">
-            Font Family
-          </label>
-          {typeof window !== 'undefined' && 
-            <FontPicker
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-              activeFontFamily={campaignData?.title?.font_family ?? "Inter"}
-              onChange={(font: any) => handleChangeTitle("font_family", font.family)} 
-              pickerId={""} 
-              families={[]} 
-              categories={[]} 
-              scripts={[]} 
-              variants={[]} 
-              filter={function (font: Font): boolean {
-                throw new Error("Function not implemented.");
-              } } 
-              limit={0}
-              sort={"alphabet"}            
-            />
-          }
-        </div> */}
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
@@ -1327,27 +1305,6 @@ const Settings: NextPage = () => {
         setOpen={setOpenDescriptionPanel}
         title="Description Options"
       >
-        {/* <div className="mb-2">
-          <label className="inline-block font-medium text-sm mb-2">
-            Font Family
-          </label>
-          {typeof window !== 'undefined' && 
-            <FontPicker
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-              activeFontFamily={campaignData?.description?.font_family ?? "Inter"}
-              onChange={(font: any) => handleChangeDescription("font_family", font.family)}pickerId={""} 
-              families={[]} 
-              categories={[]} 
-              scripts={[]} 
-              variants={[]} 
-              filter={function (font: Font): boolean {
-                throw new Error("Function not implemented.");
-              } } 
-              limit={0}
-              sort={"alphabet"}
-            />
-          }
-        </div> */}
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
@@ -1420,28 +1377,6 @@ const Settings: NextPage = () => {
         setOpen={setOpenTitlePanel}
         title="Title Options"
       >
-        {/* <div className="mb-2">
-          <label className="inline-block font-medium text-sm mb-2">
-            Font Family
-          </label>
-          {typeof window !== 'undefined' && 
-            <FontPicker
-              apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-              activeFontFamily={campaignData?.title?.font_family ?? "Inter"}
-              onChange={(font: any) => handleChangeTitle("font_family", font.family)} 
-              pickerId={""} 
-              families={[]} 
-              categories={[]} 
-              scripts={[]} 
-              variants={[]} 
-              filter={function (font: Font): boolean {
-                throw new Error("Function not implemented.");
-              } } 
-              limit={0}
-              sort={"alphabet"}            
-            />
-          }
-        </div> */}
         <div className="mb-2">
           <label className="block font-medium text-sm mb-2">Font Weight</label>
           <select
