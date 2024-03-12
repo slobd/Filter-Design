@@ -8,8 +8,14 @@
 }
 
 .campaign-preview-carousel .carousel .control-dots .dot {
-    width: 20px !important;
-    height: 4px !important;
+    width: 30px !important;
+    height: 3px !important;
     margin: 0 5px !important;
     border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color:#50504f !important;
+}
+
+.campaign-preview-carousel .carousel .control-dots .dot.selected {
+    background-color:#4374cf !important;
 }
