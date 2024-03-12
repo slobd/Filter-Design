@@ -40,7 +40,7 @@ const tabs = [
         id: "story",
         label: "Story",
         icon: "/assets/images/icons/rectangle.svg",
-        width: "max-w-[250px]",
+        width: "max-w-[290px]",
     },
     {
         id: "custom",
@@ -73,7 +73,7 @@ const FilterDesigns: NextPage = () => {
     const { campaignData, contextCampaignData } = useAppContext();
     const [filterDesigns, setFilterDesigns] = useState<FilterDesignType[]>([])
     const [open, setOpen] = useState(false);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState(10);
     const [openSidebar, setOpenSidebar] = useState(false);
     const [selectedFilterTab, setSelectedFilterTab] = useState("square");
     const [buttonStyle, setButtonStyle] = useState<ButtonType>();
@@ -267,11 +267,12 @@ const FilterDesigns: NextPage = () => {
     }, [openSidebar]);
 
     useEffect(() => {
-        if (campaignData?.filters?.length && filterDesigns?.length && selectedFilterIndex) {
+        if (campaignData?.filters?.length && filterDesigns?.length) {
             const filterDesignElement = document.querySelector<HTMLDivElement>(
                 `#filter-design-${selectedFilterIndex}`
             );
             if (filterDesignElement) {
+                console.log("filterDesignElement", filterDesignElement.clientHeight)
                 setDimension({
                     ...dimension,
                     width: filterDesignElement.clientWidth,
@@ -412,7 +413,7 @@ const FilterDesigns: NextPage = () => {
                                                 quality={50}
                                                 priority={true}
                                                 width={filterDesign?.type == 'story' ? 290 : 350}
-                                                height={filterDesign?.type == 'story' ? 450 : 350}
+                                                height={filterDesign?.type == 'story' ? 515 : 350}
                                             />
                                         </div>
                                         {filterDesign.image && (
@@ -423,7 +424,7 @@ const FilterDesigns: NextPage = () => {
                                                     quality={50}
                                                     priority={true}
                                                     width={filterDesign?.type == 'story' ? 290 : 350}
-                                                    height={filterDesign?.type == 'story' ? 450 : 350}
+                                                    height={filterDesign?.type == 'story' ? 515 : 350}
                                                 />
                                             </div>
                                         )}
@@ -560,37 +561,48 @@ const FilterDesigns: NextPage = () => {
                                                     style={{
                                                         borderTopLeftRadius: campaignData.edge ?? 14 - 3,
                                                         borderTopRightRadius: campaignData.edge ?? 14 - 3,
+                                                        width: filter?.filter_design?.type == 'story' ? "290px" : "350px",
+                                                        height: filter?.filter_design?.type == 'story' ? "500px" : "350px"
                                                     }}
                                                 >
                                                     <Image
                                                         src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                                        id={`filter-design-${i}`}
+                                                        // id={`filter-design-${i}`}
                                                         loader={({ src, width }) => { return src + "?w=" + width }}
                                                         quality={50}
                                                         priority={true}
                                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
+                                                        height={filter?.filter_design?.type == 'story' ? 515 : 350}
                                                     />
                                                 </div>
                                             )}
-                                            <div
-                                                className="absolute object-cover pointer-events-none max-w-none"
+                                            {/* <div
+                                                className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                                                 style={{
-                                                    width: `${filter?.rnd?.w}%`,
-                                                    height: `${filter?.rnd?.h}%`,
-                                                    left: `${filter?.rnd?.x}%`,
-                                                    top: `${filter?.rnd?.y}%`,
+                                                    // width: `${filter?.rnd?.w}%`,
+                                                    // height: `${filter?.rnd?.h}%`,
+                                                    width: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                                                    height: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                                                    // left: `${filter?.rnd?.x}%`,
+                                                    // top: `${filter?.rnd?.y}%`,
                                                 }}
-                                            >
-                                                <Image
+                                            > */}
+                                                <img
+                                                    className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                                                    id={`filter-design-${i}`}
                                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
-                                                    loader={({ src, width }) => { return src + "?w=" + width }}
-                                                    quality={50}
-                                                    priority={true}
-                                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                                    height={filter?.filter_design?.type == 'story' ? 450 : 350}
+                                                    style={{
+                                                        width: `${filter?.rnd?.w}%`,
+                                                        height: `${filter?.rnd?.h}%`,
+                                                        left: `${filter?.rnd?.x}%`,
+                                                        top: `${filter?.rnd?.y}%`,
+                                                    }}
+                                                    // loader={({ src, width }) => { return src + "?w=" + width }}
+                                                    // quality={50}
+                                                    // priority={true}
+                                                    // layout={'fill'}
                                                 />
-                                            </div>
+                                            {/* </div> */}
                                         </div>
                                         <div className="flex justify-center p-6">
                                             <div className="relative">

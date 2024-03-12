@@ -93,7 +93,8 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                   quality={50}
                   priority={true}
                   className="max-w-xs md:max-w-md mb-8 rounded-lg object-cover"
-                  width={500} height={700}
+                  width={item?.filter_design?.type == 'square' ? 400 : 290} 
+                  height={item?.filter_design?.type == 'square' ? 400 : 515}
                   alt=""
                 />
               <div className="h-full">

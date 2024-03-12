@@ -1011,7 +1011,7 @@ const Settings: NextPage = () => {
                     <div
                       className={`w-full ${
                         filterDesignWidths[filter?.filter_design?.type ?? "square"]
-                      } bg-white dark:bg-gray-700 shadow-lg ${campaignData?.dark_mode ? "bg-gray-700" : ""}`}
+                      } bg-white shadow-lg overflow-hidden ${campaignData?.dark_mode ? "bg-gray-700" : ""}`}
                       style={{ borderRadius: campaignData?.edge ?? 14  }}
                     >
                       <div
@@ -1021,54 +1021,14 @@ const Settings: NextPage = () => {
                           borderTopRightRadius:  campaignData?.edge ?? 14,
                         }}
                       >
-                        
-                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && (
-                          <div
-                            className="absolute object-cover max-w-none"
-                            style={{
-                              width: `${filter?.rnd?.w}%`,
-                              height: `${filter?.rnd?.h}%`,
-                              left: `${filter?.rnd?.x}%`,
-                              top: `${filter?.rnd?.y}%`,
-                            }}
-                          >
-                            <Image
-                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImage}`}
-                              loader={({ src, width }) => { return src + "?w=" + width }}
-                              quality={50}
-                              priority={true}
-                              width={filter?.filter_design?.type == 'square' ? 350 : 290}
-                              height={filter?.filter_design?.type == 'square' ? 450 : 350}
-                            />
-                          </div>
-                          
-                        )}
-                        {filter?.filter_design?.type == 'story' && selectedPlaceholderImageForStory && (
-                          <div
-                            className="absolute object-cover max-w-none"
-                            style={{
-                              width: `${filter?.rnd?.w}%`,
-                              height: `${filter?.rnd?.h}%`,
-                              left: `${filter?.rnd?.x}%`,
-                              top: `${filter?.rnd?.y}%`,
-                            }}
-                          >
-                            <Image
-                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImageForStory}`}
-                              loader={({ src, width }) => { return src + "?w=" + width }}
-                              quality={50}
-                              priority={true}
-                              width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                              height={filter?.filter_design?.type == 'story' ? 450 : 350}
-                            />
-                          </div>
-                        )}
                         {filter?.filter_design?.image && (
                           <div
-                            className="relative z-10"
+                            className="relative object-cover z-10 pointer-events-none"
                             style={{
-                              borderTopLeftRadius:  campaignData?.edge ?? 14,
-                              borderTopRightRadius:  campaignData?.edge ?? 14,
+                              borderTopLeftRadius:  campaignData?.edge ?? 14 - 3,
+                              borderTopRightRadius:  campaignData?.edge ?? 14 - 3,
+                              width: filter?.filter_design?.type == 'story' ? "290px" : "350px",
+                              height: filter?.filter_design?.type == 'story' ? "500px" : "350px"
                             }}
                           >
                             <Image
@@ -1077,9 +1037,74 @@ const Settings: NextPage = () => {
                               quality={50}
                               priority={true}
                               width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                              height={filter?.filter_design?.type == 'story' ? 450 : 350}
+                              height={filter?.filter_design?.type == 'story' ? 515 : 350}
                             />
                           </div>
+                        )}
+                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && (
+                          // <div
+                          //   className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                          //   style={{
+                          //     // width: `${filter?.rnd?.w}%`,
+                          //     // height: `${filter?.rnd?.h}%`,
+                          //     width: filter?.filter_design?.type == 'square' ? "350px" : "500px",
+                          //     height: filter?.filter_design?.type == 'square' ? "350px" : "500px",
+                          //     left: `${filter?.rnd?.x}%`,
+                          //     top: `${filter?.rnd?.y}%`,
+                          //   }}
+                          // >
+                          //   <img
+                          //     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImage}`}
+                          //     // loader={({ src, width }) => { return src + "?w=" + width }}
+                          //     // quality={50}
+                          //     // priority={true}
+                          //     // width={filter?.filter_design?.type == 'square' ? 350 : 290}
+                          //     // height={filter?.filter_design?.type == 'square' ? 515 : 350}
+                          //   />
+                          // </div>
+                          <img
+                              className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'square' ? campaignData?.placeholder_image : campaignData?.placeholder_story_image}`}
+                              style={{
+                                  width: `${filter?.rnd?.w}%`,
+                                  height: `${filter?.rnd?.h}%`,
+                                  left: `${filter?.rnd?.x}%`,
+                                  top: `${filter?.rnd?.y}%`,
+                              }}
+                          />
+                          
+                        )}
+                        {filter?.filter_design?.type == 'story' && selectedPlaceholderImageForStory && (
+                          // <div
+                          //   className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                          //   style={{
+                          //     // width: `${filter?.rnd?.w}%`,
+                          //     // height: `${filter?.rnd?.h}%`,
+                          //     width: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                          //     height: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                          //     left: `${filter?.rnd?.x}%`,
+                          //     top: `${filter?.rnd?.y}%`,
+                          //   }}
+                          // >
+                          //   <img
+                          //     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImageForStory}`}
+                          //     // loader={({ src, width }) => { return src + "?w=" + width }}
+                          //     // quality={50}
+                          //     // priority={true}
+                          //     // width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                          //     // height={filter?.filter_design?.type == 'story' ? 515 : 350}
+                          //   />
+                          // </div>
+                          <img
+                              className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
+                              style={{
+                                  width: `${filter?.rnd?.w}%`,
+                                  height: `${filter?.rnd?.h}%`,
+                                  left: `${filter?.rnd?.x}%`,
+                                  top: `${filter?.rnd?.y}%`,
+                              }}
+                          />
                         )}
                       </div>
                       <div className="flex flex-col items-center p-4 pb-6 relative gap-2">

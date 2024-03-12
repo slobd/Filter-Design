@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 import domtoimage from "dom-to-image";
-import html2canvas from 'html2canvas';
 import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
@@ -84,7 +83,6 @@ const User: NextPage = () => {
                 ? alert("Please select an image")
                 : domtoimage
                     .toPng(dom, { quality: 0.95, width, height })
-                // : html2canvas(dom)
                     .then((canvas: any) => {
                         var link = document.createElement("a");
                         link.download = "image.png";
@@ -114,7 +112,6 @@ const User: NextPage = () => {
                 const { width, height } = dom.getBoundingClientRect();
                 domtoimage
                     .toPng(dom, { quality: 0.95, width, height })
-                // html2canvas(dom)
                     .then((canvas: any) => {
                         const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
                         APIService.gallery
@@ -123,9 +120,9 @@ const User: NextPage = () => {
                                 filter_design_id: _filter_design_id,
                                 author: user?.email,
                                 image: dataURLtoFile(canvas, fileRef.current.files[0]?.name),
-                                // .toDataURL('image/png')
                             })
                             .then((res: any) => {
+                                console.log(" gallery created", res.data.path)
                                 let clonedGallery = [...gallery];
                                 clonedGallery[selectedIndex] = res.data.path;
                                 setGallery([...clonedGallery]);
@@ -223,7 +220,7 @@ const User: NextPage = () => {
                     style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
                 >
                     <div
-                        className={`bg-white dark:bg-gray-700 overflow-hidden`}
+                        className={`bg-white dark:bg-gray-700 shadow-md overflow-hidden`}
                         style={{ borderRadius: campaign?.edge ?? 14 }}
                     >
                         <ThreeDots
@@ -237,52 +234,35 @@ const User: NextPage = () => {
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
                         <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[450px]"} ${loaded ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
-                            <div
-                                className="absolute"
-                                style={{
-                                    width: `${filter?.rnd?.w}%`,
-                                    height: `${filter?.rnd?.h}%`,
-                                    left: `${filter?.rnd?.x}%`,
-                                    top: `${filter?.rnd?.y}%`,
-                                }}
-                            >
-                                {image[i] ? (
-                                    <Image
-                                        src={URL.createObjectURL(image[i])}
-                                        loader={({ src, width }) => { return src + "?w=" + width }}
-                                        quality={50}
-                                        priority={true}
-                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
-                                        alt=""
-                                    />
-                                ) : (
-                                    <Image
-                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
-                                        loader={({ src, width }) => { return src + "?w=" + width }}
-                                        quality={50}
-                                        priority={true}
-                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
-                                        alt=""
-                                    />
-                                )}
-                            </div>
+                            {image[i] ? (
+                                <img
+                                    className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                                    src={URL.createObjectURL(image[i])}
+                                    style={{
+                                        width: `${filter?.rnd?.w}%`,
+                                        height: `${filter?.rnd?.h}%`,
+                                        left: `${filter?.rnd?.x}%`,
+                                        top: `${filter?.rnd?.y}%`,
+                                    }}
+                                />
+                            ) : (
+                                <img
+                                    className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
+                                    style={{
+                                        width: `${filter?.rnd?.w}%`,
+                                        height: `${filter?.rnd?.h}%`,
+                                        left: `${filter?.rnd?.x}%`,
+                                        top: `${filter?.rnd?.y}%`,
+                                    }}
+                                />
+                            )}
                             <div className="absolute z-10">
                                 <img
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 450 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 515 : 350}
                                 />
-                                {/* <Image
-                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                    loader={({ src, width }) => { return src }}
-                                    quality={50}
-                                    priority={true}
-                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                    alt=""
-                                /> */}
                             </div>
                         </div>
 

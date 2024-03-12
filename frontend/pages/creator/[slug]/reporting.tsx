@@ -23,6 +23,7 @@ const Reporting: NextPage = () => {
         endDate: new Date(),
     });
     const [filterDesignReport, setFilterDesignReport] = useState<any>({});
+    const [filterDesigns, setFilterDesigns] = useState<any[]>([])
 
     const handleChangeDateRange = (target: any, value: any) => {
         setDateRange({ ...dateRange, [target]: value });
@@ -38,6 +39,7 @@ const Reporting: NextPage = () => {
             })
             .then((res: any) => {
                 setReport({ ...res.data });
+                setFilterDesigns(res.data?.galleries?.map((item: any) => item.filter_design));
                 const _filterDesigns = res.data?.galleries?.map((i: any) => i.filter_design);
                 const _filterDesignReports = _filterDesigns.reduce((acc: any, item: any) => {
                     const key = item?.image;
@@ -45,7 +47,6 @@ const Reporting: NextPage = () => {
                     return acc;
                 }, {});
                 setFilterDesignReport(_filterDesignReports)
-
             })
             .catch((error: any) => console.log(error));
     }, [dateRange, query?.slug]);
@@ -121,8 +122,8 @@ const Reporting: NextPage = () => {
                                         className="rounded-lg cursor-pointer"
                                         loader={({ src, width }) => { return src + "?w=" + width }}
                                         quality={50}
-                                        width={150}
-                                        height={150}
+                                        width={gallery?.filter_design?.type == 'square' ? 350 : 290}
+                                        height={gallery?.filter_design?.type == 'square' ? 350 : 515}
                                     />
                                 </div>
                             ))}
@@ -143,8 +144,8 @@ const Reporting: NextPage = () => {
                                         className="rounded-lg cursor-pointer"
                                         loader={({ src, width }) => { return src + "?w=" + width }}
                                         quality={50}
-                                        width={130}
-                                        height={130}
+                                        width={120}
+                                        height={filterDesigns.filter((i: any) => i._id == item)?.[0]?.filter_design?.type == 'square' ? 120 : 213}
                                     />
                                     <div className="">{filterDesignReport[item]} time(s) used</div>
                                 </div>
