@@ -56,11 +56,9 @@ export function ContextWrapper({ children } : Props) {
     }, [user]);
 
     const getInitData = () => {
-      console.log("user email", user?.email)
       APIService.campaign
         .getAll(user?.email)
         .then((res: any) =>{
-          console.log("context campaigns", res.data);
           if(res.data) setCampaigns(res.data);
       })
     }
@@ -71,7 +69,6 @@ export function ContextWrapper({ children } : Props) {
 
     const contextCampaignData = (newCampaign: CampaignType) => {
       setCampaignData(newCampaign);
-      console.log("set CampaignData", campaignData);
     }
 
     const contextResetCampaignData = () => {

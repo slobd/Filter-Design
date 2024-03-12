@@ -145,7 +145,6 @@ const Signup: NextPage = () => {
       .getAll(user?.email)
       .then((res: any) => setGalleries(res.data));
   };
-  console.log("galleries", galleries)
 
   const renderRow = (row: CampaignType) => {
     return (
@@ -332,7 +331,7 @@ const Signup: NextPage = () => {
                       className="rounded-lg cursor-pointer"
                       onClick={() => handleShowGalleryLightbox(i)}
                       width={120}
-                      height={120}
+                      height={140}
                       alt=""
                       loader={({ src, width }) => { return src + "?w=" + width }}
                     />

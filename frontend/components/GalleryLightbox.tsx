@@ -93,7 +93,6 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                   quality={50}
                   priority={true}
                   className="max-w-xs md:max-w-md mb-8 rounded-lg object-cover"
-                  // style={{ height: `${imageHeight - 230}px` }}
                   width={500} height={700}
                   alt=""
                 />

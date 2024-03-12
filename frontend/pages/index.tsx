@@ -43,7 +43,7 @@ const Home: NextPage = () => {
   const {loading, loadingHandle} = useAppContext();
 
   const handleCreateFilterCampaign = () => {
-    console.log("handleCreateFilterCampaign");
+
   };
 
   useEffect(() => {

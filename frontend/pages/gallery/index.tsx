@@ -30,8 +30,6 @@ const Gallery: NextPage = () => {
     }
     
   }, [user?.email]);
-
-  console.log("galleries", galleries);
   
   const getFilteredGalleries = (galleries: any[]) => {
     return galleries.filter((gallery: any) => {

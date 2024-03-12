@@ -412,7 +412,7 @@ const FilterDesigns: NextPage = () => {
                                                 quality={50}
                                                 priority={true}
                                                 width={filterDesign?.type == 'story' ? 290 : 350}
-                                                height={350}
+                                                height={filterDesign?.type == 'story' ? 450 : 350}
                                             />
                                         </div>
                                         {filterDesign.image && (
@@ -423,7 +423,7 @@ const FilterDesigns: NextPage = () => {
                                                     quality={50}
                                                     priority={true}
                                                     width={filterDesign?.type == 'story' ? 290 : 350}
-                                                    height={350}
+                                                    height={filterDesign?.type == 'story' ? 450 : 350}
                                                 />
                                             </div>
                                         )}
@@ -569,7 +569,7 @@ const FilterDesigns: NextPage = () => {
                                                         quality={50}
                                                         priority={true}
                                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
                                                     />
                                                 </div>
                                             )}
@@ -588,7 +588,7 @@ const FilterDesigns: NextPage = () => {
                                                     quality={50}
                                                     priority={true}
                                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                                    height={filter?.filter_design?.type == 'story' ? 450 : 350}
                                                 />
                                             </div>
                                         </div>

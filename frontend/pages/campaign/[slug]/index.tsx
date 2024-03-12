@@ -75,7 +75,6 @@ const User: NextPage = () => {
             gallery: `${process.env.NEXT_PUBLIC_APP_API_URL}/${gallery[i]}`,
         });
     };
-    console.log("laoded", loaded)
 
     const handleDownload = (i: any) => {
         const dom = document.querySelector(`#card-${i}`);
@@ -108,14 +107,11 @@ const User: NextPage = () => {
         setImage([...clonedImage]);
         setOpen(false);
         setPassed(true);
-        // changeCarouselHeight();
         setTimeout(() => {
             
-            console.log(selectedIndex, "selectedIndex", fileRef.current.files[0])
             const dom = document.querySelector(`#card-${selectedIndex}`);
             if (dom) {
                 const { width, height } = dom.getBoundingClientRect();
-                console.log("dom", dom)
                 domtoimage
                     .toPng(dom, { quality: 0.95, width, height })
                 // html2canvas(dom)
@@ -130,7 +126,6 @@ const User: NextPage = () => {
                                 // .toDataURL('image/png')
                             })
                             .then((res: any) => {
-                                console.log(" gallery created", res.data)
                                 let clonedGallery = [...gallery];
                                 clonedGallery[selectedIndex] = res.data.path;
                                 setGallery([...clonedGallery]);
@@ -139,7 +134,6 @@ const User: NextPage = () => {
                     .catch(function (error: any) {
                         console.error('Error generating image: ', error);
                     });
-                // changeCarouselHeight();
                 fileRef.current.value = "";
             }
         }, 10000);
@@ -167,33 +161,9 @@ const User: NextPage = () => {
         fileRef.current.value = "";
     };
 
-    // const changeCarouselHeight = () => {
-    //     const _timer = setTimeout(() => {
-    //         const currentItem = document.querySelector(`.campaign-preview-carousel .slide.selected .carousel-item`);
-    //         if (currentItem) {
-    //             setCarouselHeight(currentItem.clientHeight);
-    //             setFilterloaded(prev => prev + 1);
-    //         }
-    //     }, 10);
-    //     setTimer(_timer);
-    // }
-
-    // const imageLoaded = () => {
-    //     if (filterloaded > 0 || timer) return;
-    //     // changeCarouselHeight();
-    // }
-
     const handleSlideChange = (index: any) => {
         setActiveCarouselIndex(index)
     };
-
-    // useEffect(() => {
-    //     if (carouselHeight < 500) return;
-    //     const slideWrapper = document.querySelector<HTMLElement>(`.campaign-preview-carousel .slider-wrapper`);
-    //     if (slideWrapper) {
-    //         slideWrapper.style.height = carouselHeight + 'px';
-    //     }
-    // }, [carouselHeight])
 
     useEffect(() => {
         if (query?.slug && query?.slug !== undefined) {
@@ -235,39 +205,13 @@ const User: NextPage = () => {
     }, [campaign]);
 
     useEffect(() => {
-        console.log("user and campa", user?.email, "::::::::", campaigns.length)
         if(!user?.email != undefined && campaigns.length > 0) {
-            console.log("setLoaded  soon")
             setTimeout(() => {
                 setLoaded(true);
             }, 2500)
         }
         
     }, [user?.email, campaigns])
-
-    // useEffect(() => {
-    //   const handleScroll = () => {
-    //     if(!campaign?.active_slider_mode || campaign?.filters.length == 1){
-    //       const element = filterTabRef.current;
-    //       if (element) {
-    //         const rect = element.getBoundingClientRect();
-    //         console.log('Element position:1111111', rect);
-    //         setGrayHeight((rect.top + rect.bottom) / 2)
-    //       }
-    //     } else {
-    //       const element2 = filterTabRef2.current;
-    //       if (element2) {
-    //         const rect = element2.getBoundingClientRect();
-    //         console.log('Element position:2222222', rect);
-    //         setGrayHeight((rect.top + rect.bottom) / 2)
-    //       }
-    //     }
-    //   };
-    //   window.addEventListener('resize', handleScroll);
-    //   return () => {
-    //     window.removeEventListener('resize', handleScroll);
-    //   };
-    // }, [campaign])
 
     const FilterCard: NextPage<FilterCardProps> = ({ filter, i }) => {
         const [tab, setTab] = useState("download");
@@ -279,7 +223,7 @@ const User: NextPage = () => {
                     style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
                 >
                     <div
-                        className={`bg-white dark:bg-gray-700 shadow-lg overflow-hidden`}
+                        className={`bg-white dark:bg-gray-700 overflow-hidden`}
                         style={{ borderRadius: campaign?.edge ?? 14 }}
                     >
                         <ThreeDots
@@ -292,7 +236,7 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px]": "w-[290px]"} ${loaded ? 'visible' : 'invisible'} h-[350px] relative flex-shrink-0 overflow-hidden`}>
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[450px]"} ${loaded ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
                             <div
                                 className="absolute"
                                 style={{
@@ -309,7 +253,7 @@ const User: NextPage = () => {
                                         quality={50}
                                         priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
                                         alt=""
                                     />
                                 ) : (
@@ -319,7 +263,7 @@ const User: NextPage = () => {
                                         quality={50}
                                         priority={true}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 450 : 350}
                                         alt=""
                                     />
                                 )}
@@ -328,7 +272,7 @@ const User: NextPage = () => {
                                 <img
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                                     width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                                    height={filter?.filter_design?.type == 'story' ? 450 : 350}
                                 />
                                 {/* <Image
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
@@ -724,7 +668,6 @@ const User: NextPage = () => {
                                         showArrows={true}
                                         showThumbs={false}
                                         interval={undefined}
-                                        // transitionTime={0}
                                         selectedItem={activeCarouselIndex}
                                         stopOnHover={true}
                                         onChange={handleSlideChange}
