@@ -49,7 +49,7 @@ const User: NextPage = () => {
     const [carouselHeight, setCarouselHeight] = useState(0);
     const [filterloaded, setFilterloaded] = useState(0);
     const [timer, setTimer] = useState<any>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [loaded, setLoaded] = useState(false);
     const [stackedViewMode, setStackedViewMode] = useState(true);
     const [filters, setFilters] = useState<any>();
@@ -106,13 +106,13 @@ const User: NextPage = () => {
         setOpen(false);
         setPassed(true);
         setTimeout(() => {
-            
             const dom = document.querySelector(`#card-${selectedIndex}`);
             if (dom) {
                 const { width, height } = dom.getBoundingClientRect();
                 domtoimage
                     .toPng(dom, { quality: 0.95, width, height })
                     .then((canvas: any) => {
+                        setLoading(true);
                         const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
                         APIService.gallery
                             .create({
@@ -126,6 +126,9 @@ const User: NextPage = () => {
                                 let clonedGallery = [...gallery];
                                 clonedGallery[selectedIndex] = res.data.path;
                                 setGallery([...clonedGallery]);
+                                setTimeout(() => {
+                                    setLoading(false);
+                                }, 2000)
                             });
                     })
                     .catch(function (error: any) {
@@ -133,7 +136,7 @@ const User: NextPage = () => {
                     });
                 fileRef.current.value = "";
             }
-        }, 10000);
+        }, 300);
     };
 
     const handleConfirm = () => {
@@ -159,7 +162,11 @@ const User: NextPage = () => {
     };
 
     const handleSlideChange = (index: any) => {
-        setActiveCarouselIndex(index)
+        setLoading(true);
+        setActiveCarouselIndex(index);
+        setTimeout(() => {
+            setLoading(false);
+        }, 100)
     };
 
     useEffect(() => {
@@ -180,7 +187,6 @@ const User: NextPage = () => {
         } else {
             setFilters(campaign?.filters?.filter((i: any) => i.filter_design.type == 'story'))
         }
-        console.log("filters", filters)
     }, [stackedViewMode])
 
     useEffect(() => {
@@ -205,6 +211,7 @@ const User: NextPage = () => {
         if(!user?.email != undefined && campaigns.length > 0) {
             setTimeout(() => {
                 setLoaded(true);
+                setLoading(false);
             }, 2500)
         }
         
@@ -224,7 +231,7 @@ const User: NextPage = () => {
                         style={{ borderRadius: campaign?.edge ?? 14 }}
                     >
                         <ThreeDots
-                            visible={!loaded}
+                            visible={loading}
                             height="80"
                             width="80"
                             color="#E7E8EA"
@@ -233,7 +240,7 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[450px]"} ${loaded ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[450px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
                             {image[i] ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
@@ -655,7 +662,7 @@ const User: NextPage = () => {
                                             hasPrev &&
                                             <div className="absolute top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
-                                                    className="hover:bg-white bg-gray-300 rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
+                                                    className="bg-white hover:bg-gray-300 shadow-md rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
                                                 >
                                                     <ArrowLeftIcon className="!h-5 !w-5 !text-gray-800" />
@@ -666,7 +673,7 @@ const User: NextPage = () => {
                                             hasNext &&
                                             <div className="absolute right-0 top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
-                                                    className="hover:bg-white bg-gray-300 rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
+                                                    className="bg-white hover:bg-gray-300 shadow-md rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
                                                 >
                                                     <ArrowRightIcon className="!h-5 !w-5 !text-gray-800" />
