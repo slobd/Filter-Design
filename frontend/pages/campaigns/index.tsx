@@ -318,7 +318,7 @@ const Signup: NextPage = () => {
             </div>
             <div className={`${galleries.length > 5 ? `-mx-2` : ``}`}>
               <div className="grid gap-4 grid-cols-2">
-                {galleries.slice(0, 8).map((gallery, i) => (
+                {galleries.slice(0, 8).map((gallery: any, i) => (
                   <div className="relative group" key={gallery?._id}>
                     <button
                       className="p-[3px] z-10 absolute top-2 right-4 cursor-pointer opacity-0 transition group-hover:opacity-100 p-1.5 rounded bg-black"
@@ -331,7 +331,7 @@ const Signup: NextPage = () => {
                       className="rounded-lg cursor-pointer"
                       onClick={() => handleShowGalleryLightbox(i)}
                       width={120}
-                      height={140}
+                      height={gallery?.filter_design?.type == 'square' ? 120 : 213}
                       alt=""
                       loader={({ src, width }) => { return src + "?w=" + width }}
                     />
