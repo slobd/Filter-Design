@@ -79,17 +79,19 @@ const User: NextPage = () => {
         const dom = document.querySelector(`#card-${i}`);
         if (dom) {
             const { width, height } = dom.getBoundingClientRect();
+            const options = { quality: 0.95, width, height };
             !image
                 ? alert("Please select an image")
-                : domtoimage
-                    .toPng(dom, { quality: 0.95, width, height })
-                    .then((canvas: any) => {
+                : domtoimage.toPng(dom, options).then((res: any) => {
+                    domtoimage.toPng(dom, options).then((canvas: any) => {
+                    
                         var link = document.createElement("a");
                         link.download = "image.png";
                         link.href = canvas;
                         link.click();
                         setShowNotification(true);
                     });
+                })
         }
 
     };
@@ -109,27 +111,28 @@ const User: NextPage = () => {
             const dom = document.querySelector(`#card-${selectedIndex}`);
             if (dom) {
                 const { width, height } = dom.getBoundingClientRect();
-                domtoimage
-                    .toPng(dom, { quality: 0.95, width, height })
-                    .then((canvas: any) => {
-                        setLoading(true);
-                        const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
-                        APIService.gallery
-                            .create({
-                                campaign_id: campaign?._id,
-                                filter_design_id: _filter_design_id,
-                                author: user?.email,
-                                image: dataURLtoFile(canvas, fileRef.current.files[0]?.name),
-                            })
-                            .then((res: any) => {
-                                console.log(" gallery created", res.data.path)
-                                let clonedGallery = [...gallery];
-                                clonedGallery[selectedIndex] = res.data.path;
-                                setGallery([...clonedGallery]);
-                                setTimeout(() => {
-                                    setLoading(false);
-                                }, 2000)
-                            });
+                const options = { quality: 0.95, width, height };
+                domtoimage.toPng(dom, options).then((res: any) => {
+                        domtoimage.toPng(dom, options).then((canvas: any) => {
+                            setLoading(true);
+                            const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
+                            APIService.gallery
+                                .create({
+                                    campaign_id: campaign?._id,
+                                    filter_design_id: _filter_design_id,
+                                    author: user?.email,
+                                    image: dataURLtoFile(canvas, fileRef.current.files[0]?.name),
+                                })
+                                .then((res: any) => {
+                                    console.log(" gallery created", res.data.path)
+                                    let clonedGallery = [...gallery];
+                                    clonedGallery[selectedIndex] = res.data.path;
+                                    setGallery([...clonedGallery]);
+                                    setTimeout(() => {
+                                        setLoading(false);
+                                    }, 2000)
+                                });
+                        })
                     })
                     .catch(function (error: any) {
                         console.error('Error generating image: ', error);
@@ -620,7 +623,7 @@ const User: NextPage = () => {
                                         onChange={handleSlideChange}
                                         renderArrowPrev={(onClickHandler, hasPrev, label) =>
                                             hasPrev &&
-                                            <div className="absolute top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
+                                            <div className="absolute md:left-0 left-20 top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
                                                     className="bg-white hover:bg-gray-300 shadow-md rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
@@ -631,7 +634,7 @@ const User: NextPage = () => {
                                         }
                                         renderArrowNext={(onClickHandler, hasNext, label) =>
                                             hasNext &&
-                                            <div className="absolute right-0 top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
+                                            <div className="absolute md:right-0 right-20 top-0 z-10 w-8 h-[85%] mt-10 mb-20 flex items-center justify-center">
                                                 <div
                                                     className="bg-white hover:bg-gray-300 shadow-md rounded-full cursor-pointer w-8 h-8 flex flex-col justify-center items-center"
                                                     onClick={onClickHandler}
