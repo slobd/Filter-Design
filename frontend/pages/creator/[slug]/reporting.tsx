@@ -44,7 +44,6 @@ const Reporting: NextPage = () => {
                     acc[key] = (acc[key] || 0) + 1;
                     return acc;
                 }, {});
-                console.log("_filterDesignReports", Object.keys(_filterDesignReports))
                 setFilterDesignReport(_filterDesignReports)
 
             })

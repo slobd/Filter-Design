@@ -2,6 +2,10 @@
     right: 45px !important;
 }
 
+.campaign-preview-carousel .slide {
+    align-self: center;
+}
+
 .campaign-preview-carousel .carousel .control-dots .dot {
     width: 20px !important;
     height: 4px !important;

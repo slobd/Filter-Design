@@ -209,8 +209,6 @@ const Settings: NextPage = () => {
     }
   };
 
-  console.log("placeholders", placeholders)
-
   const handleChangeBackgroundColor = (e: any) => {
     setBackgroundColor(e);
     contextCampaignData({
@@ -1040,7 +1038,7 @@ const Settings: NextPage = () => {
                               quality={50}
                               priority={true}
                               width={filter?.filter_design?.type == 'square' ? 350 : 290}
-                              height={filter?.filter_design?.type == 'square' ? 350 : 350}
+                              height={filter?.filter_design?.type == 'square' ? 450 : 350}
                             />
                           </div>
                           
@@ -1061,7 +1059,7 @@ const Settings: NextPage = () => {
                               quality={50}
                               priority={true}
                               width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                              height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                              height={filter?.filter_design?.type == 'story' ? 450 : 350}
                             />
                           </div>
                         )}
@@ -1079,7 +1077,7 @@ const Settings: NextPage = () => {
                               quality={50}
                               priority={true}
                               width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                              height={filter?.filter_design?.type == 'story' ? 350 : 350}
+                              height={filter?.filter_design?.type == 'story' ? 450 : 350}
                             />
                           </div>
                         )}
