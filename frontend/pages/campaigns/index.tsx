@@ -188,8 +188,9 @@ const Signup: NextPage = () => {
               </a>
               <span className="text-[0.8rem] text-gray-400">
                 {row?.filters?.length}x Filters added | Created:{" "}
-                {moment(row?.updatedAt).format("DD.MM.YYYY - hh:mma")}
+                {moment(row?.createdAt).format("DD.MM.YYYY - hh:mma")}
               </span>
+              <span></span>
             </div>
           </div>
         </Col>

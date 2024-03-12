@@ -301,7 +301,7 @@ const User: NextPage = () => {
                                             className="!bg-blue-900 max-w-full min-w-[232px] !flex !justify-center !items-center gap-2 min-h-11 rounded shadow !px-3 !py-[6px] border border-gray-100 transition hover:opacity-60"
                                             onClick={() => handleDownload(i)}
                                             style={{
-                                                fontFamily: campaign?.download_image?.font_family ?? "Inter",
+                                                fontFamily: campaign?.download_image?.font_family ?? "inherit",
                                                 fontWeight: (campaign?.download_image?.font_weight ?? 400) * 1,
                                                 fontSize: (campaign?.download_image?.font_size ?? 14) * 1,
                                                 color: (campaign?.download_image?.color ?? "#FFF"),
@@ -458,49 +458,9 @@ const User: NextPage = () => {
 
     return (
         <>
-            {/* {campaign?.title && (
-                <div className="hidden">
-                    <FontPicker
-                        apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-                        activeFontFamily={campaign?.title?.font_family ?? "Inter"}
-                        // onChange={(font: any) => handleChangeTitle("font_family", font.family)}
-                        onChange={(font: any) => {}}
-                        pickerId={""}
-                        families={[]}
-                        categories={[]}
-                        scripts={[]}
-                        variants={[]}
-                        filter={function (font: Font): boolean {
-                            throw new Error("Function not implemented.");
-                        }}
-                        limit={0}
-                        sort={"alphabet"}
-                    />
-                </div>
-            )}
-            {campaign?.description && (
-                <div className="hidden">
-                    <FontPicker
-                        apiKey={process.env.NEXT_PUBLIC_GOOGLE_FONT_API_KEY ?? "AIzaSyAIFjmFcyJq3yyRyW96NdNvpllmd5ZJeCE"}
-                        activeFontFamily={campaign?.description?.font_family ?? "Inter"}
-                        // onChange={(font: any) => handleChangeTitle("font_family", font.family)}
-                        onChange={(font: any) => {}}
-                        pickerId={""}
-                        families={[]}
-                        categories={[]}
-                        scripts={[]}
-                        variants={[]}
-                        filter={function (font: Font): boolean {
-                            throw new Error("Function not implemented.");
-                        }}
-                        limit={0}
-                        sort={"alphabet"}
-                    />
-                </div>
-            )} */}
             <div className={`${campaign?.dark_mode ? `dark` : ``}`}>
                 <div
-                    className={`dark:bg-gray-800 relative ${campaign?.dark_mode ? "!bg-gray-800" : ""}`}
+                    className={`relative ${campaign?.dark_mode ? "!bg-gray-800" : ""}`}
                     style={{
                         background:
                             campaign?.background?.type === "color"
@@ -511,7 +471,7 @@ const User: NextPage = () => {
                     <div className="absolute top-0 left-0 right-0 bottom-0">
                         <div style={{ height: grayHeight }} />
                         <div
-                            className="w-full bg-black opacity-5"
+                            className="w-full bg-[#F7FAFC]"
                             style={{ height: `calc(100% - ${grayHeight}px)` }}
                         />
                     </div>
@@ -539,12 +499,12 @@ const User: NextPage = () => {
                             <h2
                                 className="text-center dark:!text-white"
                                 style={{
-                                    fontFamily: campaign?.title?.font_family ?? "Inter",
+                                    fontFamily: campaign?.title?.font_family ?? "inherit",
                                     fontWeight: (campaign?.title?.font_weight ?? 700) * 1,
                                     fontSize: (campaign?.title?.font_size ?? 30) * 1,
                                     color: (campaign?.title?.color ?? "#000"),
                                     paddingTop: (campaign?.title?.padding_top ?? 0) * 1,
-                                    paddingBottom: (campaign?.title?.padding_bottom ?? 20) * 1,
+                                    paddingBottom: (campaign?.title?.padding_bottom ?? 5) * 1,
                                     letterSpacing: (campaign?.title?.letter_spacing ?? 0) * 1,
                                     lineHeight: `${campaign?.title?.line_height}px`,
                                 }}
@@ -556,12 +516,12 @@ const User: NextPage = () => {
                             <p
                                 className="text-center text-gray-500 dark:!text-gray-300"
                                 style={{
-                                    fontFamily: campaign?.description?.font_family ?? "Inter",
+                                    fontFamily: campaign?.description?.font_family ?? "inherit",
                                     fontWeight: (campaign?.description?.font_weight ?? 400) * 1,
                                     fontSize: (campaign?.description?.font_size ?? 14) * 1,
                                     color: (campaign?.description?.color ?? "#000"),
                                     paddingTop: (campaign?.description?.padding_top ?? 0) * 1,
-                                    paddingBottom: (campaign?.description?.padding_bottom ?? 20) * 1,
+                                    paddingBottom: (campaign?.description?.padding_bottom ?? 0) * 1,
                                     letterSpacing: (campaign?.description?.letter_spacing ?? 0) * 1,
                                     lineHeight: `${campaign?.description?.line_height}px`,
                                 }}
