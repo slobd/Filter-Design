@@ -406,16 +406,14 @@ const FilterDesigns: NextPage = () => {
                                                 onClick={(e) => handleDeleteFilterDesign(e, filterDesign._id)}
                                             />
                                         )}
-                                        <div className="absolute top-0 left-0 object-cover">
-                                            <Image
-                                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
-                                                loader={({ src, width }) => { return src + "?w=" + width }}
-                                                quality={50}
-                                                priority={true}
-                                                width={filterDesign?.type == 'story' ? 290 : 350}
-                                                height={filterDesign?.type == 'story' ? 515 : 350}
-                                            />
-                                        </div>
+                                        <img
+                                            className="absolute top-0 left-0 object-cover"
+                                            src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
+                                            style={{
+                                                width: `${filterDesign?.type == 'square' ? 140 : 90}px`,
+                                                height: `${filterDesign?.type == 'square' ? 140 : 160}px`,
+                                            }}
+                                        />
                                         {filterDesign.image && (
                                             <div className="relative z-10">
                                                 <Image
