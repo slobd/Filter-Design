@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { Fragment, useEffect, useRef, useState, Suspense } from "react";
+import { Fragment, useEffect, useRef, useState, useMemo } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -46,8 +46,6 @@ const User: NextPage = () => {
     const [gallery, setGallery] = useState<GalleryType[]>([]);
     const [visibileSizeButtons, setVisibileSizeButtons] = useState(true);
     const [grayHeight, setGrayHeight] = useState(288);
-    const [carouselHeight, setCarouselHeight] = useState(0);
-    const [filterloaded, setFilterloaded] = useState(0);
     const [timer, setTimer] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [loaded, setLoaded] = useState(false);
@@ -61,6 +59,12 @@ const User: NextPage = () => {
     const fileRef = useRef<any>();
     const filterTabRef = useRef<any>();
     const filterTabRef2 = useRef<any>();
+
+    const imageUrl = useMemo(() => {
+        if(selectedIndex !== null && image[selectedIndex]) {
+            return URL.createObjectURL(image[selectedIndex])
+        }
+    }, [image, selectedIndex]);
 
     const handleChangeImage = (e: any) => {
         if (campaign?.password && e.target.files) {
@@ -250,7 +254,7 @@ const User: NextPage = () => {
                             {image[i] ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
-                                    src={URL.createObjectURL(image[i])}
+                                    src={imageUrl}
                                     style={{
                                         width: `${filter?.rnd?.w}%`,
                                         height: `${filter?.rnd?.h}%`,
@@ -535,26 +539,26 @@ const User: NextPage = () => {
                                 {campaign.description.text}
                             </p>
                         )}
-                        <div className="relative flex flex-col items-center z-10 w-full">
+                        <div className="relative flex flex-col items-center z-10 w-full mt-5">
                             {!campaign?.hide_size_buttons && visibileSizeButtons ?
-                                loaded && <div className="flex gap-4">
+                                loaded && <div className="flex flex-row items-center gap-4 pt-2.25 ">
                                     <Button
-                                        className={`${!stackedViewMode ? "!font-medium !bg-transparent !text-gray-400" : "!font-bold !bg-gray-300 !text-black"} !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${stackedViewMode ? "!font-semibold !bg-gray-300" : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(true);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
                                     }}
                                     >
-                                        Square Size
+                                        {campaign?.square_text ?? "Square Size" }
                                     </Button>
                                     <Button
-                                        className={`${stackedViewMode ? "!font-medium !bg-transparent !text-gray-400" : "!font-bold !bg-gray-300 !text-black"} !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${!stackedViewMode ? "!font-semibold !bg-gray-300 " : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(false);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
                                     }}
                                     >
-                                        Story Size
+                                        {campaign?.story_text ?? "Story Size" }
                                     </Button>
                                 </div>
                                 : null

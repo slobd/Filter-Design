@@ -34,6 +34,8 @@ const createCampaign = async (req, res) => {
         share_title: req.body.share_title,
         share_text: req.body.share_text,
         copy_text: req.body.copy_text,
+        square_text: req.body.square_text,
+        story_text: req.body.story_text,
         notification_title: req.body.notification_title,
         notification_text: req.body.notification_text,
         author: req.body.author,
@@ -87,6 +89,8 @@ const editCampaign = async (req, res) => {
       campaign.share_title = req.body.share_title;
       campaign.share_text = req.body.share_text;
       campaign.copy_text = req.body.copy_text;
+      campaign.square_text = req.body.square_text;
+      campaign.story_text = req.body.story_text;
       campaign.notification_title = req.body.notification_title;
       campaign.notification_text = req.body.notification_text;
       campaign.author = req.body.author;

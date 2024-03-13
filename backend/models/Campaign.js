@@ -109,8 +109,10 @@ const campaignSchema = Schema(
     share_title: { type: String, default: "" },
     share_text: { type: String, default: "" },
     copy_text: { type: String, default: "Copy Text" },
-    notification_title: { type: String, default: "Download Success" },
-    notification_text: { type: String, default: "You have successfully downloaded the image." },
+    square_text: { type: String, default: "Square Size" },
+    story_text: { type: String, default: "Story Size" },
+    notification_title: { type: String, default: "Download Successful" },
+    notification_text: { type: String, default: "" },
     sharing_options: {
       type: sharingOptionSchema,
       default: {

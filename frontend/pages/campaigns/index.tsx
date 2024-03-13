@@ -310,7 +310,7 @@ const Signup: NextPage = () => {
             </div>
             <DataTable cols={cols} rows={campaigns} renderRow={renderRow} />
           </div>
-          <div className="flex-shrink-0 w-80 bg-black p-5">
+          <div className="flex-shrink-0 w-80 min-h-screen bg-black p-5">
             <div className="flex items-center justify-between font-medium text-base text-white mb-3">
               <span>Latest Photos</span>
               {galleries.length > 0 && (

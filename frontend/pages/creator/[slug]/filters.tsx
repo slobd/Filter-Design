@@ -285,12 +285,14 @@ const FilterDesigns: NextPage = () => {
     useEffect(() => {
         fetchFilterDesigns();
         setLoading(false);
-    }, []);
+    }, [user?.email]);
 
     const fetchFilterDesigns = () => {
-        APIService.filter.getAll(user?.email).then((res: any) => {
-            setFilterDesigns(res.data);
-        });
+        if(user?.email) {
+            APIService.filter.getAll(user?.email).then((res: any) => {
+                setFilterDesigns(res.data);
+            });
+        }
     }
 
     const confirmed = async (value: any) => {
@@ -560,7 +562,7 @@ const FilterDesigns: NextPage = () => {
                                                         borderTopLeftRadius: campaignData.edge ?? 14 - 3,
                                                         borderTopRightRadius: campaignData.edge ?? 14 - 3,
                                                         width: filter?.filter_design?.type == 'story' ? "290px" : "350px",
-                                                        height: filter?.filter_design?.type == 'story' ? "500px" : "350px"
+                                                        height: filter?.filter_design?.type == 'story' ? "515px" : "350px"
                                                     }}
                                                 >
                                                     <Image
@@ -579,8 +581,8 @@ const FilterDesigns: NextPage = () => {
                                                 style={{
                                                     // width: `${filter?.rnd?.w}%`,
                                                     // height: `${filter?.rnd?.h}%`,
-                                                    width: filter?.filter_design?.type == 'story' ? "500px" : "350px",
-                                                    height: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                                                    width: filter?.filter_design?.type == 'story' ? "515px" : "350px",
+                                                    height: filter?.filter_design?.type == 'story' ? "515px" : "350px",
                                                     // left: `${filter?.rnd?.x}%`,
                                                     // top: `${filter?.rnd?.y}%`,
                                                 }}
@@ -653,15 +655,13 @@ const FilterDesigns: NextPage = () => {
                     </div>
                 )}
             </div>
-            <EmptyDrawer open={open} setOpen={setOpen} onSave={saveSettings} title="Setting">
+            <EmptyDrawer open={open} setOpen={setOpen} onSave={saveSettings} title="Filter Card Settings">
                 <div>
-                    <h2 className="text-center font-medium my-5">Filter Position</h2>
                     <TextField
                         label="Position"
                         value={filterPosition}
                         onChange={(e: any) => changeFilterPosition(e.target.value)}
                     />
-                    <h2 className="text-center font-medium my-5">Button Settings</h2>
                     <TextField
                         label="Text on Button"
                         value={buttonStyle?.text}

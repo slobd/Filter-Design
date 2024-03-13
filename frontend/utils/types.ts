@@ -86,6 +86,8 @@ export type CampaignType = {
   share_title?: string | null,
   share_text?: string | null,
   copy_text?: string | null,
+  square_text?: string | null,
+  story_text?: string | null,
   notification_title?: string | null,
   notification_text?: string | null,
   sharing_options?: sharingOptionType | undefined,

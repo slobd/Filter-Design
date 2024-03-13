@@ -56,11 +56,13 @@ export function ContextWrapper({ children } : Props) {
     }, [user]);
 
     const getInitData = () => {
-      APIService.campaign
-        .getAll(user?.email)
-        .then((res: any) =>{
-          if(res.data) setCampaigns(res.data);
-      })
+      if(user?.email) {
+        APIService.campaign
+          .getAll(user?.email)
+          .then((res: any) =>{
+            if(res.data) setCampaigns(res.data);
+        })
+      }
     }
 
     const loadingHandle = (e:boolean) => {

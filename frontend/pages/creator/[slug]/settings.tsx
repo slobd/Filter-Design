@@ -96,11 +96,11 @@ const Settings: NextPage = () => {
         [target]: value,
       }
     });
-    const metaDescription = document.getElementById('metaDescription');
-    // Set the meta description based on the content of description
-    if(metaDescription) {
-       metaDescription.setAttribute('content', value);
-    }
+    // const metaDescription = document.getElementById('metaDescription');
+    // // Set the meta description based on the content of description
+    // if(metaDescription) {
+    //    metaDescription.setAttribute('content', value);
+    // }
   };
 
   const handleChangeDownloadImage = (target: any, value: any) => {
@@ -314,58 +314,44 @@ const Settings: NextPage = () => {
     APIService.placeholder.getAll().then((res: any) => {
       setPlaceholders(res.data);
     });
-    APIService.campaign.getBySlug(query?.slug).then((res: any) => {
-      if(res) {
-        setSettingOptions({
-          showLogo: !!res.data?.logo,
-          showTitle: !!res.data?.title?.text,
-          showDescription: !!res.data?.description?.text,
-          activeSliderMode: !!res.data?.active_slider_mode,
-          lightMode: !!res.data?.dark_mode,
-          hideSizeButtons: !!res.data?.hide_size_buttons,
-          passwordProtected: !!res.data?.password,
-          downloadOptions: res.data?.sharing_options
-            ? getActiveSocial(res.data?.sharing_options)
-            : false,
-          showGallery: !!res.data?.show_gallery,
-          enableEdge: res.data?.edge != 0 ? true : false,
-        });
-        setEdge(res.data?.edge ?? 14);
-        res.data?.logo && setLogo(res.data.logo);
-        res.data?.password && setPassword(res.data?.password);
-        res.data?.placeholder_image &&
-        setSelectedPlaceholderImage(res.data?.placeholder_image);
-        res.data?.placeholder_story_image &&
-        setSelectedPlaceholderImageForStory(res.data?.placeholder_story_image);
-        res.data?.background?.type === "color" &&
-        setBackgroundColor(res.data?.background.value ?? "#FFF");
-      }
-    });
+    if(query?.slug) {
+      APIService.campaign.getBySlug(query?.slug).then((res: any) => {
+        if(res) {
+          setSettingOptions({
+            showLogo: !!res.data?.logo,
+            showTitle: !!res.data?.title?.text,
+            showDescription: !!res.data?.description?.text,
+            activeSliderMode: !!res.data?.active_slider_mode,
+            lightMode: !!res.data?.dark_mode,
+            hideSizeButtons: !!res.data?.hide_size_buttons,
+            passwordProtected: !!res.data?.password,
+            downloadOptions: res.data?.sharing_options
+              ? getActiveSocial(res.data?.sharing_options)
+              : false,
+            showGallery: !!res.data?.show_gallery,
+            enableEdge: res.data?.edge != 0 ? true : false,
+          });
+          setEdge(res.data?.edge ?? 14);
+          res.data?.logo && setLogo(res.data.logo);
+          res.data?.password && setPassword(res.data?.password);
+          res.data?.placeholder_image &&
+          setSelectedPlaceholderImage(res.data?.placeholder_image);
+          res.data?.placeholder_story_image &&
+          setSelectedPlaceholderImageForStory(res.data?.placeholder_story_image);
+          res.data?.background?.type === "color" &&
+          setBackgroundColor(res.data?.background.value ?? "#FFF");
+        }
+      });
+    }
+    
   }, [query?.slug]);
 
-  const handleChangePhotoText = (text: any) => {
+  const handleChangeText = (target: any, text: any) => {
     contextCampaignData({
       ...campaignData,
-      change_photo: text 
+      [target]: text 
     });
   };
-
-  const handleCopyTextButtonText = (text: any) => {
-    contextCampaignData({
-      ...campaignData,
-      copy_text: text 
-    });
-  };
-
-  // useEffect(() => {
-  //   const loadFontPicker = async () => {
-  //       const FontPicker = (await import('font-picker-react')).default;
-  //       // Use FontPicker here
-  //   };
-  //   if (typeof window !== 'undefined') {
-  //       loadFontPicker();
-  //   }
-  // }, []);
 
   return (
     <div className="w-full bg-gray-100 min-h-screen flex flex-row">
@@ -745,14 +731,14 @@ const Settings: NextPage = () => {
                 />
               </li>
               <li className="px-4 py-3">
-                <span className="inline-block mb-3">
+                <span className="inline-block mb-0">
                   Select Placeholder Image
                 </span>
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                <div className="grid grid-cols-4 gap-2 mb-1">
                   {placeholders?.length 
                     ? placeholders?.filter(i => i.type == 'square').map((placeholder) => (
                       <React.Fragment key={placeholder._id}>
-                        {placeholder.image && (
+                        {placeholder.image && placeholder.image !== undefined && (
                           <div
                             className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 w-12 h-12 ${
                               placeholder.image === selectedPlaceholderImage
@@ -789,14 +775,14 @@ const Settings: NextPage = () => {
                 />
               </li>
               <li className="px-4 py-3">
-                <span className="inline-block mb-3">
+                <span className="inline-block mb-0">
                   Select Placeholder Image For Story
                 </span>
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                <div className="grid grid-cols-4 gap-2 mb-1">
                   {placeholders?.length 
                     ? placeholders?.filter(i => i.type == 'story').map((placeholder) => (
                       <React.Fragment key={placeholder._id}>
-                        {placeholder.image && (
+                        {placeholder.image && placeholder.image !== undefined && (
                           <div
                             className={`rounded object-cover cursor-pointer hover:opacity-50 transition border-2 w-12 h-12 ${
                               placeholder.image === selectedPlaceholderImageForStory
@@ -904,7 +890,7 @@ const Settings: NextPage = () => {
               background:
                 campaignData?.background?.type === "color"
                   ? campaignData?.background?.value ?? "#FFF"
-                  : `url(${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.background?.value})`,
+                  : `url(${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.background?.value !== undefined ? campaignData?.background?.value : ""})`,
             }}
           >
             <div
@@ -933,7 +919,7 @@ const Settings: NextPage = () => {
               />
               {settingOptions.showLogo && (
                 <>
-                  {campaignData?.logo ? (
+                  {campaignData?.logo && campaignData?.logo !== undefined ? (
                     <div
                       onClick={() => logoRef.current.click()}
                       className="cursor-pointer"
@@ -1028,14 +1014,14 @@ const Settings: NextPage = () => {
                           borderTopRightRadius:  campaignData?.edge ?? 14,
                         }}
                       >
-                        {filter?.filter_design?.image && (
+                        {filter?.filter_design?.image && filter?.filter_design?.image !== undefined && (
                           <div
                             className="relative object-cover z-10 pointer-events-none"
                             style={{
                               borderTopLeftRadius:  campaignData?.edge ?? 14 - 3,
                               borderTopRightRadius:  campaignData?.edge ?? 14 - 3,
                               width: filter?.filter_design?.type == 'story' ? "290px" : "350px",
-                              height: filter?.filter_design?.type == 'story' ? "500px" : "350px"
+                              height: filter?.filter_design?.type == 'story' ? "515px" : "350px"
                             }}
                           >
                             <Image
@@ -1048,14 +1034,14 @@ const Settings: NextPage = () => {
                             />
                           </div>
                         )}
-                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && (
+                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && campaignData?.placeholder_image !== undefined && (
                           // <div
                           //   className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                           //   style={{
                           //     // width: `${filter?.rnd?.w}%`,
                           //     // height: `${filter?.rnd?.h}%`,
-                          //     width: filter?.filter_design?.type == 'square' ? "350px" : "500px",
-                          //     height: filter?.filter_design?.type == 'square' ? "350px" : "500px",
+                          //     width: filter?.filter_design?.type == 'square' ? "350px" : "515px",
+                          //     height: filter?.filter_design?.type == 'square' ? "350px" : "515px",
                           //     left: `${filter?.rnd?.x}%`,
                           //     top: `${filter?.rnd?.y}%`,
                           //   }}
@@ -1071,7 +1057,7 @@ const Settings: NextPage = () => {
                           // </div>
                           <img
                               className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
-                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'square' ? campaignData?.placeholder_image : campaignData?.placeholder_story_image}`}
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImage}`}
                               style={{
                                   width: `${filter?.rnd?.w}%`,
                                   height: `${filter?.rnd?.h}%`,
@@ -1087,8 +1073,8 @@ const Settings: NextPage = () => {
                           //   style={{
                           //     // width: `${filter?.rnd?.w}%`,
                           //     // height: `${filter?.rnd?.h}%`,
-                          //     width: filter?.filter_design?.type == 'story' ? "500px" : "350px",
-                          //     height: filter?.filter_design?.type == 'story' ? "500px" : "350px",
+                          //     width: filter?.filter_design?.type == 'story' ? "515px" : "350px",
+                          //     height: filter?.filter_design?.type == 'story' ? "515px" : "350px",
                           //     left: `${filter?.rnd?.x}%`,
                           //     top: `${filter?.rnd?.y}%`,
                           //   }}
@@ -1104,7 +1090,7 @@ const Settings: NextPage = () => {
                           // </div>
                           <img
                               className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
-                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
+                              src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${selectedPlaceholderImageForStory}`}
                               style={{
                                   width: `${filter?.rnd?.w}%`,
                                   height: `${filter?.rnd?.h}%`,
@@ -1443,23 +1429,35 @@ const Settings: NextPage = () => {
         </div>
       </EmptyDrawer>
 
-      {/* download setting panel */}
+      {/* setting panel */}
       <EmptyDrawer
         open={openDownloadPanel}
         setOpen={setOpenDownloadPanel}
-        title="Button Options"
+        title="Settings"
       >
         <TextField
           type="text"
           value={campaignData?.change_photo}
           label="Change Image Button Text"
-          onChange={(e: any) => handleChangePhotoText(e.target.value)}
+          onChange={(e: any) => handleChangeText("change_photo", e.target.value)}
         />
         <TextField
           type="text"
           value={campaignData?.copy_text}
           label="Copy Text Button Text"
-          onChange={(e: any) => handleCopyTextButtonText(e.target.value)}
+          onChange={(e: any) => handleChangeText("copy_text", e.target.value)}
+        />
+        <TextField
+          type="text"
+          value={campaignData?.square_text}
+          label="Square Size Button Text"
+          onChange={(e: any) => handleChangeText("square_text", e.target.value)}
+        />
+        <TextField
+          type="text"
+          value={campaignData?.story_text}
+          label="Story Size Button Text"
+          onChange={(e: any) => handleChangeText("story_text", e.target.value)}
         />
         <hr className="my-5"/>
         <TextField

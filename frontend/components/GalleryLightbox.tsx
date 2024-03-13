@@ -1,6 +1,5 @@
 import type { NextPage } from 'next';
 import { useState, useEffect, useRef } from "react";
-import Link from 'next/link';
 import Slider from "react-slick";
 import moment from "moment";
 import Image from 'next/image'
@@ -98,11 +97,11 @@ const GalleryLightbox: NextPage<GalleryLightboxProps> = ({ show, onClose, items,
                   alt=""
                 />
               <div className="h-full">
-                <Link
+                <a
                   href={`/creator/${item.campaign.slug}`}
                 >
                   <span className="text-white font-medium text-base mb-2 text-center">{item.campaign.name}</span>
-                </Link>
+                </a>
                 <p className="text-white mb-8">
                   Created at:{" "}
                   {moment(item.createdAt).format("DD.MM.YYYY - hh:mm a")}

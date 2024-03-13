@@ -30,6 +30,7 @@ const path = require('path')
 // }
 
 module.exports = withReactSvg({
+  trailingSlash: true,
   include: path.resolve(__dirname, 'public'),
   webpack(config, options) {
     return config
