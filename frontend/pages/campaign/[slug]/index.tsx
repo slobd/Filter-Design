@@ -55,7 +55,9 @@ const User: NextPage = () => {
     const [filters, setFilters] = useState<any>();
     const [activeCarouselIndex, setActiveCarouselIndex] = useState(0)
     const [showNotification, setShowNotification] = useState(false);
-
+    const [showCopyTextNotification, setShowCopyTextNotification] = useState(false);
+    const [uploaded, setUploaded] = useState(false);
+ 
     const fileRef = useRef<any>();
     const filterTabRef = useRef<any>();
     const filterTabRef2 = useRef<any>();
@@ -102,6 +104,7 @@ const User: NextPage = () => {
     };
 
     const handleGenerate = () => {
+        setUploaded(true);
         let clonedImage = [...image];
         clonedImage[selectedIndex] = fileRef.current.files[0];
         setImage([...clonedImage]);
@@ -132,11 +135,11 @@ const User: NextPage = () => {
                                         setLoading(false);
                                     }, 2000)
                                 });
-                        })
+                        }).catch(function (error: any) {
+                            console.error('Error generating image: ', error);
+                        });
                     })
-                    .catch(function (error: any) {
-                        console.error('Error generating image: ', error);
-                    });
+                    
                 fileRef.current.value = "";
             }
         }, 300);
@@ -243,7 +246,7 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[450px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[515px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
                             {image[i] ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
@@ -536,7 +539,7 @@ const User: NextPage = () => {
                             {!campaign?.hide_size_buttons && visibileSizeButtons ?
                                 loaded && <div className="flex gap-4">
                                     <Button
-                                        className={`${stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${!stackedViewMode ? "!font-medium !bg-transparent !text-gray-400" : "!font-bold !bg-gray-300 !text-black"} !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(true);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
@@ -545,7 +548,7 @@ const User: NextPage = () => {
                                         Square Size
                                     </Button>
                                     <Button
-                                        className={`${!stackedViewMode ? "!font-medium !bg-black" : "!font-light !bg-gray-500"} !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${stackedViewMode ? "!font-medium !bg-transparent !text-gray-400" : "!font-bold !bg-gray-300 !text-black"} !min-w-[105px] rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(false);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
@@ -556,30 +559,6 @@ const User: NextPage = () => {
                                 </div>
                                 : null
                             }
-                            {!campaign?.active_slider_mode && image.length || campaign?.filters?.length == 1 ?
-                                <div
-                                    className="z-10 md:fixed !ml-[680px] hidden md:inline-block !top-[504px] gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg"
-                                >
-                                    {campaign?.share_title && (
-                                        <h2 className="break-words w-full font-semibold text-lg p-3">
-                                            {campaign.share_title}
-                                        </h2>
-                                    )}
-                                    {campaign?.share_text && (
-                                        <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                                            <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
-                                            <button
-                                                className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
-                                                onClick={() => copy(campaign?.share_text ?? "")}
-                                            >
-                                                <FiSave className="text-xl mr-2" />
-                                                Copy Text
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                                : null
-                            }
                             {!campaign?.active_slider_mode || filters?.length == 1 ?
                                 <div className="items-center flex flex-col" ref={filterTabRef}>
                                     {filters?.map((filter: any, i: any) => (
@@ -587,12 +566,12 @@ const User: NextPage = () => {
                                             <FilterCard filter={filter} i={i} />
                                         </div>
                                     ))}
-                                    {image.length ?
+                                    {uploaded ?
                                         <div
                                             className="z-10 justify-content md:hidden m relative gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg"
                                         >
                                             {campaign?.share_title && (
-                                                <h2 className="break-words w-full font-semibold text-lg p-3">
+                                                <h2 className="break-words w-full font-semibold text-lg p-3 leading-snug ">
                                                     {campaign.share_title}
                                                 </h2>
                                             )}
@@ -601,10 +580,13 @@ const User: NextPage = () => {
                                                     <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
                                                     <button
                                                         className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
-                                                        onClick={() => copy(campaign.share_text ?? "")}
+                                                        onClick={() => {
+                                                            copy(campaign.share_text ?? "");
+                                                            setShowCopyTextNotification(true);
+                                                        }}
                                                     >
                                                         <FiSave className="text-xl mr-2" />
-                                                        Copy Text
+                                                        { campaign?.copy_text ?? "Copy Text"}
                                                     </button>
                                                 </div>
                                             )}
@@ -650,33 +632,37 @@ const User: NextPage = () => {
                                             </div>
                                         ))}
                                     </Carousel>
-                                    {image.length ?
-                                        <div
-                                            className="z-10 sm:absolute relative gap-1 bg-white dark:bg-gray-700 w-60 rounded-lg bottom-10 sm:left-[445px] left-0 sm:mt-40 mt-20 ml-auto mr-auto"
-                                        >
-                                            {campaign?.share_title && (
-                                                <h2 className="break-words w-full font-semibold text-lg p-3">
-                                                    {campaign.share_title}
-                                                </h2>
-                                            )}
-                                            {campaign?.share_text && (
-                                                <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
-                                                    <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
-                                                    <button
-                                                        className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
-                                                        onClick={() => copy(campaign?.share_text ?? "")}
-                                                    >
-                                                        <FiSave className="text-xl mr-2" />
-                                                        Copy Text
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                        : null}
                                 </div>
                             }
                         </div>
                     </div>
+                    {uploaded ?
+                        <div
+                            className={`${campaign?.active_slider_mode ? 'sm:absolute' : 'sm:fixed sm:visible invisible'} z-10 right-10 bottom-60 relative gap-1 bg-white w-60 rounded-lg bottom-10 sm:mt-40 mt-20 ml-auto mr-auto`}
+                        >
+                            {campaign?.share_title && (
+                                <h2 className="break-words w-full font-semibold text-lg p-3 leading-snug ">
+                                    {campaign.share_title}
+                                </h2>
+                            )}
+                            {campaign?.share_text && (
+                                <div className="w-full bg-white rounded-lg shadow-md px-3 pb-3">
+                                    <span className="break-words mb-3 opacity-80 text-xs">{campaign.share_text}</span>
+                                    <button
+                                        className="cursor-pointer text-sm hover:opacity-80 transition px-2 py-1 mt-2 flex items-center text-white bg-gray-500 rounded"
+                                        onClick={() => {
+                                            copy(campaign.share_text ?? "");
+                                            setShowCopyTextNotification(true);
+                                        }}
+                                    >
+                                        <FiSave className="text-xl mr-2" />
+                                        { campaign?.copy_text ?? "Copy Text"}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        : null
+                    }
                 </div>
             </div>
 
@@ -755,6 +741,13 @@ const User: NextPage = () => {
                 type="success"
                 title={campaign?.notification_title ?? ""}
                 content={campaign?.notification_text ?? ""}
+            />
+            <Notification
+                show={showCopyTextNotification}
+                onClose={() => setShowCopyTextNotification(false)}
+                type="success"
+                title="Success!"
+                content="You have successfully copied the text."
             />
         </>
     );

@@ -108,6 +108,7 @@ const campaignSchema = Schema(
     edge: { type: Number, default: 14 },
     share_title: { type: String, default: "" },
     share_text: { type: String, default: "" },
+    copy_text: { type: String, default: "Copy Text" },
     notification_title: { type: String, default: "Download Success" },
     notification_text: { type: String, default: "You have successfully downloaded the image." },
     sharing_options: {
