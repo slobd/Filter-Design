@@ -263,6 +263,7 @@ const User: NextPage = () => {
                                     }}
                                 />
                             ) : (
+                                campaign?.placeholder_story_image !== undefined && 
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
@@ -275,11 +276,14 @@ const User: NextPage = () => {
                                 />
                             )}
                             <div className="absolute z-10">
-                                <img
-                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 515 : 350}
-                                />
+                                { filter?.filter_design?.image && filter?.filter_design?.image !== undefined &&
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
+                                        height={filter?.filter_design?.type == 'story' ? 515 : 350}
+                                    />
+                                }
+                                
                             </div>
                         </div>
 
@@ -475,7 +479,7 @@ const User: NextPage = () => {
                         background:
                             campaign?.background?.type === "color"
                                 ? campaign?.background?.value ?? "#FFF"
-                                : `url(${process.env.NEXT_PUBLIC_APP_API_URL}/${campaign?.background?.value})`,
+                                : `${campaign?.background?.value !== undefined ? 'url(' + process.env.NEXT_PUBLIC_APP_API_URL +'/' + campaign?.background?.value : ""}`,
                     }}
                 >
                     <div className="absolute top-0 left-0 right-0 bottom-0">
@@ -486,7 +490,7 @@ const User: NextPage = () => {
                         />
                     </div>
                     <div className="py-10 px-5 md:px-20 flex flex-col items-center relative z-10">
-                        {campaign?.logo && (
+                        {campaign?.logo && campaign?.logo !== undefined && (
                             <div
                                 style={{
                                     width: (campaign.logo_setting?.size ?? 80) * 1,
