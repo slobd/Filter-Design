@@ -314,7 +314,7 @@ const Settings: NextPage = () => {
     APIService.placeholder.getAll().then((res: any) => {
       setPlaceholders(res.data);
     });
-    if(query?.slug) {
+    if(query?.slug && query?.slug !== undefined) {
       APIService.campaign.getBySlug(query?.slug).then((res: any) => {
         if(res) {
           setSettingOptions({
@@ -890,7 +890,7 @@ const Settings: NextPage = () => {
               background:
                 campaignData?.background?.type === "color"
                   ? campaignData?.background?.value ?? "#FFF"
-                  : `url(${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.background?.value !== undefined ? campaignData?.background?.value : ""})`,
+                  : `${campaignData?.background?.value !== undefined ? 'url(' + process.env.NEXT_PUBLIC_APP_API_URL +'/' + campaignData?.background?.value : ""}`,
             }}
           >
             <div
@@ -1034,7 +1034,7 @@ const Settings: NextPage = () => {
                             />
                           </div>
                         )}
-                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && campaignData?.placeholder_image !== undefined && (
+                        {filter?.filter_design?.type == 'square' && selectedPlaceholderImage && selectedPlaceholderImage !== undefined && (
                           // <div
                           //   className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                           //   style={{
@@ -1067,7 +1067,7 @@ const Settings: NextPage = () => {
                           />
                           
                         )}
-                        {filter?.filter_design?.type == 'story' && selectedPlaceholderImageForStory && (
+                        {filter?.filter_design?.type == 'story' && selectedPlaceholderImageForStory && selectedPlaceholderImageForStory !== undefined && (
                           // <div
                           //   className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                           //   style={{
