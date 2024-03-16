@@ -25,6 +25,7 @@
     "dotenv": "^16.4.5",
     "flowbite-react": "^0.7.2",
     "font-picker-react": "^3.5.2",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "http": "^0.0.1-security",
     "i18next": "^23.7.16",

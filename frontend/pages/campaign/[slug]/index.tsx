@@ -1,9 +1,11 @@
 import { NextPage } from "next";
-import { Fragment, useEffect, useRef, useState, useMemo } from "react";
+import { Fragment, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 import domtoimage from "dom-to-image";
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
@@ -25,6 +27,7 @@ import Notification from "../../../components/Notification";
 import { filterDesignWidths } from "../../../utils/constants";
 import { CampaignType, GalleryType, FilterType } from '../../../utils/types';
 import { useAppContext } from "../../../context/context";
+import { darcula } from "react-syntax-highlighter/dist/esm/styles/hljs";
 interface FilterCardProps {
     filter: FilterType;
     i: number;
@@ -54,17 +57,19 @@ const User: NextPage = () => {
     const [activeCarouselIndex, setActiveCarouselIndex] = useState(0)
     const [showNotification, setShowNotification] = useState(false);
     const [showCopyTextNotification, setShowCopyTextNotification] = useState(false);
+    const [showImageProcessCompletedNotification, setShowImageProcessCompletedNotification] = useState(false);
+    const [showImageProcessingNotification, setShowImageProcessingNotification] = useState(false);
     const [uploaded, setUploaded] = useState(false);
  
     const fileRef = useRef<any>();
     const filterTabRef = useRef<any>();
     const filterTabRef2 = useRef<any>();
 
-    const imageUrl = useMemo(() => {
-        if(selectedIndex !== null && image[selectedIndex]) {
-            return URL.createObjectURL(image[selectedIndex])
-        }
-    }, [image, selectedIndex]);
+    // const imageUrl = useMemo(() => {
+    //     if(selectedIndex !== null && image[selectedIndex]) {
+    //         return URL.createObjectURL(image[selectedIndex])
+    //     }
+    // }, [image, selectedIndex]);
 
     const handleChangeImage = (e: any) => {
         if (campaign?.password && e.target.files) {
@@ -81,25 +86,45 @@ const User: NextPage = () => {
         });
     };
 
-    const handleDownload = (i: any) => {
-        const dom = document.querySelector(`#card-${i}`);
-        if (dom) {
+    const buildPng = async (index: any) => {
+
+        const dom = document.querySelector<HTMLElement>(`#card-${index}`);
+        
+        if(dom) {
             const { width, height } = dom.getBoundingClientRect();
             const options = { quality: 0.95, width, height };
-            !image
-                ? alert("Please select an image")
-                : domtoimage.toPng(dom, options).then((res: any) => {
-                    domtoimage.toPng(dom, options).then((canvas: any) => {
-                    
-                        var link = document.createElement("a");
-                        link.download = "image.png";
-                        link.href = canvas;
-                        link.click();
-                        setShowNotification(true);
-                    });
-                })
-        }
 
+            let dataUrl = '';
+            const minDataLength = 100000;
+            let i = 0;
+            const maxAttempts = 10;
+            console.log("dom", dom)
+        
+            while (dataUrl.length < minDataLength && i < maxAttempts) {
+                dataUrl = await toPng(dom, options);
+                console.log("dataUrl, length", dataUrl.length);
+                i += 1;
+            }
+            return dataUrl;
+        }
+    };
+
+    const handleDownload = async(i: any) => {
+        if(!image) {
+            alert("Please select an image")
+        } else {
+            const dataUrl = await buildPng(i);
+            if(dataUrl) {
+                var link = document.createElement("a");
+                link.download = "image.png";
+                link.href = dataUrl;
+                link.click();
+                setShowNotification(true);
+            } else {
+                console.log("image create failed");
+            }
+            
+        }
     };
 
     const handleClickUploadButton = (i: number) => {
@@ -108,45 +133,42 @@ const User: NextPage = () => {
     };
 
     const handleGenerate = () => {
+        console.log("selectedIndex", selectedIndex);
+        console.log("fileRef.current.files[0];", fileRef.current.files[0])
         setUploaded(true);
         let clonedImage = [...image];
         clonedImage[selectedIndex] = fileRef.current.files[0];
         setImage([...clonedImage]);
         setOpen(false);
         setPassed(true);
-        setTimeout(() => {
-            const dom = document.querySelector(`#card-${selectedIndex}`);
-            if (dom) {
-                const { width, height } = dom.getBoundingClientRect();
-                const options = { quality: 0.95, width, height };
-                domtoimage.toPng(dom, options).then((res: any) => {
-                        domtoimage.toPng(dom, options).then((canvas: any) => {
-                            setLoading(true);
-                            const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
-                            APIService.gallery
-                                .create({
-                                    campaign_id: campaign?._id,
-                                    filter_design_id: _filter_design_id,
-                                    author: user?.email,
-                                    image: dataURLtoFile(canvas, fileRef.current.files[0]?.name),
-                                })
-                                .then((res: any) => {
-                                    console.log(" gallery created", res.data.path)
-                                    let clonedGallery = [...gallery];
-                                    clonedGallery[selectedIndex] = res.data.path;
-                                    setGallery([...clonedGallery]);
-                                    setTimeout(() => {
-                                        setLoading(false);
-                                    }, 2000)
-                                });
-                        }).catch(function (error: any) {
-                            console.error('Error generating image: ', error);
-                        });
+        // setShowImageProcessingNotification(true)
+        setTimeout(async() => {
+            const dataUrl = await buildPng(selectedIndex);
+            if(dataUrl) {
+                const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
+                APIService.gallery
+                    .create({
+                        campaign_id: campaign?._id,
+                        filter_design_id: _filter_design_id,
+                        author: user?.email,
+                        image: dataURLtoFile(dataUrl, fileRef.current.files[0]?.name),
                     })
-                    
-                fileRef.current.value = "";
+                    .then((res: any) => {
+                        console.log(" gallery created", res.data.path);
+                        // setShowImageProcessCompletedNotification(true);
+                        let clonedGallery = [...gallery];
+                        clonedGallery[selectedIndex] = res.data.path;
+                        setGallery([...clonedGallery]);
+                        setTimeout(() => {
+                            setLoading(false);
+                        }, 2000)
+                    });
+            } else {
+                console.log("image creation failed")
             }
+                
         }, 300);
+        fileRef.current.value = "";
     };
 
     const handleConfirm = () => {
@@ -227,6 +249,8 @@ const User: NextPage = () => {
         
     }, [user?.email, campaigns])
 
+    console.log("image;", image)
+
     const FilterCard: NextPage<FilterCardProps> = ({ filter, i }) => {
         const [tab, setTab] = useState("download");
         return (
@@ -251,10 +275,10 @@ const User: NextPage = () => {
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
                         <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[515px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
-                            {image[i] ? (
+                            {image[i] &&  image[i] !== undefined ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
-                                    src={imageUrl}
+                                    src={URL.createObjectURL(image[i])}
                                     style={{
                                         width: `${filter?.rnd?.w}%`,
                                         height: `${filter?.rnd?.h}%`,
@@ -547,7 +571,7 @@ const User: NextPage = () => {
                             {!campaign?.hide_size_buttons && visibileSizeButtons ?
                                 loaded && <div className="flex flex-row items-center gap-4 pt-2.25 ">
                                     <Button
-                                        className={`${stackedViewMode ? "!font-semibold !bg-gray-300" : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${stackedViewMode ? "!font-semibold !bg-gray-300" : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] !rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(true);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
@@ -556,7 +580,7 @@ const User: NextPage = () => {
                                         {campaign?.square_text ?? "Square Size" }
                                     </Button>
                                     <Button
-                                        className={`${!stackedViewMode ? "!font-semibold !bg-gray-300 " : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] rounded-full !cursor-auto`}
+                                        className={`${!stackedViewMode ? "!font-semibold !bg-gray-300 " : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] !rounded-full !cursor-auto`}
                                     onClick={() => {
                                         campaign?.activate_filters && setStackedViewMode(false);
                                         campaign?.activate_filters && setActiveCarouselIndex(0);
@@ -757,6 +781,20 @@ const User: NextPage = () => {
                 title="Success!"
                 content="You have successfully copied the text."
             />
+            {/* <Notification
+                show={showImageProcessingNotification}
+                onClose={() => setShowImageProcessingNotification(false)}
+                type="warning"
+                title="Please wait some seconds."
+                content="Your image is being processed in the background."
+            /> */}
+            {/* <Notification
+                show={showImageProcessCompletedNotification}
+                onClose={() => setShowImageProcessCompletedNotification(false)}
+                type="success"
+                title="Success!"
+                content="Your image is processed successfully"
+            /> */}
         </>
     );
 };
