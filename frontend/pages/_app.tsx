@@ -27,6 +27,22 @@ function MyApp({ Component, pageProps } : AppProps) {
             <meta charSet='utf-8'/>
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
             <link rel="icon" href="/favicon.ico" />
+            <title> LIVEDAB | v2 </title>
+            <meta name="title" content="LIVEDAB Filter Software" />
+            <meta
+              name="description"
+              content="It’s easy! Just upload a photo and get a visual filter to share with your network and friends."
+              key="desc"
+            />
+            <meta property="og:title" content="LIVEDAB Filter Software" />
+            <meta
+              property="og:description"
+              content="It’s easy! Just upload a photo and get a visual filter to share with your network and friends."
+            />
+            <meta
+              property="og:image"
+              content="__PAGE_META_IMAGE__"
+            />
         </Head>
           <Component {...pageProps} /> 
       </ContextWrapper>
