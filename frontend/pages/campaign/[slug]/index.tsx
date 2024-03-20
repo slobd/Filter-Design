@@ -5,7 +5,9 @@ import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 import domtoimage from "dom-to-image";
 import * as htmlToImage from 'html-to-image';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import html2canvas from "html2canvas";
+import { saveAsPng, getCanvas } from 'save-html-as-image';
+import mergeImages from 'merge-images';
 import { Font } from "@samuelmeuli/font-manager";
 import dynamic from "next/dynamic";
 import { Dialog, Transition } from "@headlessui/react";
@@ -50,8 +52,8 @@ const User: NextPage = () => {
     const [visibileSizeButtons, setVisibileSizeButtons] = useState(true);
     const [grayHeight, setGrayHeight] = useState(288);
     const [timer, setTimer] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [loaded, setLoaded] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(true);
     const [stackedViewMode, setStackedViewMode] = useState(true);
     const [filters, setFilters] = useState<any>();
     const [activeCarouselIndex, setActiveCarouselIndex] = useState(0)
@@ -60,16 +62,10 @@ const User: NextPage = () => {
     const [showImageProcessCompletedNotification, setShowImageProcessCompletedNotification] = useState(false);
     const [showImageProcessingNotification, setShowImageProcessingNotification] = useState(false);
     const [uploaded, setUploaded] = useState(false);
- 
+
     const fileRef = useRef<any>();
     const filterTabRef = useRef<any>();
     const filterTabRef2 = useRef<any>();
-
-    // const imageUrl = useMemo(() => {
-    //     if(selectedIndex !== null && image[selectedIndex]) {
-    //         return URL.createObjectURL(image[selectedIndex])
-    //     }
-    // }, [image, selectedIndex]);
 
     const handleChangeImage = (e: any) => {
         if (campaign?.password && e.target.files) {
@@ -89,8 +85,8 @@ const User: NextPage = () => {
     const buildPng = async (index: any) => {
 
         const dom = document.querySelector<HTMLElement>(`#card-${index}`);
-        
-        if(dom) {
+
+        if (dom) {
             const { width, height } = dom.getBoundingClientRect();
             const options = { quality: 0.95, width, height };
 
@@ -98,32 +94,41 @@ const User: NextPage = () => {
             const minDataLength = 100000;
             let i = 0;
             const maxAttempts = 10;
-            console.log("dom", dom)
-        
+
             while (dataUrl.length < minDataLength && i < maxAttempts) {
-                dataUrl = await toPng(dom, options);
-                console.log("dataUrl, length", dataUrl.length);
+                dataUrl = await domtoimage.toPng(dom, options);
                 i += 1;
             }
             return dataUrl;
         }
     };
 
-    const handleDownload = async(i: any) => {
-        if(!image) {
+    const handleDownload = async (i: any) => {
+        if (!image) {
             alert("Please select an image")
         } else {
-            const dataUrl = await buildPng(i);
-            if(dataUrl) {
-                var link = document.createElement("a");
-                link.download = "image.png";
-                link.href = dataUrl;
-                link.click();
-                setShowNotification(true);
-            } else {
-                console.log("image create failed");
+            // setTimeout(async () => {
+            const dom = document.querySelector<HTMLElement>(`#card-${selectedIndex}`);
+            if (dom) {
+                saveAsPng(dom, { filename: 'image.png', printDate: false });
+                // console.log("getCanvas", getCanvas(dom, { filename: 'image.png', printDate: false }))
+
+                // html2canvas(dom, options).then(() => {
+                //     html2canvas(dom, options).then(() => {
+                //         html2canvas(dom, options).then((dataUrl: any) => {
+                //             console.log("dataUrl", dataUrl)
+                //             if (dataUrl) {
+                //                 var link = document.createElement("a");
+                //                 link.download = "image.png";
+                //                 link.href = dataUrl;
+                //                 link.click();
+                //                 // setShowNotification(true);
+                //             }
+                //         });
+                //     })
+                // })
             }
-            
+            // }, 500)
         }
     };
 
@@ -133,8 +138,6 @@ const User: NextPage = () => {
     };
 
     const handleGenerate = () => {
-        console.log("selectedIndex", selectedIndex);
-        console.log("fileRef.current.files[0];", fileRef.current.files[0])
         setUploaded(true);
         let clonedImage = [...image];
         clonedImage[selectedIndex] = fileRef.current.files[0];
@@ -142,32 +145,66 @@ const User: NextPage = () => {
         setOpen(false);
         setPassed(true);
         // setShowImageProcessingNotification(true)
-        setTimeout(async() => {
-            const dataUrl = await buildPng(selectedIndex);
-            if(dataUrl) {
-                const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
-                APIService.gallery
-                    .create({
-                        campaign_id: campaign?._id,
-                        filter_design_id: _filter_design_id,
-                        author: user?.email,
-                        image: dataURLtoFile(dataUrl, fileRef.current.files[0]?.name),
-                    })
-                    .then((res: any) => {
-                        console.log(" gallery created", res.data.path);
-                        // setShowImageProcessCompletedNotification(true);
-                        let clonedGallery = [...gallery];
-                        clonedGallery[selectedIndex] = res.data.path;
-                        setGallery([...clonedGallery]);
-                        setTimeout(() => {
-                            setLoading(false);
-                        }, 2000)
-                    });
-            } else {
-                console.log("image creation failed")
+        setTimeout(async () => {
+            const dom = document.querySelector<HTMLElement>(`#card-${selectedIndex}`);
+
+            if (dom) {
+                // console.log("getCanvas", getCanvas(dom, { filename: 'image.png', printDate: false }))
+                //     const { width, height } = dom.getBoundingClientRect();
+                //     const options = { width, height };
+                //     html2canvas(dom, options).then(() => {
+                //         html2canvas(dom, options).then(() => {
+                //             html2canvas(dom, options).then((dataUrl: any) => {
+                //                 console.log("dataUrl", dataUrl);
+                //                 if (dataUrl) {
+                //                     const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
+                //                     APIService.gallery
+                //                         .create({
+                //                             campaign_id: campaign?._id,
+                //                             filter_design_id: _filter_design_id,
+                //                             author: user?.email,
+                //                             image: dataURLtoFile(dataUrl.toDataURL("image/png"), fileRef.current.files[0]?.name),
+                //                         })
+                //                         .then((res: any) => {
+                //                             console.log(" gallery created", res.data.path);
+                //                             // setShowImageProcessCompletedNotification(true);
+                //                             let clonedGallery = [...gallery];
+                //                             clonedGallery[selectedIndex] = res.data.path;
+                //                             setGallery([...clonedGallery]);
+                //                         }).catch((err: any) => {
+                //                             console.log("gallery create error", err)
+                //                         });
+                //                 } else {
+                //                     console.log("image creation failed")
+                //                 }
+                //             });
+                //         })
+                //     })
+                // }
+
+                const dataUrl = await buildPng(selectedIndex);
+
+                if (dataUrl) {
+                    const _filter_design_id = campaign?.filters?.[selectedIndex]?.filter_design?._id;
+                    APIService.gallery
+                        .create({
+                            campaign_id: campaign?._id,
+                            filter_design_id: _filter_design_id,
+                            author: user?.email,
+                            image: dataURLtoFile(dataUrl, fileRef.current.files[0]?.name),
+                        })
+                        .then((res: any) => {
+                            console.log(" gallery created", res.data.path);
+                            // setShowImageProcessCompletedNotification(true);
+                            let clonedGallery = [...gallery];
+                            clonedGallery[selectedIndex] = res.data.path;
+                            setGallery([...clonedGallery]);
+                        });
+                } else {
+                    console.log("image creation failed")
+                }
             }
-                
-        }, 300);
+        }, 1000);
         fileRef.current.value = "";
     };
 
@@ -206,7 +243,7 @@ const User: NextPage = () => {
             APIService.campaign.getBySlug(query?.slug).then((res: any) => {
                 setCampaign({ ...res.data });
                 setFilters(res.data.filters);
-                if(res.data.activate_filters) {
+                if (res.data.activate_filters) {
                     setFilters(res.data.filters?.filter((i: any) => i?.filter_design.type == 'square'))
                 }
             });
@@ -214,7 +251,7 @@ const User: NextPage = () => {
     }, [query?.slug]);
 
     useEffect(() => {
-        if(stackedViewMode) {
+        if (stackedViewMode) {
             setFilters(campaign?.filters?.filter((i: any) => i.filter_design.type == 'square'))
         } else {
             setFilters(campaign?.filters?.filter((i: any) => i.filter_design.type == 'story'))
@@ -240,16 +277,14 @@ const User: NextPage = () => {
     }, [campaign]);
 
     useEffect(() => {
-        if(!user?.email != undefined && campaigns.length > 0) {
+        if (!user?.email != undefined && campaigns.length > 0) {
             setTimeout(() => {
                 setLoaded(true);
                 setLoading(false);
             }, 2500)
         }
-        
-    }, [user?.email, campaigns])
 
-    console.log("image;", image)
+    }, [user?.email, campaigns])
 
     const FilterCard: NextPage<FilterCardProps> = ({ filter, i }) => {
         const [tab, setTab] = useState("download");
@@ -258,7 +293,7 @@ const User: NextPage = () => {
                 <div
                     className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
                     key={i}
-                    style={{  maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
+                    style={{ maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
                 >
                     <div
                         className={`bg-white dark:bg-gray-700 shadow-md overflow-hidden`}
@@ -274,8 +309,8 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]": "w-[290px] h-[515px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
-                            {image[i] &&  image[i] !== undefined ? (
+                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]" : "w-[290px] h-[515px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
+                            {image[i] && image[i] !== undefined ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                                     src={URL.createObjectURL(image[i])}
@@ -287,7 +322,7 @@ const User: NextPage = () => {
                                     }}
                                 />
                             ) : (
-                                campaign?.placeholder_story_image !== undefined && 
+                                campaign?.placeholder_story_image !== undefined &&
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
                                     src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaign?.placeholder_story_image : campaign?.placeholder_image}`}
@@ -300,17 +335,16 @@ const User: NextPage = () => {
                                 />
                             )}
                             <div className="absolute z-10">
-                                { filter?.filter_design?.image && filter?.filter_design?.image !== undefined &&
+                                {filter?.filter_design?.image && filter?.filter_design?.image !== undefined &&
                                     <img
                                         src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                                         width={filter?.filter_design?.type == 'story' ? 290 : 350}
                                         height={filter?.filter_design?.type == 'story' ? 515 : 350}
                                     />
                                 }
-                                
+
                             </div>
                         </div>
-
                         <div
                             className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
                                 }`}
@@ -503,7 +537,7 @@ const User: NextPage = () => {
                         background:
                             campaign?.background?.type === "color"
                                 ? campaign?.background?.value ?? "#FFF"
-                                : `${campaign?.background?.value !== undefined ? 'url(' + process.env.NEXT_PUBLIC_APP_API_URL +'/' + campaign?.background?.value : ""}`,
+                                : `${campaign?.background?.value !== undefined ? 'url(' + process.env.NEXT_PUBLIC_APP_API_URL + '/' + campaign?.background?.value : ""}`,
                     }}
                 >
                     <div className="absolute top-0 left-0 right-0 bottom-0">
@@ -572,21 +606,21 @@ const User: NextPage = () => {
                                 loaded && <div className="flex flex-row items-center gap-4 pt-2.25 ">
                                     <Button
                                         className={`${stackedViewMode ? "!font-semibold !bg-gray-300" : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] !rounded-full !cursor-auto`}
-                                    onClick={() => {
-                                        campaign?.activate_filters && setStackedViewMode(true);
-                                        campaign?.activate_filters && setActiveCarouselIndex(0);
-                                    }}
+                                        onClick={() => {
+                                            campaign?.activate_filters && setStackedViewMode(true);
+                                            campaign?.activate_filters && setActiveCarouselIndex(0);
+                                        }}
                                     >
-                                        {campaign?.square_text ?? "Square Size" }
+                                        {campaign?.square_text ?? "Square Size"}
                                     </Button>
                                     <Button
                                         className={`${!stackedViewMode ? "!font-semibold !bg-gray-300 " : "!font-light !bg-white"} !text-black !text-[0.775rem] !leading-[1rem] !min-w-[105px] !rounded-full !cursor-auto`}
-                                    onClick={() => {
-                                        campaign?.activate_filters && setStackedViewMode(false);
-                                        campaign?.activate_filters && setActiveCarouselIndex(0);
-                                    }}
+                                        onClick={() => {
+                                            campaign?.activate_filters && setStackedViewMode(false);
+                                            campaign?.activate_filters && setActiveCarouselIndex(0);
+                                        }}
                                     >
-                                        {campaign?.story_text ?? "Story Size" }
+                                        {campaign?.story_text ?? "Story Size"}
                                     </Button>
                                 </div>
                                 : null
@@ -618,7 +652,7 @@ const User: NextPage = () => {
                                                         }}
                                                     >
                                                         <FiSave className="text-xl mr-2" />
-                                                        { campaign?.copy_text ?? "Copy Text"}
+                                                        {campaign?.copy_text ?? "Copy Text"}
                                                     </button>
                                                 </div>
                                             )}
@@ -688,7 +722,7 @@ const User: NextPage = () => {
                                         }}
                                     >
                                         <FiSave className="text-xl mr-2" />
-                                        { campaign?.copy_text ?? "Copy Text"}
+                                        {campaign?.copy_text ?? "Copy Text"}
                                     </button>
                                 </div>
                             )}
