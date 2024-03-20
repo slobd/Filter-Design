@@ -83,6 +83,8 @@ const FilterDesigns: NextPage = () => {
     const [userConfirmed, setUserConfirmed] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
+    const [isClicked, setIsClicked] = useState(false);
+
 
     const handleUpdateButtonStyle = (target: any, value: any) => {
         setButtonStyle({ ...buttonStyle, [target]: value });
@@ -133,24 +135,31 @@ const FilterDesigns: NextPage = () => {
 
     const handleDeleteFilterDesign = (e: any, id: any) => {
         e.stopPropagation();
-        APIService.filter.delete(id).then((res: any) => {
+        APIService.filter.delete({ id: id, email: user?.email }).then((res: any) => {
             const { acknowledged, deletedCount } = res.data;
             if (acknowledged === true && deletedCount > 0) {
                 fetchFilterDesigns();
                 let _filters = campaignData?.filters ?? [];
-                if (_filters[selectedFilterIndex]?.filter_design?._id === id) {
-                    const cloneFilters = [..._filters];
-                    cloneFilters[selectedFilterIndex] = {
-                        ...cloneFilters[selectedFilterIndex],
-                        filter_design: filterDesigns[0],
-                    };
-                    _filters = cloneFilters;
-                }
+                const cloneFilters = [..._filters];
+
+                _filters = cloneFilters.map(item => {
+                    let _item = { ...item };
+                    if (item.filter_design?._id == id) {
+                        _item = {
+                            ..._item,
+                            filter_design: filterDesigns.filter(item => item.image == "uploads/default_filterdesign.png")?.[0]
+                        }
+                    }
+                    return _item;
+                })
                 contextCampaignData({ ...campaignData, filters: _filters });
                 handleSave(null, { filters: _filters });
             }
         });
     };
+    console.log("campaignDate", campaignData)
+    console.log("filterDesigns", filterDesigns)
+
 
     const handleSelectFilterDesign = (filterDesign: FilterDesignType) => {
         if (!campaignData?.filters?.length) return;
@@ -173,6 +182,11 @@ const FilterDesigns: NextPage = () => {
     };
 
     const handleCreateNewFilter = () => {
+        if (isClicked) return;
+        setIsClicked(true);
+        setTimeout(() => {
+            setIsClicked(false)
+        }, 100)
         const filterDesign: FilterDesignType = filterDesigns?.filter(i => i.author == '')?.[0];
         if (filterDesign) {
             let _filters = campaignData?.filters ?? [];
@@ -288,7 +302,7 @@ const FilterDesigns: NextPage = () => {
     }, [user?.email]);
 
     const fetchFilterDesigns = () => {
-        if(user?.email) {
+        if (user?.email) {
             APIService.filter.getAll(user?.email).then((res: any) => {
                 setFilterDesigns(res.data);
             });
@@ -297,7 +311,7 @@ const FilterDesigns: NextPage = () => {
 
     const confirmed = async (value: any) => {
         setShowConfirmModal(false);
-        if(value) {
+        if (value) {
             setUserConfirmed(true)
             router.push(redirectURL);
         }
@@ -311,7 +325,7 @@ const FilterDesigns: NextPage = () => {
             throw 'Abort route change. Please ignore this error.';
         };
 
-        if(allowRedirect || userConfirmed) {
+        if (allowRedirect || userConfirmed) {
             router.events.off('routeChangeStart', routeChangeStart);
         } else {
             router.events.on('routeChangeStart', routeChangeStart);
@@ -409,11 +423,11 @@ const FilterDesigns: NextPage = () => {
                                             />
                                         )}
                                         <img
-                                            className="absolute top-0 left-0 object-cover"
+                                            className="absolute top-0 left-0 object-cover overflow-hidden"
                                             src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${campaignData?.placeholder_image}`}
                                             style={{
                                                 width: `${filterDesign?.type == 'square' ? 140 : 90}px`,
-                                                height: `${filterDesign?.type == 'square' ? 140 : 160}px`,
+                                                height: `${filterDesign?.type == 'square' ? 130 : 150}px`,
                                             }}
                                         />
                                         {filterDesign.image && (
@@ -479,7 +493,7 @@ const FilterDesigns: NextPage = () => {
                         />
                     </div>
                 ) : (
-                    <div className="md:pl-80 w-full flex flex-col items-center justify-center gap-8 py-10 mx-auto px-5 md:px-20">
+                    <div className="md:!pl-80 w-full flex flex-col items-center justify-center gap-8 py-10 mx-auto px-5 md:px-20">
                         {campaignData?.filters?.map((filter, i) => {
                             return (
                                 <div
@@ -587,21 +601,21 @@ const FilterDesigns: NextPage = () => {
                                                     // top: `${filter?.rnd?.y}%`,
                                                 }}
                                             > */}
-                                                <img
-                                                    className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
-                                                    id={`filter-design-${i}`}
-                                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
-                                                    style={{
-                                                        width: `${filter?.rnd?.w}%`,
-                                                        height: `${filter?.rnd?.h}%`,
-                                                        left: `${filter?.rnd?.x}%`,
-                                                        top: `${filter?.rnd?.y}%`,
-                                                    }}
-                                                    // loader={({ src, width }) => { return src + "?w=" + width }}
-                                                    // quality={50}
-                                                    // priority={true}
-                                                    // layout={'fill'}
-                                                />
+                                            <img
+                                                className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
+                                                id={`filter-design-${i}`}
+                                                src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.type == 'story' ? campaignData?.placeholder_story_image : campaignData?.placeholder_image}`}
+                                                style={{
+                                                    width: `${filter?.rnd?.w}%`,
+                                                    height: `${filter?.rnd?.h}%`,
+                                                    left: `${filter?.rnd?.x}%`,
+                                                    top: `${filter?.rnd?.y}%`,
+                                                }}
+                                            // loader={({ src, width }) => { return src + "?w=" + width }}
+                                            // quality={50}
+                                            // priority={true}
+                                            // layout={'fill'}
+                                            />
                                             {/* </div> */}
                                         </div>
                                         <div className="flex justify-center p-6">
