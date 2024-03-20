@@ -46,8 +46,11 @@ const Gallery: NextPage = () => {
   };
 
   const handleDeleteGallery = (id: any) => {
-    APIService.gallery.delete(id).then((res: any) => {
+    console.log("gallery delete", id)
+    APIService.gallery.delete({id: id, email: user?.email}).then((res: any) => {
       const { acknowledged, deletedCount } = res.data;
+    console.log(" delete success", deletedCount)
+
       if (acknowledged === true && deletedCount > 0) {
         fetchGalleries();
         setShow(true);
@@ -57,7 +60,7 @@ const Gallery: NextPage = () => {
 
   const fetchGalleries = () => {
     APIService.gallery
-      .getAll({author: user?.email})
+      .getAll(user?.email)
       .then((res: any) => setGalleries(res.data));
   };
 
@@ -97,7 +100,7 @@ const Gallery: NextPage = () => {
                     className="rounded-lg shadow-center cursor-pointer"
                     onClick={() => handleShowGalleryLightbox(i)}
                     width={200}
-                    height={200}
+                    height={gallery?.filter_design?.type == 'square' ? 200 : 355}
                     alt=""
                   />
                 <button
