@@ -42,6 +42,7 @@ const Signup: NextPage = () => {
   const [notificationType, setNotificationType] = useState("success");
   const [notificationTitle, setNotificationTitle] = useState("");
   const [notificationContent, setNotificationContent] = useState("");
+  const [isClicked, setIsClicked] = useState(false);
 
   const cols: ColumnType[] = [
     { id: "name", label: "Campaign Details" },
@@ -100,6 +101,11 @@ const Signup: NextPage = () => {
   };
 
   const handleCreateFilterCampaign = () => {
+    if(isClicked) return;
+    setIsClicked(true);
+    setTimeout(() => {
+      setIsClicked(false)
+    }, 100)
     contextResetCampaignData();
     let slug = uuidv4(); //crc.crc32(moment().valueOf().toString());
     APIService.filter.getAll().then((filterRes: any) => {
@@ -161,7 +167,11 @@ const Signup: NextPage = () => {
                   >
                     <div className="absolute top-0 left-0 w-full h-full object-cover rounded-md overflow-hidden">
                       <Image
-                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${row?.placeholder_image}`}
+                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${
+                          row?.filters[0]?.filter_design?.type == 'story' 
+                          ? row?.placeholder_story_image 
+                          : row?.placeholder_image
+                        }`}
                         width={row?.filters[0]?.filter_design?.type == 'square' ? 70 : 50}
                         height={70}
                         alt=""

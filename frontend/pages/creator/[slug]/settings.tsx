@@ -274,6 +274,32 @@ const Settings: NextPage = () => {
   };
 
   useEffect(() => {
+    APIService.campaign
+      .edit({
+        ...campaignData,
+        id: campaignData?._id,
+        placeholder_image: selectedPlaceholderImage,
+      })
+      .then((res: any) => {
+        getInitData();
+      })
+      .catch((err: any) => console.log(err));
+  }, [selectedPlaceholderImage])
+
+  useEffect(() => {
+    APIService.campaign
+      .edit({
+        ...campaignData,
+        id: campaignData?._id,
+        placeholder_story_image: selectedPlaceholderImageForStory,
+      })
+      .then((res: any) => {
+        getInitData();
+      })
+      .catch((err: any) => console.log(err));
+  }, [selectedPlaceholderImageForStory])
+
+  useEffect(() => {
     document.body.style.overflow = openSidebar ? "hidden" : "auto";
   }, [openSidebar]);
 

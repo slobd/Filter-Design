@@ -110,7 +110,15 @@ const User: NextPage = () => {
             // setTimeout(async () => {
             const dom = document.querySelector<HTMLElement>(`#card-${selectedIndex}`);
             if (dom) {
-                saveAsPng(dom, { filename: 'image.png', printDate: false });
+                const dataUrl = await buildPng(selectedIndex);
+
+                if (dataUrl) {
+                    var link = document.createElement("a");
+                    link.download = "image.png";
+                    link.href = dataUrl;
+                    link.click();
+                }
+                // saveAsPng(dom, { filename: 'image.png', printDate: false });
                 // console.log("getCanvas", getCanvas(dom, { filename: 'image.png', printDate: false }))
 
                 // html2canvas(dom, options).then(() => {
