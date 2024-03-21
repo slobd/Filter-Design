@@ -73,7 +73,7 @@ const FilterDesigns: NextPage = () => {
     const { campaignData, contextCampaignData } = useAppContext();
     const [filterDesigns, setFilterDesigns] = useState<FilterDesignType[]>([])
     const [open, setOpen] = useState(false);
-    const [selectedFilterIndex, setSelectedFilterIndex] = useState(10);
+    const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
     const [openSidebar, setOpenSidebar] = useState(false);
     const [selectedFilterTab, setSelectedFilterTab] = useState("square");
     const [buttonStyle, setButtonStyle] = useState<ButtonType>();
@@ -157,9 +157,6 @@ const FilterDesigns: NextPage = () => {
             }
         });
     };
-    console.log("campaignDate", campaignData)
-    console.log("filterDesigns", filterDesigns)
-
 
     const handleSelectFilterDesign = (filterDesign: FilterDesignType) => {
         if (!campaignData?.filters?.length) return;
@@ -186,7 +183,7 @@ const FilterDesigns: NextPage = () => {
         setIsClicked(true);
         setTimeout(() => {
             setIsClicked(false)
-        }, 100)
+        }, 1000)
         const filterDesign: FilterDesignType = filterDesigns?.filter(i => i.author == '')?.[0];
         if (filterDesign) {
             let _filters = campaignData?.filters ?? [];
@@ -286,7 +283,6 @@ const FilterDesigns: NextPage = () => {
                 `#filter-design-${selectedFilterIndex}`
             );
             if (filterDesignElement) {
-                console.log("filterDesignElement", filterDesignElement.clientHeight)
                 setDimension({
                     ...dimension,
                     width: filterDesignElement.clientWidth,

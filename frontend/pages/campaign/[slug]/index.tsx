@@ -301,7 +301,6 @@ const User: NextPage = () => {
                 <div
                     className={`relative items-center ${filterDesignWidths[filter.filter_design?.type ?? "square"]}`}
                     key={i}
-                    style={{ maxWidth: filter.filter_design?.type == "square" ? 350 : 290 }}
                 >
                     <div
                         className={`bg-white dark:bg-gray-700 shadow-md overflow-hidden`}
@@ -317,7 +316,7 @@ const User: NextPage = () => {
                             wrapperStyle={{}}
                             wrapperClass={`absolute top-[175px] ${filter?.filter_design?.type == 'story' ? 'left-[105px]' : 'left-[135px]'}`}
                         />
-                        <div id={`card-${i}`} className={`${filter.filter_design?.type == "square" ? "w-[350px] h-[350px]" : "w-[290px] h-[515px]"} ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
+                        <div className={` ${!loading ? 'visible' : 'invisible'} relative flex-shrink-0 overflow-hidden`}>
                             {image[i] && image[i] !== undefined ? (
                                 <img
                                     className="absolute object-cover pointer-events-none max-w-none overflow-hidden"
@@ -342,16 +341,12 @@ const User: NextPage = () => {
                                     }}
                                 />
                             )}
-                            <div className="absolute z-10">
-                                {filter?.filter_design?.image && filter?.filter_design?.image !== undefined &&
-                                    <img
-                                        src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
-                                        width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                        height={filter?.filter_design?.type == 'story' ? 515 : 350}
-                                    />
-                                }
-
-                            </div>
+                            {filter?.filter_design?.image && filter?.filter_design?.image !== undefined &&
+                                <img
+                                    src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
+                                    className="relative z-10"
+                                />
+                            }
                         </div>
                         <div
                             className={`w-full flex flex-col items-center justify-center gap-3 text-gray-600 ${!image[i] ? `p-6` : `p-4 pb-6`
@@ -449,12 +444,14 @@ const User: NextPage = () => {
                         </div>
                     </div>
                 </div>
-                {/* <div className="w-0 h-0 overflow-hidden" >
+                <div className="w-0 h-0 overflow-hidden">
                     <div
-                        className={`w-max h-max relative overflow-hidden invisible  ${loaded ? 'visible' : 'invisible'}`}
+                        className={`w-max h-max relative overflow-hidden`}
+                        id={`card-${i}`}
                     >
                         {image[i] && (
-                            <div
+                            <img
+                                src={URL.createObjectURL(image[i])}
                                 className="object-cover absolute max-w-none"
                                 style={{
                                     width: `${filter?.rnd?.w}%`,
@@ -462,28 +459,14 @@ const User: NextPage = () => {
                                     left: `${filter?.rnd?.x}%`,
                                     top: `${filter?.rnd?.y}%`,
                                 }}
-                            >
-                                <Image
-                                    src={URL.createObjectURL(image[i])}
-                                    loader={({ src, width }) => { return src + "?w=" + width }}
-                                    quality={50}
-                                    priority={true}
-                                    width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                                    height={filter?.filter_design?.type == 'story' ? 350 : 350}
-                                />
-                            </div>
+                            />
                         )}
-                        <Image
+                        <img
                             src={`${process.env.NEXT_PUBLIC_APP_API_URL}/${filter?.filter_design?.image}`}
                             className="relative z-10"
-                            loader={({ src, width }) => { return src + "?w=" + width }}
-                            quality={50}
-                            priority={true}
-                            width={filter?.filter_design?.type == 'story' ? 290 : 350}
-                            height={filter?.filter_design?.type == 'story' ? 350 : 350}
                         />
                     </div>
-                </div> */}
+                </div>
             </>
         );
     };
